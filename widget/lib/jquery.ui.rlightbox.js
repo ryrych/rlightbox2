@@ -10,21 +10,18 @@
  */
 (function( $, undefined ) {
 
-$.widget( "ui.progressbar", {
+$.widget( "ui.rlightbox", {
 	options: {
 	},
 
 	_create: function() {
-
 	},
 
 	destroy: function() {
-
 	},
 
 	_setOption: function( key, value ) {
-
-	},
+	}
 });
 
 })( jQuery );
