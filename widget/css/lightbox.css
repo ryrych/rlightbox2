@@ -1,0 +1,60 @@
+#ui-lightbox {
+	font-size: 62.5%;
+	padding: 5px;
+	margin: 0;
+	position: fixed;
+	z-index: 9999;
+	width: auto;
+	height: auto;
+}
+
+#ui-lightbox-content {
+	border: 0 none;
+	margin: 0;
+	padding: 0;
+	width: 20px;
+	height: 20px;
+}
+
+#ui-lightbox-content > * {
+	display: block;
+}
+
+.ui-lightbox-loader {
+	background: url(loader.gif) center center no-repeat;
+}
+
+#ui-lightbox-header {
+	margin: 0;
+	margin-top: 5px;
+	padding: 5px;
+	height: 40px;
+	position: relative;
+}
+
+#ui-lightbox-header > p {
+	margin: 0;
+	padding: 0;
+}
+
+#ui-lightbox-header-title {
+	font-size: 14px;
+	line-height: 20px;
+}
+
+#ui-lightbox-header-counter {
+	font-size: 9px;
+	line-height: 20px;
+}
+
+#ui-lightbox-header-close {
+	position: absolute;
+	top: 17px;
+	right: 5px;
+}
+
+#ui-lightbox-overlay {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
