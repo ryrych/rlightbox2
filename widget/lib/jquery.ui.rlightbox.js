@@ -40,6 +40,7 @@ $.widget( "ui.rlightbox", {
 			.appendTo( "body" )
 			.after( "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>" );
 
+		// save references to wrapped set for later use
 		self.$lightbox.root = $( "#ui-lightbox" );
 		self.$lightbox.content = self.$lightbox.root.find( "#ui-lightbox-content" );
 		self.$lightbox.header = self.$lightbox.root.find( "#ui-lightbox-header" );
