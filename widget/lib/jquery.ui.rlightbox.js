@@ -30,7 +30,7 @@ $.widget( "ui.rlightbox", {
 	_createStructure: function() {
 		var self = this;
 
-		if ( self.lightbox.$root ) {
+		if ( self.$lightbox.root ) {
 			return;
 		}
 
@@ -40,10 +40,10 @@ $.widget( "ui.rlightbox", {
 			.appendTo( "body" )
 			.after( "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>" );
 
-		self.lightbox.$root = $( "#ui-lightbox" );
-		self.lightbox.$content = self.lightbox.$root.find( "#ui-lightbox-content" );
-		self.lightbox.$header = self.lightbox.$root.find( "#ui-lightbox-header" );
-		self.lightbox.$overlay = $( "#ui-lightbox-overlay" );
+		self.$lightbox.root = $( "#ui-lightbox" );
+		self.$lightbox.content = self.$lightbox.root.find( "#ui-lightbox-content" );
+		self.$lightbox.header = self.$lightbox.root.find( "#ui-lightbox-header" );
+		self.$lightbox.overlay = $( "#ui-lightbox-overlay" );
 	},
 
 	destroy: function() {
@@ -76,17 +76,17 @@ $.widget( "ui.rlightbox", {
 
 					// show overlay
 					$( "body" ).css( "overflow", "hidden" );
-					self.lightbox.$overlay.fadeIn( self.options.animationSpeed, next );
+					self.$lightbox.overlay.fadeIn( self.options.animationSpeed, next );
 				},
 				function( next ) {
 
 					// center the lightbox
 					var _screenWidth = $( window ).width(),
 						_screenHeight = $( window ).height();
-						_lbWidth = self.lightbox.$root.outerWidth(),
-						_lbHeight = self.lightbox.$root.outerHeight();
+						_lbWidth = self.$lightbox.root.outerWidth(),
+						_lbHeight = self.$lightbox.root.outerHeight();
 
-					self.lightbox.$root
+					self.$lightbox.root
 						.css({
 							left: Math.round( (_screenWidth - _lbWidth) / 2 ) + "px",
 							top: Math.round( (_screenHeight - _lbHeight) / 2 ) + "px"
@@ -96,10 +96,10 @@ $.widget( "ui.rlightbox", {
 				function( next ) {
 
 					// start loading maximized image
-					self.lightbox.$content.addClass( "ui-lightbox-loader" );
+					self.$lightbox.content.addClass( "ui-lightbox-loader" );
 
 					$.when( self._loadImage( $(self.element).attr("href") )).then(function(img) {
-						self.lightbox.$content
+						self.$lightbox.content
 							.append( img )
 							.find( "img" )
 								.hide();
@@ -109,11 +109,11 @@ $.widget( "ui.rlightbox", {
 				function( next ) {
 
 					// animate width and height to the size of the content (image, flash video) size
-					var _img = self.lightbox.$content.find( "img" ),
+					var _img = self.$lightbox.content.find( "img" ),
 						_h = $( _img ).height(),
 						_w = $( _img ).width();
 
-					self.lightbox.$root
+					self.$lightbox.root
 						.find( "#ui-lightbox-content" )
 							.removeClass( "ui-lightbox-loader" )
 							.animate( {width: _w}, self.options.animationSpeed )
@@ -125,14 +125,14 @@ $.widget( "ui.rlightbox", {
 				function( next ) {
 
 					// show content
-					self.lightbox.$content
+					self.$lightbox.content
 						.find( "img" )
 						.fadeIn( self.options.animationSpeed, next );
 				},
 				function(next) {
 
 					// show header
-					self.lightbox.$header.slideDown( self.options.animationSpeed, function() {
+					self.$lightbox.header.slideDown( self.options.animationSpeed, function() {
 						next();
 					});
 				}
@@ -145,7 +145,7 @@ $.widget( "ui.rlightbox", {
 	_setOption: function( key, value ) {
 	},
 
-	lightbox: {}
+	$lightbox: {}
 });
 
 })( jQuery );
