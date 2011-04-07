@@ -18,8 +18,15 @@ $.widget( "ui.rlightbox", {
 	_create: function() {
 		var self = this;
 
-		// there may be many elements to act on: images, flash films but only one structure of the widget
-		self._createStructure();
+		// some actions run only once – dirty flag nom nom nom
+		if ( !$("body" ).data( "rlb_iWasRunAlready" ) ) {
+
+			// there may be many elements to act on: images, flash films but only one structure of the widget
+			self._createStructure();
+
+			// never run it again
+			$( "body" ).data( "rlb_iWasRunAlready", true );
+		}
 
 		self.element.click(function() {
 			self._open();
@@ -29,10 +36,6 @@ $.widget( "ui.rlightbox", {
 
 	_createStructure: function() {
 		var self = this;
-
-		if ( self.$lightbox.root ) {
-			return;
-		}
 
 		$( "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'></div>" )
 			.append( "<div id='ui-lightbox-content' class='ui-widget-content'></div>" )
