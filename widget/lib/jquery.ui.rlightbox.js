@@ -24,6 +24,9 @@ $.widget( "ui.rlightbox", {
 			// there may be many elements to act on: images, flash films but only one structure of the widget
 			self._createStructure();
 
+			// set animation queues
+			self._setQueues();
+
 			// never run it again
 			$( "body" ).data( "rlb_iWasRunAlready", true );
 		}
@@ -73,9 +76,17 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_open: function() {
+
+		// start opening the lighbox
+		this.$lightbox.queueStart.dequeue( "lightboxOpen" );
+	},
+
+	_setOption: function( key, value ) {
+	},
+
+	_setQueues: function() {
 		var self = this,
-			$lightboxQueue = $({}),
-			queueList = [
+			queueStartList = [
 				function( next ) {
 
 					// show overlay
@@ -142,11 +153,9 @@ $.widget( "ui.rlightbox", {
 				}
 			];
 
-		$lightboxQueue.queue( "lightbox", queueList );
-		$lightboxQueue.dequeue( "lightbox" );
-	},
-
-	_setOption: function( key, value ) {
+		// place start animation queue in the jQuery wrapper and save the reference
+		self.$lightbox.queueStart= $({});
+		self.$lightbox.queueStart.queue( "lightboxOpen", queueStartList );
 	},
 
 	$lightbox: {}
