@@ -232,6 +232,9 @@ $.widget( "ui.rlightbox", {
 
 	_open: function() {
 
+		// keep an url to an image - bad hack?
+		this.$lightbox.imageUrl = $( this.element ).attr( "href" );
+
 		// start opening the lighbox
 		this.$lightbox.queueStart.dequeue( "lightboxOpen" );
 	},
@@ -267,7 +270,7 @@ $.widget( "ui.rlightbox", {
 
 					// start loading maximized image
 					self.$lightbox.content.addClass( "ui-lightbox-loader" );
-					$.when( self._loadImage( $(self.element).attr("href") )).then(function(img) {
+					$.when( self._loadImage( self.$lightbox.imageUrl) ).then(function( img ) {
 
 						// keep original size of an image – needed when resizing
 						self.$lightbox.root.data({
