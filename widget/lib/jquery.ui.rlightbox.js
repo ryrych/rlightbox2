@@ -12,7 +12,7 @@
 
 $.widget( "ui.rlightbox", {
 	options: {
-		animationSpeed: "fast"
+		animationSpeed: "fast",
 	},
 
 	_create: function() {
@@ -29,6 +29,17 @@ $.widget( "ui.rlightbox", {
 
 			// never run it again
 			$( "body" ).data( "rlb_iWasRunAlready", true );
+
+			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
+			// fill with initial data
+			self.$lightbox.root.data({
+				minimalLightboxSize: {
+					width: 300,
+					height: 300
+				},
+				lightboxPadding: 12,
+				headerHeight: 57
+			});
 		}
 
 		self.element.click(function() {
@@ -55,6 +66,150 @@ $.widget( "ui.rlightbox", {
 
 	destroy: function() {
 	},
+
+	_getSizes: function() {
+        var _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
+			self = this,
+            $lb = self.$lightbox,
+            _windowWidth = $( window ).width(),
+            _windowHeight = $( window ).height(),
+            _minimalLightboxWidth = $lb.root.data().minimalLightboxSize.width,
+            _minimalLightboxHeight = $lb.root.data().minimalLightboxSize.height,
+            _imageWidth = $lb.root.data().originalImageSize.width,
+            _imageHeight = $lb.root.data().originalImageSize.height,
+            _lightboxPadding = $lb.root.data().lightboxPadding,
+			_headerHeight = $lb.root.data().headerHeight;
+
+		// statuses (concern both sides):
+		// 1 - content fits the window and is larger than minimal lightbox size
+		// -1 - content fits the window but is smaller or equal to minial lightbox size
+		// 2 - content is larger than the window
+		// -2 - the window is smaller than minimal lightbox size
+        function _getStatus( imgW, imgH ) {
+            if ( _windowWidth < _minimalLightboxWidth + _lightboxPadding ) {
+				_statusWidth = -2;
+			} else if ( imgW <= _minimalLightboxWidth ) {
+				_statusWidth = -1;
+			} else if ( imgW > _minimalLightboxWidth && imgW + _lightboxPadding <= _windowWidth ) {
+				_statusWidth = 1;
+            } else {
+				_statusWidth = 2;
+			}
+
+            if ( _windowHeight < _minimalLightboxHeight + _lightboxPadding + _headerHeight ) {
+				_statusHeight = -2;
+			} else if ( imgH <= _minimalLightboxHeight ) {
+				_statusHeight = -1;
+            } else if ( imgH > _minimalLightboxHeight && _windowHeight >= imgH + _lightboxPadding + _headerHeight ) {
+				_statusHeight = 1;
+            } else {
+				_statusHeight = 2;
+			}
+        }
+
+        function _calculateSizes( w, h ) {
+            _getStatus( w, h );
+
+            // if image fits the window
+            if ( ((_statusWidth === 1 || _statusWidth === -1) && _statusHeight !== 2) && ((_statusHeight === 1 || _statusHeight === -1) && _statusWidth !== 2) ) {
+                if ( _statusWidth === 1 ) {
+                    _lightboxTargetWidth = w;
+                } else if ( _statusWidth === -1 ) {
+                    _lightboxTargetWidth = _minimalLightboxWidth;
+				}
+				_imageTargetWidth = w;
+
+                if ( _statusHeight === 1 ) {
+                    _lightboxTargetHeight = h;
+                } else if ( _statusHeight === -1 ) {
+                    _lightboxTargetHeight = _minimalLightboxHeight;
+				}
+				_imageTargetHeight = h;
+            } else if ( _statusWidth === 2 || _statusHeight === 2 ) {
+
+                // height is larger than window, width fits the window
+                if ( _statusWidth === 1 || _statusWidth === -1 ) {
+                    _lightboxTargetHeight = _windowHeight - structure.labelHeight - _lightboxPadding;
+					_heightRatio = _lightboxTargetHeight / _imageHeight;
+					_imageTargetHeight = _lightboxTargetHeight;
+
+                    if (_statusWidth === -1) {
+                        _lightboxTargetWidth = _minimalLightboxWidth;
+						_imageTargetWidth = w;
+					} else {
+                        _lightboxTargetWidth = _imageWidth * _heightRatio;
+						_imageTargetWidth = _lightboxTargetWidth;
+
+						// sprawdzić!
+                        if ( _lightboxTargetWidth <= _minimalLightboxWidth ) {
+                            _calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
+						}
+                    }
+                } else if ( _statusHeight === 1 || _statusHeight === -1 ) {
+
+					// width is larger than window, height fit the window
+                    _lightboxTargetWidth = _windowWidth - _lightboxPadding;
+					_widthRatio = _lightboxTargetWidth / _imageWidth;
+					_imageTargetWidth = _lightboxTargetWidth;
+
+                    if ( _statusHeight === -1 ) {
+                        _lightboxTargetHeight = _minimalLightboxHeight;
+						_imageTargetHeight = h;
+					} else {
+                        _lightboxTargetHeight = _imageHeight * _widthRatio;
+						_imageTargetHeight = _lightboxTargetHeight;
+
+						// sprawdzić!
+                        if ( _lightboxTargetHeight <= _minimalLightboxHeight ) {
+                            _calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
+						}
+                    }
+                } else {
+
+					// both width and height are larger than window
+                    if ( _imageWidth > _imageHeight ) {
+                        _lightboxTargetWidth = _windowWidth - _lightboxPadding;
+						_imageTargetWidth = _lightboxTargetWidth;
+                        _widthRatio = _lightboxTargetWidth / _imageWidth;
+                        _lightboxTargetHeight = _imageHeight * _widthRatio - _lightboxPadding - _headerHeight;
+						_imageTargetHeight = _lightboxTargetHeight;
+
+                        // check if height fits the window
+                        // if no, then scale height to fit the window and re-scale the width
+                        if ( (_windowHeight < _lightboxTargetHeight + _lightboxPadding + _headerHeight) || _lightboxTargetHeight <= _minimalLightboxHeight ) {
+                            _calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
+						}
+                    } else {
+                        _lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;
+                        _heightRatio = _lightboxTargetHeight / _imageHeight;
+						_imageTargetHeight = _lightboxTargetHeight;
+
+                        // check if width fits window after scaling
+                        _lightboxTargetWidth = _imageWidth * _heightRatio;
+						_imageTargetHeight = _lightboxTargetHeight;
+
+                        // no, then scale width to fit the window and re-scale width
+                        if ( _lightboxTargetWidth + _lightboxPadding > _windowWidth || _lightboxTargetWidth < _minimalLightboxWidth ) {
+                            _calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
+						}
+                    }
+                }
+            }
+        }
+        _calculateSizes( _imageWidth, _imageHeight );
+
+        // final status
+        _getStatus( _imageTargetWidth, _imageTargetHeight );
+
+        return {
+			imageTargetWidth: _imageTargetWidth,
+			imageTargetHeight: _imageTargetHeight,
+            lightboxTargetWidth: _lightboxTargetWidth,
+            lightboxTargetHeight: _lightboxTargetHeight,
+            statusWidth: _statusWidth,
+			statusHeight: _statusHeight
+        };
+    },
 
 	_loadImage: function( path ) {
 		var _image = new Image(),
@@ -112,44 +267,89 @@ $.widget( "ui.rlightbox", {
 
 					// start loading maximized image
 					self.$lightbox.content.addClass( "ui-lightbox-loader" );
-
 					$.when( self._loadImage( $(self.element).attr("href") )).then(function(img) {
+
+						// keep original size of an image – needed when resizing
+						self.$lightbox.root.data({
+							originalImageSize: {
+								width: img.width,
+								height: img.height
+							}
+						});
+
+						// add the loaded image and hide it
 						self.$lightbox.content
 							.append( img )
 							.find( "img" )
 								.hide();
+
 						next();
 					});
 				},
 				function( next ) {
 
-					// animate width and height to the size of the content (image, flash video) size
-					var _img = self.$lightbox.content.find( "img" ),
-						_h = $( _img ).height(),
-						_w = $( _img ).width();
+					// center the lightbox and scale it
+					// get sizes of the lightbox, image and their statuses
+					var _sizes = self._getSizes(),
+						_imageTargetWidth = _sizes.imageTargetWidth,
+						_imageTargetHeight = _sizes.imageTargetHeight,
+						_lightboxTargetWidth = _sizes.lightboxTargetWidth,
+						_lightboxTargetHeight = _sizes.lightboxTargetHeight,
+						_statusWidth = _sizes.statusWidth,
+						_statusHeight = _sizes.statusHeight,
+						_img = self.$lightbox.content.find( "img" ),
+						_padding = self.$lightbox.root.data().lightboxPadding
+						_headerHeight = self.$lightbox.root.data().headerHeight;
 
-					self.$lightbox.root
-						.find( "#ui-lightbox-content" )
-							.removeClass( "ui-lightbox-loader" )
-							.animate( {width: _w}, self.options.animationSpeed )
-							.animate( {height: _h}, self.options.animationSpeed )
-							.end()
-						.animate( {left: ($(window).width() - _w) / 2}, self.options.animationSpeed )
-						.animate( {top: ($(window).height() - _h) / 2}, self.options.animationSpeed, next )
+					// only if window is larger than minial size of the lightbox
+					if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
+
+						// scale the image to fit the window or container
+						_img
+							.width( _imageTargetWidth )
+							.height( _imageTargetHeight );
+
+						// scale and resize the lightbox
+						self.$lightbox.root
+							.find( "#ui-lightbox-content" )
+								.removeClass( "ui-lightbox-loader" )
+								.animate( {width: _imageTargetWidth}, 2000 )
+								.animate( {height: _imageTargetHeight}, 2000 )
+								.end()
+							.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, 2000)
+							.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, 2000, next);
+					} else {
+
+						// window is too small to fit the lightbox
+						$( self._$lightbox.root ).hide();
+						if ( _statusWidth === -2 ) {
+							alert( "Window width is too small. Please resize it." );
+						} else if ( _statusHeight === -2 ) {
+							alert("Window height is too small. Please resize it." );
+						} else {
+							alert( "Window size is too small. Please resize it." );
+						}
+					}
 				},
 				function( next ) {
+					var _sizes = self._getSizes();
 
 					// show content
 					self.$lightbox.content
+						.css( {position: "relative"} )
 						.find( "img" )
+						.css({
+							position: "absolute",
+							top: _sizes.lightboxTargetHeight / 2 - _sizes.imageTargetHeight / 2,
+							left: _sizes.lightboxTargetWidth / 2 - _sizes.imageTargetWidth / 2,
+							zIndex: 778
+						})
 						.fadeIn( self.options.animationSpeed, next );
 				},
 				function(next) {
 
 					// show header
-					self.$lightbox.header.slideDown( self.options.animationSpeed, function() {
-						next();
-					});
+					self.$lightbox.header.slideDown( self.options.animationSpeed, next );
 				}
 			];
 
