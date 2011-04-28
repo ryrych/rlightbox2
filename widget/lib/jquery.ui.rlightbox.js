@@ -226,7 +226,7 @@ $.widget( "ui.rlightbox", {
 		}
 
 		// just simulate loading
-		_loadWatch = setTimeout( _watch, 5000 );
+		_loadWatch = setTimeout( _watch, 2000 );
 		return _dfd.promise();
 	},
 
