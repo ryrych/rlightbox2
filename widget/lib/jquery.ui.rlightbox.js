@@ -129,7 +129,7 @@ $.widget( "ui.rlightbox", {
 
                 // height is larger than window, width fits the window
                 if ( _statusWidth === 1 || _statusWidth === -1 ) {
-                    _lightboxTargetHeight = _windowHeight - structure.labelHeight - _lightboxPadding;
+                    _lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;
 					_heightRatio = _lightboxTargetHeight / _imageHeight;
 					_imageTargetHeight = _lightboxTargetHeight;
 
