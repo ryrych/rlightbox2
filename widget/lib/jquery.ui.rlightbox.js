@@ -324,7 +324,7 @@ $.widget( "ui.rlightbox", {
 					} else {
 
 						// window is too small to fit the lightbox
-						$( self._$lightbox.root ).hide();
+						$( self.$lightbox.root ).hide();
 						if ( _statusWidth === -2 ) {
 							alert( "Window width is too small. Please resize it." );
 						} else if ( _statusHeight === -2 ) {
