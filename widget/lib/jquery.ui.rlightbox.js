@@ -264,7 +264,7 @@ $.widget( "ui.rlightbox", {
 							left: Math.round( (_screenWidth - _lbWidth) / 2 ) + "px",
 							top: Math.round( (_screenHeight - _lbHeight) / 2 ) + "px"
 						})
-						.show( next );
+						.show( 0, next );
 				},
 				function( next ) {
 
