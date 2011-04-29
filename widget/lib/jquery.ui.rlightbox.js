@@ -304,8 +304,6 @@ $.widget( "ui.rlightbox", {
 						_padding = self.$lightbox.root.data().lightboxPadding
 						_headerHeight = self.$lightbox.root.data().headerHeight;
 
-					console.log("status: ", _statusWidth, _statusHeight);
-
 					// only if window is larger than minial size of the lightbox
 					if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
 
