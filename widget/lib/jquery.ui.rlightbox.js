@@ -304,6 +304,8 @@ $.widget( "ui.rlightbox", {
 						_padding = self.$lightbox.root.data().lightboxPadding
 						_headerHeight = self.$lightbox.root.data().headerHeight;
 
+					console.log("status: ", _statusWidth, _statusHeight);
+
 					// only if window is larger than minial size of the lightbox
 					if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
 
@@ -316,8 +318,8 @@ $.widget( "ui.rlightbox", {
 						self.$lightbox.root
 							.find( "#ui-lightbox-content" )
 								.removeClass( "ui-lightbox-loader" )
-								.animate( {width: _imageTargetWidth}, 2000 )
-								.animate( {height: _imageTargetHeight}, 2000 )
+								.animate( {width: _lightboxTargetWidth}, 2000 )
+								.animate( {height: _lightboxTargetHeight}, 2000 )
 								.end()
 							.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, 2000)
 							.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, 2000, next);
