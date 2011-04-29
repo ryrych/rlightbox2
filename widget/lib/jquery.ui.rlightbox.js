@@ -140,7 +140,6 @@ $.widget( "ui.rlightbox", {
                         _lightboxTargetWidth = Math.ceil( _imageWidth * _heightRatio );
 						_imageTargetWidth = _lightboxTargetWidth;
 
-						// sprawdzić!
                         if ( _lightboxTargetWidth <= _minimalLightboxWidth ) {
                             _calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
 						}
@@ -159,7 +158,6 @@ $.widget( "ui.rlightbox", {
                         _lightboxTargetHeight = Math.ceil( _imageHeight * _widthRatio );
 						_imageTargetHeight = _lightboxTargetHeight;
 
-						// sprawdzić!
                         if ( _lightboxTargetHeight <= _minimalLightboxHeight ) {
                             _calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
 						}
