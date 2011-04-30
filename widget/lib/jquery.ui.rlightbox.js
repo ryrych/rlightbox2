@@ -27,6 +27,12 @@ $.widget( "ui.rlightbox", {
 			// set animation queues
 			self._setQueues();
 
+			// add a handler to the close button and the overlay
+			self.$lightbox.close.add( self.$lightbox.overlay ).click(function() {
+				self._close();
+			});
+
+
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
 			self.$lightbox.root.data({
@@ -48,6 +54,26 @@ $.widget( "ui.rlightbox", {
 		});
 	},
 
+	_close: function() {
+		var self = this,
+			$lb = self.$lightbox;
+
+		$lb.overlay
+			.add( $lb.root )
+			.add ( $lb.header )
+			.hide();
+
+		$( "body" ).css( "overflow", "visible" );
+
+		// remove content and restore its initial size
+		$lb.content
+			.empty()
+			.width( 20 )
+			.height( 20 );
+
+		self._setQueues();
+	},
+
 	_createStructure: function() {
 		var self = this;
 
@@ -62,6 +88,7 @@ $.widget( "ui.rlightbox", {
 		self.$lightbox.content = self.$lightbox.root.find( "#ui-lightbox-content" );
 		self.$lightbox.header = self.$lightbox.root.find( "#ui-lightbox-header" );
 		self.$lightbox.overlay = $( "#ui-lightbox-overlay" );
+		self.$lightbox.close = $( "#ui-lightbox-header-close" );
 	},
 
 	destroy: function() {
