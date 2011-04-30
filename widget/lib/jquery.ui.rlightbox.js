@@ -27,9 +27,6 @@ $.widget( "ui.rlightbox", {
 			// set animation queues
 			self._setQueues();
 
-			// never run it again
-			$( "body" ).data( "rlb_iWasRunAlready", true );
-
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
 			self.$lightbox.root.data({
@@ -40,6 +37,9 @@ $.widget( "ui.rlightbox", {
 				lightboxPadding: 12,
 				headerHeight: 57
 			});
+
+			// never run it again
+			$( "body" ).data( "rlb_iWasRunAlready", true );
 		}
 
 		self.element.click(function() {
