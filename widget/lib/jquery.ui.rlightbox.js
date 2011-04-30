@@ -25,7 +25,7 @@ $.widget( "ui.rlightbox", {
 			self._createStructure();
 
 			// set animation queues
-			self._setQueues();
+			self._setOpenQueue();
 
 			// add a handler to the close button and the overlay
 			self.$lightbox.close.add( self.$lightbox.overlay ).click(function() {
@@ -71,7 +71,7 @@ $.widget( "ui.rlightbox", {
 			.width( 20 )
 			.height( 20 );
 
-		self._setQueues();
+		self._setOpenQueue();
 	},
 
 	_createStructure: function() {
@@ -89,6 +89,10 @@ $.widget( "ui.rlightbox", {
 		self.$lightbox.header = self.$lightbox.root.find( "#ui-lightbox-header" );
 		self.$lightbox.overlay = $( "#ui-lightbox-overlay" );
 		self.$lightbox.close = $( "#ui-lightbox-header-close" );
+		self.$lightbox.queueContainer = {
+			open: $({}),
+			next: $({})
+		}
 	},
 
 	destroy: function() {
@@ -261,15 +265,15 @@ $.widget( "ui.rlightbox", {
 		this.$lightbox.imageUrl = $( this.element ).attr( "href" );
 
 		// start opening the lighbox
-		this.$lightbox.queueStart.dequeue( "lightboxOpen" );
+		this.$lightbox.queueContainer.open.dequeue( "lightboxOpen" );
 	},
 
 	_setOption: function( key, value ) {
 	},
 
-	_setQueues: function() {
+	_setOpenQueue: function() {
 		var self = this,
-			queueStartList = [
+			queueOpenList = [
 				function( next ) {
 
 					// show overlay
@@ -374,16 +378,15 @@ $.widget( "ui.rlightbox", {
 						})
 						.fadeIn( self.options.animationSpeed, next );
 				},
-				function(next) {
+				function( next ) {
 
 					// show header
 					self.$lightbox.header.slideDown( self.options.animationSpeed, next );
 				}
 			];
 
-		// place start animation queue in the jQuery wrapper and save the reference
-		self.$lightbox.queueStart= $({});
-		self.$lightbox.queueStart.queue( "lightboxOpen", queueStartList );
+		// place start animation queue in the queue container
+		self.$lightbox.queueContainer.open.queue( "lightboxOpen", queueOpenList );
 	},
 
 	$lightbox: {}
