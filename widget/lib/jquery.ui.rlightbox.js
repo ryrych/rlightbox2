@@ -24,6 +24,9 @@ $.widget( "ui.rlightbox", {
 			// there may be many elements to act on: images, flash films but only one structure of the widget
 			self._createStructure();
 
+			// set references for later use
+			self._setReferences();
+
 			// set animation queues
 			self._setOpenQueue();
 
@@ -82,17 +85,6 @@ $.widget( "ui.rlightbox", {
 			.append( "<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'><p id='ui-lightbox-header-wrapper'><span id='ui-lightbox-header-title'></span></p><p id='ui-lightbox-header-counter'><span id='ui-lightbox-header-counter-current'></span><span>z</span><span id='ui-lightbox-header-counter-total'></span><a id='ui-lightbox-header-close' href='#'><span class='ui-icon ui-icon-closethick'>close</span></a></p></div>" )
 			.appendTo( "body" )
 			.after( "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>" );
-
-		// save references to wrapped set for later use
-		self.$lightbox.root = $( "#ui-lightbox" );
-		self.$lightbox.content = self.$lightbox.root.find( "#ui-lightbox-content" );
-		self.$lightbox.header = self.$lightbox.root.find( "#ui-lightbox-header" );
-		self.$lightbox.overlay = $( "#ui-lightbox-overlay" );
-		self.$lightbox.close = $( "#ui-lightbox-header-close" );
-		self.$lightbox.queueContainer = {
-			open: $({}),
-			next: $({})
-		}
 	},
 
 	destroy: function() {
@@ -387,6 +379,21 @@ $.widget( "ui.rlightbox", {
 
 		// place start animation queue in the queue container
 		self.$lightbox.queueContainer.open.queue( "lightboxOpen", queueOpenList );
+	},
+
+	_setReferences: function() {
+		var self = this;
+
+		// save references to wrapped set for later use
+		self.$lightbox.root = $( "#ui-lightbox" );
+		self.$lightbox.content = self.$lightbox.root.find( "#ui-lightbox-content" );
+		self.$lightbox.header = self.$lightbox.root.find( "#ui-lightbox-header" );
+		self.$lightbox.overlay = $( "#ui-lightbox-overlay" );
+		self.$lightbox.close = $( "#ui-lightbox-header-close" );
+		self.$lightbox.queueContainer = {
+			open: $({}),
+			next: $({})
+		}
 	},
 
 	$lightbox: {}
