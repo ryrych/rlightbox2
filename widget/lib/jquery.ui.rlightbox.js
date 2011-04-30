@@ -30,11 +30,20 @@ $.widget( "ui.rlightbox", {
 			// set animation queues
 			self._setOpenQueue();
 
-			// add a handler to the close button and the overlay
-			self.$lightbox.close.add( self.$lightbox.overlay ).click(function() {
-				self._close();
-			});
+			// add handlers to the close button and the overlay
+			self.$lightbox.close
+				.click(function() {
+					self._close();
+					return false;
+				})
+				.hover(function() {
+					$( this ).toggleClass( "ui-state-hover" );
+				});
 
+			self.$lightbox.overlay.click(function() {
+				self._close();
+				return false;
+			});
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
