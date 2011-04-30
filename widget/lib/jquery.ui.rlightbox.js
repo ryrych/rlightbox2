@@ -16,7 +16,8 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_create: function() {
-		var self = this;
+		var self = this,
+			$lb = self.$lightbox;
 
 		// some actions run only once – dirty flag nom nom nom
 		if ( !$("body" ).data( "rlb_iWasRunAlready" ) ) {
@@ -31,7 +32,7 @@ $.widget( "ui.rlightbox", {
 			self._setOpenQueue();
 
 			// add handlers to the close button and the overlay
-			self.$lightbox.close
+			$lb.close
 				.click(function() {
 					self._close();
 					return false;
@@ -40,14 +41,14 @@ $.widget( "ui.rlightbox", {
 					$( this ).toggleClass( "ui-state-hover" );
 				});
 
-			self.$lightbox.overlay.click(function() {
+			$lb.overlay.click(function() {
 				self._close();
 				return false;
 			});
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
-			self.$lightbox.root.data({
+			$lb.root.data({
 				minimalLightboxSize: {
 					width: 300,
 					height: 300
