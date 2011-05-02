@@ -307,121 +307,23 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_setOpenQueue: function() {
+		// we have two animated queues: one to open the lightbox and the second to perform next/previous operation
+		// half of the operations are the same - they ovelap, and the rest such as ‘show the overlay’, ‘center lightbox’,
+		// ‘slide up the header’ and ‘hide content’ are run only in one queue not in both
+		// thus to not repeat oneself we keep in the queue lists only references to these methods
+		// every one of these methods (that begin with _queue…) are passed ‘next’ parameter that is a reference to another
+		// method in the queue.
+		// $proxy is needed to have an access to a ‘global’ scope of the plugin – every one method that is called in the queue
+		// is run in its internal scope - we need to have an access to such method as _getSizez, _open, etc - one the same level.
+
 		var self = this,
 			queueOpenList = [
-				function( next ) {
-					// indicate that animation is being performed
-					self.$lightbox.root.data({isAnimated: true});
-
-					// show overlay
-					$( "body" ).css( "overflow", "hidden" );
-					self.$lightbox.overlay.fadeIn( self.options.animationSpeed, next );
-				},
-				function( next ) {
-
-					// center the lightbox
-					var _screenWidth = $( window ).width(),
-						_screenHeight = $( window ).height();
-						_lbWidth = self.$lightbox.root.outerWidth(),
-						_lbHeight = self.$lightbox.root.outerHeight();
-
-					self.$lightbox.root
-						.css({
-							left: Math.round( (_screenWidth - _lbWidth) / 2 ) + "px",
-							top: Math.round( (_screenHeight - _lbHeight) / 2 ) + "px"
-						})
-						.show( 0, next );
-				},
-				function( next ) {
-
-					// start loading maximized image
-					self.$lightbox.content.addClass( "ui-lightbox-loader" );
-					$.when( self._loadImage( self.$lightbox.imageUrl) ).then(function( img ) {
-
-						// keep original size of an image – needed when resizing
-						self.$lightbox.root.data({
-							originalImageSize: {
-								width: img.width,
-								height: img.height
-							}
-						});
-
-						// add the loaded image and hide it
-						self.$lightbox.content
-							.append( img )
-							.find( "img" )
-								.hide();
-
-						next();
-					});
-				},
-				function( next ) {
-
-					// center the lightbox and scale it
-					// get sizes of the lightbox, image and their statuses
-					var _sizes = self._getSizes(),
-						_imageTargetWidth = _sizes.imageTargetWidth,
-						_imageTargetHeight = _sizes.imageTargetHeight,
-						_lightboxTargetWidth = _sizes.lightboxTargetWidth,
-						_lightboxTargetHeight = _sizes.lightboxTargetHeight,
-						_statusWidth = _sizes.statusWidth,
-						_statusHeight = _sizes.statusHeight,
-						_img = self.$lightbox.content.find( "img" ),
-						_padding = self.$lightbox.root.data().lightboxPadding
-						_headerHeight = self.$lightbox.root.data().headerHeight;
-
-					// only if window is larger than minial size of the lightbox
-					if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
-
-						// scale the image to fit the window or container
-						_img
-							.width( _imageTargetWidth )
-							.height( _imageTargetHeight );
-
-						// scale and resize the lightbox
-						self.$lightbox.root
-							.find( "#ui-lightbox-content" )
-								.removeClass( "ui-lightbox-loader" )
-								.animate( {width: _lightboxTargetWidth}, 2000 )
-								.animate( {height: _lightboxTargetHeight}, 2000 )
-								.end()
-							.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, 2000)
-							.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, 2000, next);
-					} else {
-
-						// window is too small to fit the lightbox
-						$( self.$lightbox.root ).hide();
-						if ( _statusWidth === -2 && _statusHeight === -2 ) {
-							alert( "Window’s size is too small. Please resize it." );
-						} else if ( _statusHeight === -2 ) {
-							alert("Window’s height is too small. Please resize it." );
-						} else if ( _statusWidth === -2 ) {
-							alert( "Window’s width is too small. Please resize it." );
-						}
-					}
-				},
-				function( next ) {
-					var _sizes = self._getSizes();
-
-					// show content
-					self.$lightbox.content
-						.css( {position: "relative"} )
-						.find( "img" )
-						.css({
-							position: "absolute",
-							top: _sizes.lightboxTargetHeight / 2 - _sizes.imageTargetHeight / 2,
-							left: _sizes.lightboxTargetWidth / 2 - _sizes.imageTargetWidth / 2,
-							zIndex: 778
-						})
-						.fadeIn( self.options.animationSpeed, next );
-				},
-				function( next ) {
-
-					// show header
-					self.$lightbox.header.slideDown( self.options.animationSpeed, next );
-					// indicate that animation queue is finshed
-					self.$lightbox.root.data().isAnimated = false;
-				}
+				$.proxy( self._queueShowOverlay, this ),
+				$.proxy( self._queueCenterLightbox, this ),
+				$.proxy( self._queueLoadContent, this ),
+				$.proxy( self._queueResizeLightbox, this ),
+				$.proxy( self._queueShowContent, this ),
+				$.proxy( self._queueSlideDownHeader, this )
 			];
 
 		// place start animation queue in the queue container
@@ -441,6 +343,131 @@ $.widget( "ui.rlightbox", {
 			open: $({}),
 			next: $({})
 		}
+	},
+
+	_queueShowOverlay: function( next ) {
+		var self = this;
+
+		// indicate that animation is being performed
+		self.$lightbox.root.data({isAnimated: true});
+
+		// show overlay
+		$( "body" ).css( "overflow", "hidden" );
+		self.$lightbox.overlay.fadeIn( self.options.animationSpeed, next );
+	},
+
+	_queueCenterLightbox: function( next ) {
+		var self = this;
+
+		var _screenWidth = $( window ).width(),
+			_screenHeight = $( window ).height();
+			_lbWidth = self.$lightbox.root.outerWidth(),
+			_lbHeight = self.$lightbox.root.outerHeight();
+
+		self.$lightbox.root
+			.css({
+				left: Math.round( (_screenWidth - _lbWidth) / 2 ) + "px",
+				top: Math.round( (_screenHeight - _lbHeight) / 2 ) + "px"
+			})
+			.show( 0, next );
+	},
+
+	_queueLoadContent: function( next ) {
+		var self = this;
+
+		// start loading maximized image
+		self.$lightbox.content.addClass( "ui-lightbox-loader" );
+		$.when( self._loadImage( self.$lightbox.imageUrl) ).then(function( img ) {
+
+			// keep original size of an image – needed when resizing
+			self.$lightbox.root.data({
+				originalImageSize: {
+					width: img.width,
+					height: img.height
+				}
+			});
+
+			// add the loaded image and hide it
+			self.$lightbox.content
+				.append( img )
+				.find( "img" )
+					.hide();
+
+			next();
+		});
+	},
+
+	_queueResizeLightbox: function( next ) {
+
+		// center the lightbox and scale it
+		// get sizes of the lightbox, image and their statuses
+		var self = this,
+			_sizes = self._getSizes(),
+			_imageTargetWidth = _sizes.imageTargetWidth,
+			_imageTargetHeight = _sizes.imageTargetHeight,
+			_lightboxTargetWidth = _sizes.lightboxTargetWidth,
+			_lightboxTargetHeight = _sizes.lightboxTargetHeight,
+			_statusWidth = _sizes.statusWidth,
+			_statusHeight = _sizes.statusHeight,
+			_img = self.$lightbox.content.find( "img" ),
+			_padding = self.$lightbox.root.data().lightboxPadding
+			_headerHeight = self.$lightbox.root.data().headerHeight;
+
+		// only if window is larger than minial size of the lightbox
+		if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
+
+			// scale the image to fit the window or container
+			_img
+				.width( _imageTargetWidth )
+				.height( _imageTargetHeight );
+
+			// scale and resize the lightbox
+			self.$lightbox.root
+				.find( "#ui-lightbox-content" )
+					.removeClass( "ui-lightbox-loader" )
+					.animate( {width: _lightboxTargetWidth}, 2000 )
+					.animate( {height: _lightboxTargetHeight}, 2000 )
+					.end()
+				.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, 2000)
+				.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, 2000, next);
+		} else {
+
+			// window is too small to fit the lightbox
+			$( self.$lightbox.root ).hide();
+			if ( _statusWidth === -2 && _statusHeight === -2 ) {
+				alert( "Window’s size is too small. Please resize it." );
+			} else if ( _statusHeight === -2 ) {
+				alert("Window’s height is too small. Please resize it." );
+			} else if ( _statusWidth === -2 ) {
+				alert( "Window’s width is too small. Please resize it." );
+			}
+		}
+	},
+
+	_queueShowContent: function( next ) {
+		var self = this,
+			_sizes = self._getSizes();
+
+		// show content
+		self.$lightbox.content
+			.css( {position: "relative"} )
+			.find( "img" )
+			.css({
+				position: "absolute",
+				top: _sizes.lightboxTargetHeight / 2 - _sizes.imageTargetHeight / 2,
+				left: _sizes.lightboxTargetWidth / 2 - _sizes.imageTargetWidth / 2,
+				zIndex: 778
+			})
+			.fadeIn( self.options.animationSpeed, next );
+	},
+
+	_queueSlideDownHeader: function( next ) {
+		var self = this;
+
+		// show header
+		self.$lightbox.header.slideDown( self.options.animationSpeed, next );
+		// indicate that animation queue is finshed
+		self.$lightbox.root.data().isAnimated = false;
 	},
 
 	$lightbox: {},
