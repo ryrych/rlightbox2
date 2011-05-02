@@ -51,7 +51,7 @@ $.widget( "ui.rlightbox", {
 
 			// in case of categories show relevant cursor indicating that you can go to next or prev content
 			$lb.content.mousemove(function(event) {
-				if ( $lb.root.data("ready") ) {
+				if ( $lb.root.data("ready") && $lb.root.data("currentCategory") ) {
 					var _pos = event.pageX - $( this ).offset().left,
 						_center = Math.round( $(this).width() / 2 );
 
