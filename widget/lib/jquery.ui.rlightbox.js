@@ -49,6 +49,22 @@ $.widget( "ui.rlightbox", {
 				}
 			});
 
+			// in case of categories show relevant cursor indicating that you can go to next or prev content
+			$lb.content.mousemove(function(event) {
+				if ( $lb.root.data("ready") ) {
+					var _pos = event.pageX - $( this ).offset().left,
+						_center = Math.round( $(this).width() / 2 );
+
+					if ( _pos <= _center ) {
+						$( this ).css( "cursor", "w-resize" );
+					} else {
+						$( this ).css( "cursor","e-resize" );
+					}
+				} else {
+					$( this ).css( "cursor", "default" );
+				}
+			});
+
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
 			$lb.root.data({
@@ -71,22 +87,6 @@ $.widget( "ui.rlightbox", {
 		self.element.click(function() {
 			self._open();
 			return false;
-		});
-
-		// in case of categories show relevant cursor indicating that you can go to next or prev content
-		$lb.content.mousemove(function(event) {
-			if ( $lb.root.data("ready") ) {
-				var _pos = event.pageX - $( this ).offset().left,
-					_center = Math.round( $(this).width() / 2 );
-
-				if ( _pos <= _center ) {
-					$( this ).css( "cursor", "w-resize" );
-				} else {
-					$( this ).css( "cursor","e-resize" );
-				}
-			} else {
-				$( this ).css( "cursor", "default" );
-			}
 		});
 	},
 
