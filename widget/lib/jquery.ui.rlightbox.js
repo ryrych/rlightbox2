@@ -316,12 +316,17 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_open: function() {
+		var self = this,
+			$lb = self.$lightbox;
 
 		// keep a reference to an anchor element
-		this.$lightbox.anchor = this.element;
+		$lb.anchor = this.element;
+
+		// remember which category content belongs to
+		$lb.root.data( "currentCategory", self._getCategoryName( $lb.anchor ) );
 
 		// start opening the lighbox
-		this.$lightbox.queueContainer.open.dequeue( "lightboxOpen" );
+		$lb.queueContainer.open.dequeue( "lightboxOpen" );
 	},
 
 	_setOption: function( key, value ) {
