@@ -55,7 +55,8 @@ $.widget( "ui.rlightbox", {
 					height: 300
 				},
 				lightboxPadding: 12,
-				headerHeight: 57
+				headerHeight: 57,
+				isAnimated: false
 			});
 
 			// never run it again
@@ -309,6 +310,8 @@ $.widget( "ui.rlightbox", {
 		var self = this,
 			queueOpenList = [
 				function( next ) {
+					// indicate that animation is being performed
+					self.$lightbox.root.data({isAnimated: true});
 
 					// show overlay
 					$( "body" ).css( "overflow", "hidden" );
@@ -416,6 +419,8 @@ $.widget( "ui.rlightbox", {
 
 					// show header
 					self.$lightbox.header.slideDown( self.options.animationSpeed, next );
+					// indicate that animation queue is finshed
+					self.$lightbox.root.data().isAnimated = false;
 				}
 			];
 
