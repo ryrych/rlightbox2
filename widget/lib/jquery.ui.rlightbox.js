@@ -82,6 +82,8 @@ $.widget( "ui.rlightbox", {
 				} else {
 					$( this ).css( "cursor","e-resize" );
 				}
+			} else {
+				$( this ).css( "cursor", "default" );
 			}
 		});
 	},
