@@ -124,6 +124,9 @@ $.widget( "ui.rlightbox", {
 			.width( 20 )
 			.height( 20 );
 
+		// lightbox is not ready again
+		$lb.root.data( "ready", false );
+
 		self._setOpenQueue();
 	},
 
