@@ -70,6 +70,20 @@ $.widget( "ui.rlightbox", {
 			self._open();
 			return false;
 		});
+
+		// in case of categories show relevant cursor indicating that you can go to next or prev content
+		$lb.content.mousemove(function(event) {
+			if ( $lb.root.data( "isAnimated" ) === false ) {
+				var _pos = event.pageX - $( this ).offset().left,
+					_center = Math.round( $(this).width() / 2 );
+
+				if ( _pos <= _center ) {
+					$( this ).css( "cursor", "w-resize" );
+				} else {
+					$( this ).css( "cursor","e-resize" );
+				}
+			}
+		});
 	},
 
 	_addToCategory: function( element ) {
