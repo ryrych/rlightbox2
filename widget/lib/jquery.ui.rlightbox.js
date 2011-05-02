@@ -56,7 +56,7 @@ $.widget( "ui.rlightbox", {
 				},
 				lightboxPadding: 12,
 				headerHeight: 57,
-				isAnimated: false
+				ready: false
 			});
 
 			// never run it again
@@ -73,7 +73,7 @@ $.widget( "ui.rlightbox", {
 
 		// in case of categories show relevant cursor indicating that you can go to next or prev content
 		$lb.content.mousemove(function(event) {
-			if ( $lb.root.data( "isAnimated" ) === false ) {
+			if ( $lb.root.data("ready") ) {
 				var _pos = event.pageX - $( this ).offset().left,
 					_center = Math.round( $(this).width() / 2 );
 
@@ -362,9 +362,6 @@ $.widget( "ui.rlightbox", {
 	_queueShowOverlay: function( next ) {
 		var self = this;
 
-		// indicate that animation is being performed
-		self.$lightbox.root.data({isAnimated: true});
-
 		// show overlay
 		$( "body" ).css( "overflow", "hidden" );
 		self.$lightbox.overlay.fadeIn( self.options.animationSpeed, next );
@@ -481,7 +478,7 @@ $.widget( "ui.rlightbox", {
 		// show header
 		self.$lightbox.header.slideDown( self.options.animationSpeed, next );
 		// indicate that animation queue is finshed
-		self.$lightbox.root.data().isAnimated = false;
+		self.$lightbox.root.data( "ready", true );
 	},
 
 	$lightbox: {},
