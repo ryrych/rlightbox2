@@ -43,8 +43,10 @@ $.widget( "ui.rlightbox", {
 				});
 
 			$lb.overlay.click(function() {
-				self._close();
-				return false;
+				if ( $lb.root.data("ready") ) {
+					self._close();
+					return false;
+				}
 			});
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
