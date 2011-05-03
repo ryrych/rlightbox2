@@ -43,7 +43,7 @@ $.widget( "ui.rlightbox", {
 				});
 
 			$lb.overlay.click(function() {
-				if ( $lb.root.data("ready") ) {
+				if ( self._getData("ready") ) {
 					self._close();
 					return false;
 				}
@@ -51,7 +51,7 @@ $.widget( "ui.rlightbox", {
 
 			// in case of categories show relevant cursor indicating that you can go to next or prev content
 			$lb.content.mousemove(function(event) {
-				if ( $lb.root.data("ready") && $lb.root.data("currentCategory") ) {
+				if ( self._getData("ready") && self._getData("currentCategory") ) {
 					var _pos = event.pageX - $( this ).offset().left,
 						_center = Math.round( $(this).width() / 2 );
 
@@ -67,7 +67,7 @@ $.widget( "ui.rlightbox", {
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
-			$lb.root.data({
+			self._setData({
 				minimalLightboxSize: {
 					width: 300,
 					height: 300
@@ -127,7 +127,7 @@ $.widget( "ui.rlightbox", {
 			.height( 20 );
 
 		// lightbox is not ready again
-		$lb.root.data( "ready", false );
+		self._setData( "ready", false );
 
 		self._setOpenQueue();
 	},
@@ -154,18 +154,24 @@ $.widget( "ui.rlightbox", {
         return _name ? _name[1] : null;
 	},
 
+	_getData: function( key ) {
+
+		// it is only a wrapper for ‘this.$lightbox.root.data()’
+		return this.$lightbox.root.data( key );
+	},
+
 	_getSizes: function() {
         var _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
 			self = this,
             $lb = self.$lightbox,
             _windowWidth = $( window ).width(),
             _windowHeight = $( window ).height(),
-            _minimalLightboxWidth = $lb.root.data().minimalLightboxSize.width,
-            _minimalLightboxHeight = $lb.root.data().minimalLightboxSize.height,
-            _imageWidth = $lb.root.data().originalImageSize.width,
-            _imageHeight = $lb.root.data().originalImageSize.height,
-            _lightboxPadding = $lb.root.data().lightboxPadding,
-			_headerHeight = $lb.root.data().headerHeight;
+            _minimalLightboxWidth = self._getData( "minimalLightboxSize" ).width,
+            _minimalLightboxHeight = self._getData( "minimalLightboxSize" ).height,
+            _imageWidth = self._getData( "originalImageSize" ).width,
+            _imageHeight = self._getData( "originalImageSize" ).height,
+            _lightboxPadding = self._getData( "lightboxPadding" ),
+			_headerHeight = self._getData( "headerHeight" );
 
 		// statuses (concern both sides):
 		// 1 - content fits the window and is larger than minimal lightbox size
@@ -323,10 +329,27 @@ $.widget( "ui.rlightbox", {
 		$lb.anchor = this.element;
 
 		// remember which category content belongs to
-		$lb.root.data( "currentCategory", self._getCategoryName( $lb.anchor ) );
+		self._setData( "currentCategory", self._getCategoryName( $lb.anchor ) );
 
 		// start opening the lighbox
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
+	},
+
+	_setData: function( data ) {
+
+		// it is only a wrapper for ‘this.$lightbox.root.data()’
+		var $root = this.$lightbox.root,
+			_arg1 = arguments[0],
+			_arg2 = arguments[1];
+
+		// if you pass an object
+		if ( arguments.length === 1 && $.isPlainObject( _arg1 ) ) {
+			$root.data( _arg1 );
+		} else if ( arguments.length === 2 && typeof _arg1 === "string" ) {
+
+			// key and value
+			$root.data( _arg1, _arg2 );
+		}
 	},
 
 	_setOption: function( key, value ) {
@@ -403,7 +426,7 @@ $.widget( "ui.rlightbox", {
 		$.when( self._loadImage($(self.$lightbox.anchor).attr("href")) ).then(function( img ) {
 
 			// keep original size of an image – needed when resizing
-			self.$lightbox.root.data({
+			self._setData({
 				originalImageSize: {
 					width: img.width,
 					height: img.height
@@ -433,8 +456,8 @@ $.widget( "ui.rlightbox", {
 			_statusWidth = _sizes.statusWidth,
 			_statusHeight = _sizes.statusHeight,
 			_img = self.$lightbox.content.find( "img" ),
-			_padding = self.$lightbox.root.data().lightboxPadding
-			_headerHeight = self.$lightbox.root.data().headerHeight;
+			_padding = self._getData( "lightboxPadding" ),
+			_headerHeight = self._getData( "headerHeight" );
 
 		// only if window is larger than minial size of the lightbox
 		if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
@@ -490,7 +513,7 @@ $.widget( "ui.rlightbox", {
 		// show header
 		self.$lightbox.header.slideDown( self.options.animationSpeed, next );
 		// indicate that animation queue is finshed
-		self.$lightbox.root.data( "ready", true );
+		self._setData( "ready", true );
 	},
 
 	$lightbox: {},
