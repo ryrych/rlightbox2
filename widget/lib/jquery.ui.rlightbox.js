@@ -82,6 +82,9 @@ $.widget( "ui.rlightbox", {
 							// update current element
 							$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
 
+							// update the counter
+							self._updateCounter();
+
 							// next element - trigger the queue ‘next’ - first update it
 							self._setNextQueue();
 							$lb.queueContainer.next.dequeue( "lightboxNext" );
@@ -90,6 +93,9 @@ $.widget( "ui.rlightbox", {
 
 							// update current element
 							$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
+
+							// update the counter
+							self._updateCounter();
 
 							// next element - trigger the queue ‘next’ - first update it
 							self._setNextQueue();
@@ -159,6 +165,10 @@ $.widget( "ui.rlightbox", {
 			.width( 20 )
 			.height( 20 );
 
+		// reset the counter
+		self._setData( "currentElementNumber", null );
+		self._setData( "totalElementsNumber", null );
+
 		// lightbox is not ready again
 		self._setData( "ready", false );
 
@@ -171,7 +181,7 @@ $.widget( "ui.rlightbox", {
 
 		$( "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'></div>" )
 			.append( "<div id='ui-lightbox-content' class='ui-widget-content'></div>" )
-			.append( "<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'><p id='ui-lightbox-header-wrapper'><span id='ui-lightbox-header-title'></span></p><p id='ui-lightbox-header-counter' style='display: none'><span id='ui-lightbox-header-counter-current'></span><span>z</span><span id='ui-lightbox-header-counter-total'></span></p><a id='ui-lightbox-header-close' href='#'><span class='ui-icon ui-icon-closethick'>close</span></a></div>" )
+			.append( "<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'><p id='ui-lightbox-header-wrapper'><span id='ui-lightbox-header-title'></span></p><p id='ui-lightbox-header-counter'><span id='ui-lightbox-header-counter-current'>1</span><span> of </span><span id='ui-lightbox-header-counter-total'>1</span></p><a id='ui-lightbox-header-close' href='#'><span class='ui-icon ui-icon-closethick'>close</span></a></div>" )
 			.appendTo( "body" )
 			.after( "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>" );
 	},
@@ -387,6 +397,8 @@ $.widget( "ui.rlightbox", {
 			self._setData( "currentElementNumber", self._getCurrentElementNumber() );
 		}
 
+		// show counter
+		self._updateCounter();
 
 		// start opening the lighbox
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
@@ -462,10 +474,29 @@ $.widget( "ui.rlightbox", {
 		self.$lightbox.header = self.$lightbox.root.find( "#ui-lightbox-header" );
 		self.$lightbox.overlay = $( "#ui-lightbox-overlay" );
 		self.$lightbox.close = $( "#ui-lightbox-header-close" );
+		self.$lightbox.counterCurrent = self.$lightbox.root.find( "#ui-lightbox-header-counter-current" );
+		self.$lightbox.counterTotal = self.$lightbox.root.find( "#ui-lightbox-header-counter-total" );
 		self.$lightbox.queueContainer = {
 			open: $({}),
 			next: $({})
 		}
+	},
+
+	_updateCounter: function() {
+		var _current, _total,
+			self = this,
+			$lb = self.$lightbox;
+
+		_current = self._getData( "currentElementNumber" ) || 1;
+		_total = self._getData( "totalElementsNumber" ) || 1;
+
+		$lb.counterCurrent
+			.empty()
+			.append( _current );
+
+		$lb.counterTotal
+			.empty()
+			.append( _total );
 	},
 
 	_queueShowOverlay: function( next ) {
