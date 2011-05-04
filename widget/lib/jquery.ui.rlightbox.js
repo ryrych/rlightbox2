@@ -79,8 +79,8 @@ $.widget( "ui.rlightbox", {
 						if ( self._getData("currentElementNumber") + 1 <= self._getData("totalElementNumber") && self._getData("side") === "right" ){
 							self._setData( "currentElementNumber", self._getData("currentElementNumber") + 1 );
 
-							// update current element - an anchor
-							$lb.anchor = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
+							// update current element
+							$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
 
 							// next element - trigger the queue ‘next’ - first update it
 							self._setNextQueue();
@@ -88,8 +88,8 @@ $.widget( "ui.rlightbox", {
 						} else if ( self._getData("currentElementNumber") - 1 >= 1 && self._getData("side") === "left" ){
 							self._setData( "currentElementNumber", self._getData("currentElementNumber") - 1 );
 
-							// update current element - an anchor
-							$lb.anchor = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
+							// update current element
+							$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
 
 							// next element - trigger the queue ‘next’ - first update it
 							self._setNextQueue();
@@ -194,7 +194,7 @@ $.widget( "ui.rlightbox", {
 		$.each( this.categories[this._getData("currentCategory")], function(i, v) {
 
 			// compare DOM elements
-			if ( self.$lightbox.anchor.get( 0 ) === $( v ).get( 0 ) ) {
+			if ( self.$lightbox.currentElement.get( 0 ) === $( v ).get( 0 ) ) {
 				_current = i + 1;
 				return false;
 			}
@@ -373,11 +373,11 @@ $.widget( "ui.rlightbox", {
 		var self = this,
 			$lb = self.$lightbox;
 
-		// keep a reference to an anchor element
-		$lb.anchor = this.element;
+		// keep a reference to a currentElement element
+		$lb.currentElement = this.element;
 
 		// remember which category content belongs to
-		self._setData( "currentCategory", self._getCategoryName( $lb.anchor ) );
+		self._setData( "currentCategory", self._getCategoryName( $lb.currentElement ) );
 
 		// determine and remember how many elements belong to a category
 		// determine the current (and clicked) element in a category
@@ -498,7 +498,7 @@ $.widget( "ui.rlightbox", {
 
 		// start loading maximized image
 		self.$lightbox.content.addClass( "ui-lightbox-loader" );
-		$.when( self._loadImage($(self.$lightbox.anchor).attr("href")) ).then(function( img ) {
+		$.when( self._loadImage($(self.$lightbox.currentElement).attr("href")) ).then(function( img ) {
 
 			// keep original size of an image – needed when resizing
 			self._setData({
