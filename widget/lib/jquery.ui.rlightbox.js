@@ -56,13 +56,21 @@ $.widget( "ui.rlightbox", {
 						_center = Math.round( $(this).width() / 2 );
 
 					if ( _pos <= _center ) {
+
+						// remember the side
+						self._setData( "side", "left" );
 						$( this ).css( "cursor", "w-resize" );
 					} else {
+						self._setData( "side", "right" );
 						$( this ).css( "cursor","e-resize" );
 					}
 				} else {
+
+					// reset state
+					self._setData( "side", "" );
 					$( this ).css( "cursor", "default" );
 				}
+				console.log(self._getData("side"));
 			});
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
