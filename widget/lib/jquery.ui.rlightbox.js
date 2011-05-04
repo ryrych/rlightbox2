@@ -546,11 +546,11 @@ $.widget( "ui.rlightbox", {
 			self.$lightbox.root
 				.find( "#ui-lightbox-content" )
 					.removeClass( "ui-lightbox-loader" )
-					.animate( {width: _lightboxTargetWidth}, 2000 )
-					.animate( {height: _lightboxTargetHeight}, 2000 )
+					.animate( {width: _lightboxTargetWidth}, self.options.animationSpeed )
+					.animate( {height: _lightboxTargetHeight}, self.options.animationSpeed )
 					.end()
-				.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, 2000)
-				.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, 2000, next);
+				.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, self.options.animationSpeed )
+				.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, self.options.animationSpeed, next);
 		} else {
 
 			// window is too small to fit the lightbox
