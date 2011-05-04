@@ -82,9 +82,6 @@ $.widget( "ui.rlightbox", {
 							// update current element
 							$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
 
-							// update the counter
-							self._updateCounter();
-
 							// next element - trigger the queue ‘next’ - first update it
 							self._setNextQueue();
 							$lb.queueContainer.next.dequeue( "lightboxNext" );
@@ -93,9 +90,6 @@ $.widget( "ui.rlightbox", {
 
 							// update current element
 							$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
-
-							// update the counter
-							self._updateCounter();
 
 							// next element - trigger the queue ‘next’ - first update it
 							self._setNextQueue();
@@ -619,6 +613,10 @@ $.widget( "ui.rlightbox", {
 
 		// show header
 		self.$lightbox.header.slideDown( self.options.animationSpeed, next );
+
+		// show and update counter
+		self._updateCounter();
+		
 		// indicate that animation queue is finshed
 		self._setData( "ready", true );
 	},
