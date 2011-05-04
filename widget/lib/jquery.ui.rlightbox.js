@@ -163,6 +163,9 @@ $.widget( "ui.rlightbox", {
 		self._setData( "currentElementNumber", null );
 		self._setData( "totalElementsNumber", null );
 
+		// remove old title
+		self.$lightbox.title.empty();
+
 		// lightbox is not ready again
 		self._setData( "ready", false );
 
@@ -394,6 +397,9 @@ $.widget( "ui.rlightbox", {
 		// show counter
 		self._updateCounter();
 
+		// show title if any
+		self._updateTitle();
+
 		// start opening the lighbox
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
 	},
@@ -470,6 +476,7 @@ $.widget( "ui.rlightbox", {
 		self.$lightbox.close = $( "#ui-lightbox-header-close" );
 		self.$lightbox.counterCurrent = self.$lightbox.root.find( "#ui-lightbox-header-counter-current" );
 		self.$lightbox.counterTotal = self.$lightbox.root.find( "#ui-lightbox-header-counter-total" );
+		self.$lightbox.title = self.$lightbox.root.find( "#ui-lightbox-header-title" );
 		self.$lightbox.queueContainer = {
 			open: $({}),
 			next: $({})
@@ -491,6 +498,16 @@ $.widget( "ui.rlightbox", {
 		$lb.counterTotal
 			.empty()
 			.append( _total );
+	},
+
+	_updateTitle: function() {
+		var _label = this.$lightbox.currentElement.attr( "title" );
+
+		if ( _label !== "" ) {
+			this.$lightbox.title
+				.empty()
+				.append( _label );
+		}
 	},
 
 	_queueShowOverlay: function( next ) {
@@ -616,7 +633,10 @@ $.widget( "ui.rlightbox", {
 
 		// show and update counter
 		self._updateCounter();
-		
+
+		// update title
+		self._updateTitle();
+
 		// indicate that animation queue is finshed
 		self._setData( "ready", true );
 	},
