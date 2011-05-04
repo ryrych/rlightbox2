@@ -21,7 +21,7 @@ $.widget( "ui.rlightbox", {
 			$lb = self.$lightbox;
 
 		// some actions run only once – dirty flag nom nom nom
-		if ( !$("body" ).data( "rlb_iWasRunAlready" ) ) {
+		if ( !$("body" ).data( "HKn5fX_ZtrdfM-FBRHf6" ) ) {
 
 			// there may be many elements to act on: images, flash films but only one structure of the widget
 			self._createStructure();
@@ -111,7 +111,7 @@ $.widget( "ui.rlightbox", {
 			});
 
 			// never run it again
-			$( "body" ).data( "rlb_iWasRunAlready", true );
+			$( "body" ).data( "HKn5fX_ZtrdfM-FBRHf6", true );
 		}
 
 		// add content into categories if any exists
