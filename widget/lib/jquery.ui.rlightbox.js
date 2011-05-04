@@ -503,8 +503,12 @@ $.widget( "ui.rlightbox", {
 	_updateTitle: function() {
 		var _label = this.$lightbox.currentElement.attr( "title" );
 
+		// set new label for the title and trim it if it is too long - no scrolling at the moment
 		if ( _label !== "" ) {
 			this.$lightbox.title
+				.parent()
+					.width( this.$lightbox.content.width() - 20 )
+					.end()
 				.empty()
 				.append( _label );
 		} else {

@@ -37,9 +37,11 @@
 	padding: 0;
 }
 
-#ui-lightbox-header-title {
+#ui-lightbox-header-wrapper {
 	font-size: 14px;
+	height: 20px;
 	line-height: 20px;
+	overflow: hidden;
 }
 
 #ui-lightbox-header-counter {
