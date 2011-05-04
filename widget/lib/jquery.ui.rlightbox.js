@@ -76,20 +76,20 @@ $.widget( "ui.rlightbox", {
 				.click(function() {
 					// prevent multi-clicking and do it only with categories
 					if ( self._getData("ready") && self._getData("currentCategory") ) {
-						if ( self._getData("currentElement") + 1 <= self._getData("totalElementNumber") && self._getData("side") === "right" ){
-							self._setData( "currentElement", self._getData("currentElement") + 1 );
+						if ( self._getData("currentElementNumber") + 1 <= self._getData("totalElementNumber") && self._getData("side") === "right" ){
+							self._setData( "currentElementNumber", self._getData("currentElementNumber") + 1 );
 
 							// update current element - an anchor
-							$lb.anchor = self.categories[self._getData("currentCategory")][self._getData("currentElement") - 1];
+							$lb.anchor = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
 
 							// next element - trigger the queue ‘next’ - first update it
 							self._setNextQueue();
 							$lb.queueContainer.next.dequeue( "lightboxNext" );
-						} else if ( self._getData("currentElement") - 1 >= 1 && self._getData("side") === "left" ){
-							self._setData( "currentElement", self._getData("currentElement") - 1 );
+						} else if ( self._getData("currentElementNumber") - 1 >= 1 && self._getData("side") === "left" ){
+							self._setData( "currentElementNumber", self._getData("currentElementNumber") - 1 );
 
 							// update current element - an anchor
-							$lb.anchor = self.categories[self._getData("currentCategory")][self._getData("currentElement") - 1];
+							$lb.anchor = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
 
 							// next element - trigger the queue ‘next’ - first update it
 							self._setNextQueue();
@@ -383,7 +383,7 @@ $.widget( "ui.rlightbox", {
 		// determine the current (and clicked) element in a category
 		if ( self._getData("currentCategory") ) {
 			self._setData( "totalElementNumber", self.categories[self._getData("currentCategory")].length );
-			self._setData( "currentElement", self._getCurrentElementNumber() );
+			self._setData( "currentElementNumber", self._getCurrentElementNumber() );
 		}
 
 
