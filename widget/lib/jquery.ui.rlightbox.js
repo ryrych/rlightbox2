@@ -507,6 +507,8 @@ $.widget( "ui.rlightbox", {
 			this.$lightbox.title
 				.empty()
 				.append( _label );
+		} else {
+			this.$lightbox.title.append( "&nbsp;" );
 		}
 	},
 
