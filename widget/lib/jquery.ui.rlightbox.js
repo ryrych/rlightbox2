@@ -31,6 +31,7 @@ $.widget( "ui.rlightbox", {
 
 			// set animation queues
 			self._setOpenQueue();
+			self._setNextQueue();
 
 			// add handlers to the close button and the overlay
 			$lb.close
@@ -50,27 +51,52 @@ $.widget( "ui.rlightbox", {
 			});
 
 			// in case of categories show relevant cursor indicating that you can go to next or prev content
-			$lb.content.mousemove(function(event) {
-				if ( self._getData("ready") && self._getData("currentCategory") ) {
-					var _pos = event.pageX - $( this ).offset().left,
-						_center = Math.round( $(this).width() / 2 );
+			$lb.content
+				.mousemove(function(event) {
+					if ( self._getData("ready") && self._getData("currentCategory") ) {
+						var _pos = event.pageX - $( this ).offset().left,
+							_center = Math.round( $(this).width() / 2 );
 
-					if ( _pos <= _center ) {
+						if ( _pos <= _center ) {
 
-						// remember the side
-						self._setData( "side", "left" );
-						$( this ).css( "cursor", "w-resize" );
+							// remember the side
+							self._setData( "side", "left" );
+							$( this ).css( "cursor", "w-resize" );
+						} else {
+							self._setData( "side", "right" );
+							$( this ).css( "cursor","e-resize" );
+						}
 					} else {
-						self._setData( "side", "right" );
-						$( this ).css( "cursor","e-resize" );
-					}
-				} else {
 
-					// reset state
-					self._setData( "side", "" );
-					$( this ).css( "cursor", "default" );
-				}
-			});
+						// reset state
+						self._setData( "side", "" );
+						$( this ).css( "cursor", "default" );
+					}
+				})
+				.click(function() {
+					// prevent multi-clicking and do it only with categories
+					if ( self._getData("ready") && self._getData("currentCategory") ) {
+						if ( self._getData("currentElement") + 1 <= self._getData("totalElements") && self._getData("side") === "right" ){
+							self._setData( "currentElement", self._getData("currentElement") + 1 );
+
+							// update current element - an anchor
+							$lb.anchor = self.categories[self._getData("currentCategory")][self._getData("currentElement") - 1];
+
+							// next element - trigger the queue ‘next’ - first update it
+							self._setNextQueue();
+							$lb.queueContainer.next.dequeue( "lightboxNext" );
+						} else if ( self._getData("currentElement") - 1 >= 1 && self._getData("side") === "left" ){
+							self._setData( "currentElement", self._getData("currentElement") - 1 );
+
+							// update current element - an anchor
+							$lb.anchor = self.categories[self._getData("currentCategory")][self._getData("currentElement") - 1];
+
+							// next element - trigger the queue ‘next’ - first update it
+							self._setNextQueue();
+							$lb.queueContainer.next.dequeue( "lightboxNext" );
+						}
+					}
+				});
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
@@ -385,6 +411,23 @@ $.widget( "ui.rlightbox", {
 	_setOption: function( key, value ) {
 	},
 
+	_setNextQueue: function() {
+
+		// for description take a look at _setOpenQueue method
+		var self = this,
+			queueNextList = [
+				$.proxy( self._queueSlideUpHeader, this ),
+				$.proxy( self._queueHideContent, this ),
+				$.proxy( self._queueLoadContent, this ),
+				$.proxy( self._queueResizeLightbox, this ),
+				$.proxy( self._queueShowContent, this ),
+				$.proxy( self._queueSlideDownHeader, this )
+			];
+
+		// place start animation queue in the queue container
+		self.$lightbox.queueContainer.next.queue( "lightboxNext", queueNextList );
+	},
+
 	_setOpenQueue: function() {
 		// we have two animated queues: one to open the lightbox and the second to perform next/previous operation
 		// half of the operations are the same - they ovelap, and the rest such as ‘show the overlay’, ‘center lightbox’,
@@ -427,6 +470,8 @@ $.widget( "ui.rlightbox", {
 	_queueShowOverlay: function( next ) {
 		var self = this;
 
+		// lightbox is not ready
+		self._setData( "ready", false );
 		// show overlay
 		$( "body" ).css( "overflow", "hidden" );
 		self.$lightbox.overlay.fadeIn( self.options.animationSpeed, next );
@@ -544,6 +589,21 @@ $.widget( "ui.rlightbox", {
 		self.$lightbox.header.slideDown( self.options.animationSpeed, next );
 		// indicate that animation queue is finshed
 		self._setData( "ready", true );
+	},
+
+	_queueSlideUpHeader: function( next ) {
+
+		// structure is not ready - start an animation
+		this._setData( "ready", false );
+		this.$lightbox.header.slideUp ( this.options.animationSpeed, next );
+	},
+
+	_queueHideContent: function( next ) {
+		this.$lightbox.content.find( "img" )
+			.fadeOut( this.options.animationSpeed, function() {
+				$( this ).remove();
+				next();
+			});
 	},
 
 	$lightbox: {},
