@@ -162,6 +162,7 @@ $.widget( "ui.rlightbox", {
 		// lightbox is not ready again
 		self._setData( "ready", false );
 
+		// get ready to next time - fill in queue
 		self._setOpenQueue();
 	},
 
