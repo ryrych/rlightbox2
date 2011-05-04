@@ -339,6 +339,11 @@ $.widget( "ui.rlightbox", {
 		// remember which category content belongs to
 		self._setData( "currentCategory", self._getCategoryName( $lb.anchor ) );
 
+		// determine and remember how many elements belong to a category
+		if ( self._getData("currentCategory") ) {
+			self._setData( "totalElements", self.categories[self._getData("currentCategory")].length );
+		}
+
 		// start opening the lighbox
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
 	},
