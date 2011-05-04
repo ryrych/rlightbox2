@@ -76,7 +76,7 @@ $.widget( "ui.rlightbox", {
 				.click(function() {
 					// prevent multi-clicking and do it only with categories
 					if ( self._getData("ready") && self._getData("currentCategory") ) {
-						if ( self._getData("currentElement") + 1 <= self._getData("totalElements") && self._getData("side") === "right" ){
+						if ( self._getData("currentElement") + 1 <= self._getData("totalElementNumber") && self._getData("side") === "right" ){
 							self._setData( "currentElement", self._getData("currentElement") + 1 );
 
 							// update current element - an anchor
@@ -382,7 +382,7 @@ $.widget( "ui.rlightbox", {
 		// determine and remember how many elements belong to a category
 		// determine the current (and clicked) element in a category
 		if ( self._getData("currentCategory") ) {
-			self._setData( "totalElements", self.categories[self._getData("currentCategory")].length );
+			self._setData( "totalElementNumber", self.categories[self._getData("currentCategory")].length );
 			self._setData( "currentElement", self._getCurrentElementNumber() );
 		}
 
