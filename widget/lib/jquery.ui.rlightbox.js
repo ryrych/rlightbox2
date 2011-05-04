@@ -162,6 +162,21 @@ $.widget( "ui.rlightbox", {
         return _name ? _name[1] : null;
 	},
 
+	_getCurrentElementNumber: function() {
+		var _current,
+			self = this;
+
+		$.each( this.categories[this._getData("currentCategory")], function(i, v) {
+
+			// compare DOM elements
+			if ( self.$lightbox.anchor.get( 0 ) === $( v ).get( 0 ) ) {
+				_current = i + 1;
+				return false;
+			}
+		});
+		return _current;
+	},
+
 	_getData: function( key ) {
 
 		// it is only a wrapper for ‘this.$lightbox.root.data()’
@@ -340,9 +355,12 @@ $.widget( "ui.rlightbox", {
 		self._setData( "currentCategory", self._getCategoryName( $lb.anchor ) );
 
 		// determine and remember how many elements belong to a category
+		// determine the current (and clicked) element in a category
 		if ( self._getData("currentCategory") ) {
 			self._setData( "totalElements", self.categories[self._getData("currentCategory")].length );
+			self._setData( "currentElement", self._getCurrentElementNumber() );
 		}
+
 
 		// start opening the lighbox
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
