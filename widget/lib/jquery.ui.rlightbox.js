@@ -70,7 +70,6 @@ $.widget( "ui.rlightbox", {
 					self._setData( "side", "" );
 					$( this ).css( "cursor", "default" );
 				}
-				console.log(self._getData("side"));
 			});
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
