@@ -504,6 +504,7 @@ $.widget( "ui.rlightbox", {
 		var _label = this.$lightbox.currentElement.attr( "title" );
 
 		// set new label for the title and trim it if it is too long - no scrolling at the moment
+		// 20px is a safety distance between text and the close button
 		if ( _label !== "" ) {
 			this.$lightbox.title
 				.parent()
