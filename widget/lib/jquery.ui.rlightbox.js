@@ -100,8 +100,10 @@ $.widget( "ui.rlightbox", {
 
 			// resize lightbox when window size changes
 			$( window ).bind( "resize.rlightbox", $.proxy(function() {
-				this._queueResizeLightbox();
-				this._queueCenterContent();
+				if ( self._getData("ready") ) {
+					this._queueResizeLightbox();
+					this._queueCenterContent();
+				}
 			}, self));
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
