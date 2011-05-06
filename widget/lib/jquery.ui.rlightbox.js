@@ -581,7 +581,7 @@ $.widget( "ui.rlightbox", {
 
 		// center the lightbox and scale it
 		// get sizes of the lightbox, image and their statuses
-		var _speed, _animate
+		var _speed, _animate,
 			self = this,
 			_sizes = self._getSizes(),
 			_imageTargetWidth = _sizes.imageTargetWidth,
