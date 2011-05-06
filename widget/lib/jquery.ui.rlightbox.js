@@ -98,6 +98,9 @@ $.widget( "ui.rlightbox", {
 					}
 				});
 
+			// resize lightbox when window size changes
+			$( window ).bind( "resize.rlightbox", $.proxy(self._liveResize, self));
+
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
 			self._setData({
@@ -358,6 +361,21 @@ $.widget( "ui.rlightbox", {
         };
     },
 
+	_liveResize: function() {
+		var _sizes,
+			self = this;
+
+		// first clear interval
+		clearInterval( self._getData("liveResizeInterval") );
+
+		// and monitor resizing every 100 miliseconds
+		self._setData( "liveResizeInterval", setInterval( function() {
+			if ( self._getData("ready") ) {
+				self._queueResizeLightbox(false);
+			}
+		}), 100);
+	},
+
 	_loadImage: function( path ) {
 		var _image = new Image(),
 			_loadWatch,
@@ -572,7 +590,8 @@ $.widget( "ui.rlightbox", {
 
 		// center the lightbox and scale it
 		// get sizes of the lightbox, image and their statuses
-		var self = this,
+		var _speed, _animate
+			self = this,
 			_sizes = self._getSizes(),
 			_imageTargetWidth = _sizes.imageTargetWidth,
 			_imageTargetHeight = _sizes.imageTargetHeight,
@@ -583,6 +602,16 @@ $.widget( "ui.rlightbox", {
 			_img = self.$lightbox.content.find( "img" ),
 			_padding = self._getData( "lightboxPadding" ),
 			_headerHeight = self._getData( "headerHeight" );
+
+		// if you use this method in the context of a queue then use animation; otherwise when used in live resize, don’t animate it
+		if ( $.isFunction(next) ) {
+			_speed = self.options.animationSpeed;
+			_animate = true;
+		} else if ( typeof next === "boolean" ) {
+			_speed = 0;
+			_animate = false;
+			self._setData( "ready", false );
+		}
 
 		// only if window is larger than minial size of the lightbox
 		if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
@@ -596,11 +625,17 @@ $.widget( "ui.rlightbox", {
 			self.$lightbox.root
 				.find( "#ui-lightbox-content" )
 					.removeClass( "ui-lightbox-loader" )
-					.animate( {width: _lightboxTargetWidth}, self.options.animationSpeed )
-					.animate( {height: _lightboxTargetHeight}, self.options.animationSpeed )
+					.animate( {width: _lightboxTargetWidth}, _speed )
+					.animate( {height: _lightboxTargetHeight}, _speed )
 					.end()
-				.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, self.options.animationSpeed )
-				.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, self.options.animationSpeed, next);
+				.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, _speed )
+				.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, function() {
+					if ( _animate ) {
+						next();
+					} else {
+						self._setData( "ready", true );
+					}
+				});
 		} else {
 
 			// window is too small to fit the lightbox
