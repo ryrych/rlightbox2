@@ -611,6 +611,7 @@ $.widget( "ui.rlightbox", {
 
 			// scale and resize the lightbox
 			self.$lightbox.root
+				.show()
 				.find( "#ui-lightbox-content" )
 					.removeClass( "ui-lightbox-loader" )
 					.animate( {width: _lightboxTargetWidth}, _speed )
