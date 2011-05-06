@@ -99,7 +99,7 @@ $.widget( "ui.rlightbox", {
 				});
 
 			// resize lightbox when window size changes
-			$( window ).bind( "resize.rlightbox", $.proxy(self._liveResize, self));
+			$( window ).bind( "resize.rlightbox", $.proxy(self._queueResizeLightbox, self));
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
@@ -360,22 +360,6 @@ $.widget( "ui.rlightbox", {
 			statusHeight: _statusHeight
         };
     },
-
-	_liveResize: function() {
-		var _sizes,
-			self = this;
-
-		// first clear interval
-		clearInterval( self._getData("liveResizeInterval") );
-
-		// and monitor resizing every 100 miliseconds
-		self._setData( "liveResizeInterval", setInterval( function() {
-			if ( self._getData("ready") ) {
-				self._queueResizeLightbox(false);
-			}
-		}), 100);
-	},
-
 	_loadImage: function( path ) {
 		var _image = new Image(),
 			_loadWatch,
@@ -607,10 +591,9 @@ $.widget( "ui.rlightbox", {
 		if ( $.isFunction(next) ) {
 			_speed = self.options.animationSpeed;
 			_animate = true;
-		} else if ( typeof next === "boolean" ) {
+		} else {
 			_speed = 0;
 			_animate = false;
-			self._setData( "ready", false );
 		}
 
 		// only if window is larger than minial size of the lightbox
@@ -629,13 +612,7 @@ $.widget( "ui.rlightbox", {
 					.animate( {height: _lightboxTargetHeight}, _speed )
 					.end()
 				.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, _speed )
-				.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, function() {
-					if ( _animate ) {
-						next();
-					} else {
-						self._setData( "ready", true );
-					}
-				});
+				.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, next);
 		} else {
 
 			// window is too small to fit the lightbox
