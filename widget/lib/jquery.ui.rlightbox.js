@@ -99,7 +99,10 @@ $.widget( "ui.rlightbox", {
 				});
 
 			// resize lightbox when window size changes
-			$( window ).bind( "resize.rlightbox", $.proxy(self._queueResizeLightbox, self));
+			$( window ).bind( "resize.rlightbox", $.proxy(function() {
+				this._queueResizeLightbox();
+				this._queueCenterContent();
+			}, self));
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
@@ -435,6 +438,7 @@ $.widget( "ui.rlightbox", {
 				$.proxy( self._queueHideContent, this ),
 				$.proxy( self._queueLoadContent, this ),
 				$.proxy( self._queueResizeLightbox, this ),
+				$.proxy( self._queueCenterContent, this ),
 				$.proxy( self._queueShowContent, this ),
 				$.proxy( self._queueSlideDownHeader, this )
 			];
@@ -459,6 +463,7 @@ $.widget( "ui.rlightbox", {
 				$.proxy( self._queueCenterLightbox, this ),
 				$.proxy( self._queueLoadContent, this ),
 				$.proxy( self._queueResizeLightbox, this ),
+				$.proxy( self._queueCenterContent, this ),
 				$.proxy( self._queueShowContent, this ),
 				$.proxy( self._queueSlideDownHeader, this )
 			];
@@ -627,20 +632,28 @@ $.widget( "ui.rlightbox", {
 		}
 	},
 
+	_queueCenterContent: function( next ) {
+		var _sizes = this._getSizes();
+
+		this.$lightbox.content
+			.css( {position: "relative"} )
+			.find( "img" )
+				.css({
+					position: "absolute",
+					top: _sizes.lightboxTargetHeight / 2 - _sizes.imageTargetHeight / 2,
+					left: _sizes.lightboxTargetWidth / 2 - _sizes.imageTargetWidth / 2,
+					zIndex: 778
+				});
+
+		next();
+	},
+
 	_queueShowContent: function( next ) {
 		var self = this,
 			_sizes = self._getSizes();
 
 		// show content
-		self.$lightbox.content
-			.css( {position: "relative"} )
-			.find( "img" )
-			.css({
-				position: "absolute",
-				top: _sizes.lightboxTargetHeight / 2 - _sizes.imageTargetHeight / 2,
-				left: _sizes.lightboxTargetWidth / 2 - _sizes.imageTargetWidth / 2,
-				zIndex: 778
-			})
+		self.$lightbox.content.find( "img" )
 			.fadeIn( self.options.animationSpeed, next );
 	},
 
