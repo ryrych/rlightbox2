@@ -380,7 +380,7 @@ $.widget( "ui.rlightbox", {
 		}
 
 		// just simulate loading
-		_loadWatch = setTimeout( _watch, 2000 );
+		_loadWatch = setInterval( _watch, 100 );
 		return _dfd.promise();
 	},
 
