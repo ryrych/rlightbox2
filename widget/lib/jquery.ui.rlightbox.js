@@ -613,7 +613,6 @@ $.widget( "ui.rlightbox", {
 
 			// scale and resize the lightbox
 			self.$lightbox.root
-				.show()
 				.find( "#ui-lightbox-content" )
 					.removeClass( "ui-lightbox-loader" )
 					.animate( {width: _lightboxTargetWidth}, _speed )
@@ -621,17 +620,6 @@ $.widget( "ui.rlightbox", {
 					.end()
 				.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, _speed )
 				.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, next);
-		} else {
-
-			// window is too small to fit the lightbox
-			$( self.$lightbox.root ).hide();
-			if ( _statusWidth === -2 && _statusHeight === -2 ) {
-				alert( "Window’s size is too small. Please resize it." );
-			} else if ( _statusHeight === -2 ) {
-				alert("Window’s height is too small. Please resize it." );
-			} else if ( _statusWidth === -2 ) {
-				alert( "Window’s width is too small. Please resize it." );
-			}
 		}
 	},
 
