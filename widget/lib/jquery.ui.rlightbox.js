@@ -648,7 +648,10 @@ $.widget( "ui.rlightbox", {
 					zIndex: 778
 				});
 
-		next();
+		// if we don’t run it in the live resize but in the queue
+		if ( next ) {
+			next();
+		}
 	},
 
 	_queueShowContent: function( next ) {
