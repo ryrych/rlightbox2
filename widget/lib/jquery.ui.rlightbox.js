@@ -53,7 +53,7 @@ $.widget( "ui.rlightbox", {
 			// in case of categories show relevant cursor indicating that you can go to next or prev content
 			$lb.content
 				.mousemove(function(event) {
-					if ( self._getData("ready") && self._getData("currentCategory") ) {
+					if ( self._getData("ready") && self._getData("currentCategory") && self._getData("panoramaEnabled") === false ) {
 						var _pos = event.pageX - $( this ).offset().left,
 							_center = Math.round( $(this).width() / 2 );
 
