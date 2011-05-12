@@ -11,13 +11,35 @@
 #ui-lightbox-content {
 	border: 0 none;
 	margin: 0;
+	overflow: hidden;
 	padding: 0;
+	position: relative;
 	width: 20px;
 	height: 20px;
 }
 
-#ui-lightbox-content > * {
+#ui-lightbox-content > img {
 	display: block;
+	position: absolute;
+	z-index: 100;
+}
+
+#ui-lightbox-panorama-icon {
+	cursor: pointer;
+	height: 32px;
+	left: 20px;
+	width: 32px;
+	position: absolute;
+	top: 20px;
+	z-index: 110;
+}
+
+.ui-lightbox-panorama-icon-expand {
+	background: url(panorama.png) center left no-repeat;
+}
+
+.ui-lightbox-panorama-icon-shrink {
+	background: url(panorama.png) center right no-repeat;
 }
 
 .ui-lightbox-loader {

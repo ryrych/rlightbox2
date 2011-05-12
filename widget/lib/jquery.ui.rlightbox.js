@@ -96,7 +96,12 @@ $.widget( "ui.rlightbox", {
 							$lb.queueContainer.next.dequeue( "lightboxNext" );
 						}
 					}
-				});
+				})
+				.mousedown( $.proxy(self._panoramaStart, self) )
+				.mouseup( $.proxy(self._panoramaStop, self) );
+
+			// zoom in or zoom out an image
+			$lb.panoramaIcon.click( $.proxy(self._panoramaToggle, self) );
 
 			// resize lightbox when window size changes
 			$( window ).bind( "resize.rlightbox", $.proxy(function() {
@@ -115,7 +120,8 @@ $.widget( "ui.rlightbox", {
 				},
 				lightboxPadding: 12,
 				headerHeight: 57,
-				ready: false
+				ready: false,
+				panoramaEnabled: false
 			});
 
 			// never run it again
@@ -167,6 +173,12 @@ $.widget( "ui.rlightbox", {
 			.width( 20 )
 			.height( 20 );
 
+		// reset panorama
+		$lb.panoramaIcon
+			.hide()
+			.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink");
+		self._setData( "panoramaEnabled", false );
+
 		// reset the counter
 		self._setData( "currentElementNumber", null );
 		self._setData( "totalElementsNumber", null );
@@ -185,6 +197,7 @@ $.widget( "ui.rlightbox", {
 		var self = this;
 
 		$( "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'></div>" )
+			.append( "<div id='ui-lightbox-panorama-icon' style='display: none'></div> ")
 			.append( "<div id='ui-lightbox-content' class='ui-widget-content'></div>" )
 			.append( "<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'><p id='ui-lightbox-header-wrapper'><span id='ui-lightbox-header-title'></span></p><p id='ui-lightbox-header-counter'><span id='ui-lightbox-header-counter-current'>1</span><span> of </span><span id='ui-lightbox-header-counter-total'>1</span></p><a id='ui-lightbox-header-close' href='#'><span class='ui-icon ui-icon-closethick'>close</span></a></div>" )
 			.appendTo( "body" )
@@ -224,8 +237,52 @@ $.widget( "ui.rlightbox", {
 		return this.$lightbox.root.data( key );
 	},
 
+	_getImageStatus: function( width, height ) {
+
+		// statuses (concern both sides):
+		// 1 - content fits the window and is larger than minimal lightbox size
+		// -1 - content fits the window but is smaller or equal to minial lightbox size
+		// 2 - content is larger than the window
+		// -2 - the window is smaller than minimal lightbox size
+		var _statusWidth, _statusHeight,
+			self = this,
+            _windowWidth = $( window ).width(),
+            _windowHeight = $( window ).height(),
+            _minimalLightboxWidth = self._getData( "minimalLightboxSize" ).width,
+            _minimalLightboxHeight = self._getData( "minimalLightboxSize" ).height,
+            _imageWidth = self._getData( "originalImageSize" ).width,
+            _imageHeight = self._getData( "originalImageSize" ).height,
+            _lightboxPadding = self._getData( "lightboxPadding" ),
+			_headerHeight = self._getData( "headerHeight" );
+
+		if ( _windowWidth < _minimalLightboxWidth + _lightboxPadding ) {
+			_statusWidth = -2;
+		} else if ( width <= _minimalLightboxWidth ) {
+			_statusWidth = -1;
+		} else if ( width > _minimalLightboxWidth && width + _lightboxPadding <= _windowWidth ) {
+			_statusWidth = 1;
+		} else {
+			_statusWidth = 2;
+		}
+
+		if ( _windowHeight < _minimalLightboxHeight + _lightboxPadding + _headerHeight ) {
+			_statusHeight = -2;
+		} else if ( height <= _minimalLightboxHeight ) {
+			_statusHeight = -1;
+		} else if ( height > _minimalLightboxHeight && _windowHeight >= height + _lightboxPadding + _headerHeight ) {
+			_statusHeight = 1;
+		} else {
+			_statusHeight = 2;
+		}
+
+		return {
+			statusWidth: _statusWidth,
+			statusHeight: _statusHeight
+		}
+	},
+
 	_getSizes: function() {
-        var _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
+        var _statuses, _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
 			self = this,
             $lb = self.$lightbox,
             _windowWidth = $( window ).width(),
@@ -237,35 +294,10 @@ $.widget( "ui.rlightbox", {
             _lightboxPadding = self._getData( "lightboxPadding" ),
 			_headerHeight = self._getData( "headerHeight" );
 
-		// statuses (concern both sides):
-		// 1 - content fits the window and is larger than minimal lightbox size
-		// -1 - content fits the window but is smaller or equal to minial lightbox size
-		// 2 - content is larger than the window
-		// -2 - the window is smaller than minimal lightbox size
-        function _getStatus( imgW, imgH ) {
-            if ( _windowWidth < _minimalLightboxWidth + _lightboxPadding ) {
-				_statusWidth = -2;
-			} else if ( imgW <= _minimalLightboxWidth ) {
-				_statusWidth = -1;
-			} else if ( imgW > _minimalLightboxWidth && imgW + _lightboxPadding <= _windowWidth ) {
-				_statusWidth = 1;
-            } else {
-				_statusWidth = 2;
-			}
-
-            if ( _windowHeight < _minimalLightboxHeight + _lightboxPadding + _headerHeight ) {
-				_statusHeight = -2;
-			} else if ( imgH <= _minimalLightboxHeight ) {
-				_statusHeight = -1;
-            } else if ( imgH > _minimalLightboxHeight && _windowHeight >= imgH + _lightboxPadding + _headerHeight ) {
-				_statusHeight = 1;
-            } else {
-				_statusHeight = 2;
-			}
-        }
-
         function _calculateSizes( w, h ) {
-            _getStatus( w, h );
+            _statuses = self._getImageStatus( w, h );
+			_statusWidth = _statuses.statusWidth;
+			_statusHeight = _statuses.statusHeight;
 
             // if image fits the window
             if ( ((_statusWidth === 1 || _statusWidth === -1) && _statusHeight !== 2) && ((_statusHeight === 1 || _statusHeight === -1) && _statusWidth !== 2) ) {
@@ -354,7 +386,9 @@ $.widget( "ui.rlightbox", {
         _calculateSizes( _imageWidth, _imageHeight );
 
         // final status
-        _getStatus( _imageTargetWidth, _imageTargetHeight );
+		_statuses = self._getImageStatus( _imageTargetWidth, _imageTargetHeight );
+		_statusWidth = _statuses.statusWidth;
+		_statusHeight = _statuses.statusHeight;
 
         return {
 			imageTargetWidth: _imageTargetWidth,
@@ -409,6 +443,85 @@ $.widget( "ui.rlightbox", {
 
 		// start opening the lighbox
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
+	},
+
+	_panoramaExpand: function() {
+
+		// give the natural size to an image
+		var _originalSize = this._getData( "originalImageSize" );
+
+		// let know that we can scroll now
+		this._setData( "panoramaEnabled", true );
+
+		// show the icon
+		this.$lightbox.panoramaIcon
+			.removeClass( "ui-lightbox-panorama-icon-expand" )
+			.addClass( "ui-lightbox-panorama-icon-shrink" );
+
+		// zoom in
+		this.$lightbox.content
+			.find( "img" )
+				.width( _originalSize.width )
+				.height( _originalSize.height );
+
+		// and center the content
+		this._queueCenterContent();
+	},
+
+	_panoramaShrink: function() {
+		this._setData( "panoramaEnabled", false );
+
+		// show the icon
+		this.$lightbox.panoramaIcon
+			.removeClass( "ui-lightbox-panorama-icon-shrink" )
+			.addClass( "ui-lightbox-panorama-icon-expand" );
+
+		// zoom out
+		this._queueResizeLightbox();
+		this._queueCenterContent();
+	},
+
+	_panoramaStart: function( event ) {
+
+		// remember starting point to calculate distance in _panoramaStop()
+		this._setData({
+			panoramaPosition: {
+				xStart: event.pageX,
+				yStart: event.pageY
+			}
+		});
+
+		return false;
+	},
+
+	_panoramaStop: function( event ) {
+		var _distX = ( event.pageX - this._getData("panoramaPosition").xStart ) * -1,
+			_distY = ( event.pageY - this._getData("panoramaPosition").yStart ) * -1,
+			$content = this.$lightbox.content;
+
+		// if zooming is possible…
+		if ( this._getData("panoramaEnabled") ) {
+			$content
+				.scrollLeft( $content.scrollLeft() + _distX )
+				.scrollTop( $content.scrollTop() + _distY );
+		}
+
+		event.stopPropagation();
+	},
+
+	_panoramaToggle: function( event ) {
+
+		// switches between _panoramaExpand and _panoramaShrink
+		// we couldn’t use .toggle( expand, shrink ) on panorama icon because when lb is closed after panorama was turned on
+		// and open again and next image once again can be zoomed we need to make sure that
+		// expand is the first action – toggle would run shrink as the second function
+		var _panoramaOn = this._getData( "panoramaEnabled" );
+
+		if ( _panoramaOn === false ) {
+			this._panoramaExpand();
+		} else {
+			this._panoramaShrink();
+		}
 	},
 
 	_setData: function( data ) {
@@ -479,6 +592,7 @@ $.widget( "ui.rlightbox", {
 
 		// save references to wrapped set for later use
 		self.$lightbox.root = $( "#ui-lightbox" );
+		self.$lightbox.panoramaIcon = self.$lightbox.root.find( "#ui-lightbox-panorama-icon" );
 		self.$lightbox.content = self.$lightbox.root.find( "#ui-lightbox-content" );
 		self.$lightbox.header = self.$lightbox.root.find( "#ui-lightbox-header" );
 		self.$lightbox.overlay = $( "#ui-lightbox-overlay" );
@@ -567,6 +681,10 @@ $.widget( "ui.rlightbox", {
 				}
 			});
 
+			// save original sizes and status for panorama purposes
+			self._setData( "originalStatus", self._getImageStatus( img.width, img.height) );
+			console.log("początkowy status ", self._getData("originalStatus"));
+
 			// add the loaded image and hide it
 			self.$lightbox.content
 				.append( img )
@@ -593,6 +711,8 @@ $.widget( "ui.rlightbox", {
 			_img = self.$lightbox.content.find( "img" ),
 			_padding = self._getData( "lightboxPadding" ),
 			_headerHeight = self._getData( "headerHeight" );
+
+		console.log("po przeskalowaniu", _sizes);
 
 		// if you use this method in the context of a queue then use animation; otherwise when used in live resize, don’t animate it
 		if ( $.isFunction(next) ) {
@@ -627,13 +747,10 @@ $.widget( "ui.rlightbox", {
 		var _sizes = this._getSizes();
 
 		this.$lightbox.content
-			.css( {position: "relative"} )
 			.find( "img" )
 				.css({
-					position: "absolute",
 					top: _sizes.lightboxTargetHeight / 2 - _sizes.imageTargetHeight / 2,
-					left: _sizes.lightboxTargetWidth / 2 - _sizes.imageTargetWidth / 2,
-					zIndex: 778
+					left: _sizes.lightboxTargetWidth / 2 - _sizes.imageTargetWidth / 2
 				});
 
 		// if we don’t run it in the live resize but in the queue
@@ -644,11 +761,21 @@ $.widget( "ui.rlightbox", {
 
 	_queueShowContent: function( next ) {
 		var self = this,
-			_sizes = self._getSizes();
+			$lb = self.$lightbox;
+			_originalStatus = self._getData( "originalStatus" );
 
 		// show content
-		self.$lightbox.content.find( "img" )
-			.fadeIn( self.options.animationSpeed, next );
+		$lb.content.find( "img" )
+			.fadeIn( self.options.animationSpeed, function() {
+
+				// if one of the image sides is bigger than the screen, show panorama icon
+				if ( _originalStatus.statusWidth === 2 || _originalStatus.statusHeight === 2 ) {
+					$lb.panoramaIcon
+						.show()
+						.addClass( "ui-lightbox-panorama-icon-expand" );
+				}
+				next();
+			});
 	},
 
 	_queueSlideDownHeader: function( next ) {
@@ -680,6 +807,11 @@ $.widget( "ui.rlightbox", {
 				$( this ).remove();
 				next();
 			});
+
+		// hide the panorama icon
+		this.$lightbox.panoramaIcon
+			.hide()
+			.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
 	},
 
 	$lightbox: {},
