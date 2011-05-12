@@ -207,6 +207,15 @@ $.widget( "ui.rlightbox", {
 	destroy: function() {
 	},
 
+	_getAvailableScreenSize: function() {
+		var _padding = this._getData( "lightboxPadding" );
+
+		return {
+			width: $( window ).width() - _padding,
+			height: $( window ).height() - this._getData( "headerHeight" ) - _padding
+		}
+	},
+
 	_getCategoryName: function( element ) {
         var _classNames = $( element ).attr( "class" ),
 			_classPrefix = this.options.categoryPrefix + "_",
@@ -445,6 +454,35 @@ $.widget( "ui.rlightbox", {
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
 	},
 
+	_panoramaCenterContent: function() {
+		var _left, _top,
+			_screenSize = this._getAvailableScreenSize(),
+			_screenWidth = _screenSize.width,
+			_screenHeight = _screenSize.height,
+			_imageSize = this._getData( "originalImageSize" ),
+			_imageWidth = _imageSize.width,
+			_imageHeight = _imageSize.height,
+			$content = this.$lightbox.content,
+			$img = $content.find( "img" );
+
+		if ( _screenWidth < _imageWidth ) {
+			_left = 0;
+		} else {
+			_left = $content.width() / 2 - $img.width() / 2;
+		}
+
+		if ( _screenHeight < _imageHeight ) {
+			_top = 0;
+		} else {
+			_top = $content.height() / 2 - $img.height() / 2;
+		}
+
+		$img.css( {
+			top: _top,
+			left: _left
+		});
+	},
+
 	_panoramaExpand: function() {
 
 		// give the natural size to an image
@@ -464,8 +502,45 @@ $.widget( "ui.rlightbox", {
 				.width( _originalSize.width )
 				.height( _originalSize.height );
 
-		// and center the content
-		this._queueCenterContent();
+		// enlarge lightbox’s content to fit the screen best
+		this._panoramaSetContentSize();
+
+		// center the content and the whole lightbox
+		this._panoramaCenterContent();
+		this._queueCenterLightbox();
+	},
+
+	_panoramaSetContentSize: function() {
+		var _contentWidth, _contentHeight,
+			_minLightboxSize = this._getData( "minimalLightboxSize" ),
+			_minLightboxWidth = _minLightboxSize.width,
+			_minLightboxHeight = _minLightboxSize.height,
+			_screenSize = this._getAvailableScreenSize(),
+			_screenWidth = _screenSize.width,
+			_screenHeight = _screenSize.height,
+			_imageSize = this._getData( "originalImageSize" ),
+			_imageWidth = _imageSize.width,
+			_imageHeight = _imageSize.height;
+
+			if ( _imageWidth > _screenWidth ) {
+				_contentWidth = _screenWidth;
+			} else if ( _imageWidth <= _minLightboxWidth ) {
+				_contentWidth = _minLightboxWidth;
+			} else {
+				_contentWidth = _imageWidth;
+			}
+
+			if ( _imageHeight > _screenHeight ) {
+				_contentHeight = _screenHeight;
+			} else if ( _imageHeight <= _minLightboxHeight ) {
+				_contentHeight = _minLightboxHeight;
+			} else {
+				_contentHeight = _imageHeight;
+			}
+
+			this.$lightbox.content
+				.width( _contentWidth )
+				.height( _contentHeight );
 	},
 
 	_panoramaShrink: function() {
@@ -744,13 +819,14 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_queueCenterContent: function( next ) {
-		var _sizes = this._getSizes();
+		var $content = this.$lightbox.content,
+			$img = $content.find( "img" );
 
-		this.$lightbox.content
+		$content
 			.find( "img" )
 				.css({
-					top: _sizes.lightboxTargetHeight / 2 - _sizes.imageTargetHeight / 2,
-					left: _sizes.lightboxTargetWidth / 2 - _sizes.imageTargetWidth / 2
+					top: $content.height() / 2 - $img.height() / 2,
+					left: $content.width() / 2 - $img.width() / 2
 				});
 
 		// if we don’t run it in the live resize but in the queue
