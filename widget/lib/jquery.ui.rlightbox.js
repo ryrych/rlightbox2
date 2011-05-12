@@ -808,10 +808,12 @@ $.widget( "ui.rlightbox", {
 				next();
 			});
 
-		// hide the panorama icon
+		// disable panorama
 		this.$lightbox.panoramaIcon
 			.hide()
 			.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
+
+		this._setData( "panoramaEnabled", false );
 	},
 
 	$lightbox: {},
