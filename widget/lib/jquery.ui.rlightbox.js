@@ -692,19 +692,20 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_setReferences: function() {
-		var self = this;
+		var self = this,
+			$lb = self.$lightbox;
 
 		// save references to wrapped set for later use
-		self.$lightbox.root = $( "#ui-lightbox" );
-		self.$lightbox.panoramaIcon = self.$lightbox.root.find( "#ui-lightbox-panorama-icon" );
-		self.$lightbox.content = self.$lightbox.root.find( "#ui-lightbox-content" );
-		self.$lightbox.header = self.$lightbox.root.find( "#ui-lightbox-header" );
-		self.$lightbox.overlay = $( "#ui-lightbox-overlay" );
-		self.$lightbox.close = $( "#ui-lightbox-header-close" );
-		self.$lightbox.counterCurrent = self.$lightbox.root.find( "#ui-lightbox-header-counter-current" );
-		self.$lightbox.counterTotal = self.$lightbox.root.find( "#ui-lightbox-header-counter-total" );
-		self.$lightbox.title = self.$lightbox.root.find( "#ui-lightbox-header-title" );
-		self.$lightbox.queueContainer = {
+		$lb.root = $( "#ui-lightbox" );
+		$lb.panoramaIcon = $lb.root.find( "#ui-lightbox-panorama-icon" );
+		$lb.content = $lb.root.find( "#ui-lightbox-content" );
+		$lb.header = $lb.root.find( "#ui-lightbox-header" );
+		$lb.overlay = $( "#ui-lightbox-overlay" );
+		$lb.close = $( "#ui-lightbox-header-close" );
+		$lb.counterCurrent = $lb.root.find( "#ui-lightbox-header-counter-current" );
+		$lb.counterTotal = $lb.root.find( "#ui-lightbox-header-counter-total" );
+		$lb.title = $lb.root.find( "#ui-lightbox-header-title" );
+		$lb.queueContainer = {
 			open: $({}),
 			next: $({})
 		}
