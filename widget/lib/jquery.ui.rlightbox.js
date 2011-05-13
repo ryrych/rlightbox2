@@ -61,12 +61,7 @@ $.widget( "ui.rlightbox", {
 			$lb.panoramaIcon.click( $.proxy(self._panoramaToggle, self) );
 
 			// resize lightbox when window size changes
-			$( window ).bind( "resize.rlightbox", $.proxy(function() {
-				if ( self._getData("ready") ) {
-					this._queueResizeLightbox();
-					this._queueCenterContent();
-				}
-			}, self));
+			$( window ).bind( "resize.rlightbox", $.proxy(self._liveResize, self) );
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
@@ -365,6 +360,14 @@ $.widget( "ui.rlightbox", {
 			statusHeight: _statusHeight
         };
     },
+
+	_liveResize: function() {
+		if ( this._getData("ready") ) {
+			this._queueResizeLightbox();
+			this._queueCenterContent();
+		}
+	},
+
 	_loadImage: function( path ) {
 		var _image = new Image(),
 			_loadWatch,
