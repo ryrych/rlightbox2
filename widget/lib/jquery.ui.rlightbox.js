@@ -178,11 +178,14 @@ $.widget( "ui.rlightbox", {
 		var _current,
 			self = this;
 
+		// returns an 1 based ordinal number of an image in a category
 		$.each( this.categories[this._getData("currentCategory")], function(i, v) {
 
 			// compare DOM elements
 			if ( self.$lightbox.currentElement.get( 0 ) === $( v ).get( 0 ) ) {
 				_current = i + 1;
+
+				// exit $.each()
 				return false;
 			}
 		});
