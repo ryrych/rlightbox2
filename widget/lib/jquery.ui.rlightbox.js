@@ -33,22 +33,8 @@ $.widget( "ui.rlightbox", {
 			self._setOpenQueue();
 			self._setNextQueue();
 
-			// add handlers to the close button and the overlay
-			$lb.close
-				.click(function() {
-					self._close();
-					return false;
-				})
-				.hover(function() {
-					$( this ).toggleClass( "ui-state-hover" );
-				});
-
-			$lb.overlay.click(function() {
-				if ( self._getData("ready") ) {
-					self._close();
-					return false;
-				}
-			});
+			// close the lightbox upon clicking on the close button and the overlay
+			$lb.close.add( $lb.overlay ).click( $.proxy(self._closeHandler, self) );
 
 			// add handlers to the content container
 			$lb.content
@@ -144,6 +130,14 @@ $.widget( "ui.rlightbox", {
 
 		// get ready to next time - fill in queue
 		self._setOpenQueue();
+	},
+
+	_closeHandler: function( event ) {
+		if ( this._getData("ready") ) {
+			this._close();
+			event.preventDefault();
+			event.stopPropagation();
+		}
 	},
 
 	_createStructure: function() {
