@@ -677,10 +677,10 @@ $.widget( "ui.rlightbox", {
 		// half of the operations are the same - they ovelap, and the rest such as ‘show the overlay’, ‘center lightbox’,
 		// ‘slide up the header’ and ‘hide content’ are run only in one queue not in both
 		// thus to not repeat oneself we keep in the queue lists only references to these methods
-		// every one of these methods (that begin with _queue…) are passed ‘next’ parameter that is a reference to another
+		// each one of these methods (that begin with _queue…) are passed ‘next’ parameter that is a reference to another
 		// method in the queue.
-		// $proxy is needed to have an access to a ‘global’ scope of the plugin – every one method that is called in the queue
-		// is run in its internal scope - we need to have an access to such method as _getSizez, _open, etc - one the same level.
+		// $proxy is needed to have an access to a ‘global’ scope of the plugin – every method that is called in the queue
+		// is run in its internal scope - we need to have an access to such method as _getSizes, _open, etc - one the same level.
 
 		var self = this,
 			queueOpenList = [
