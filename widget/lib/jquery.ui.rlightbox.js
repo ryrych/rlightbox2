@@ -164,6 +164,8 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_getCategoryName: function( element ) {
+
+		// if an anchor has class of e.g. ‘lb_gallery’ _getCategoryName() returns ‘gallery’ string as a category
         var _classNames = $( element ).attr( "class" ),
 			_classPrefix = this.options.categoryPrefix + "_",
 			_classPattern = new RegExp( _classPrefix + "(\\w+)" ),
