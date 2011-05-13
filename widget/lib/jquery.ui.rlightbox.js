@@ -526,6 +526,18 @@ $.widget( "ui.rlightbox", {
 			_imageWidth = _imageSize.width,
 			_imageHeight = _imageSize.height;
 
+			// show the most part of an image
+			// e.g. suppose that we have an image of 3600px × 500px size and the available space in the browser
+			// is 1268px × 806px taking into account default Firefox toolbars, scrollbars, etc.
+			// Opening such an image results in displaing it (after resizing) of 1268px × 176px (the ratio must have been kept).
+			// Now we would like to switch to the Panorama mode™. ;) The goal of panorama is to show the original size of the image
+			// (that is 3600px × 500px in this example). But we just cannot display such big size in the smaller screen size.
+			// We are confined to our example screen size (1268 × 806). The point is to display as much as possible.
+			// Our width is bigger than those of the screen (1268) so we can only use the latter → if an image size is bigger than the screen size
+			// limit it to the size of the screen. As for the height, before applying the panorama it was of 176px. But we have more space available on the screen (806px).
+			// So instead of displaying 176px of height we can display the natural size of the image height — 500px.
+			// But for example if the height was of 150px we cannot use this size because the minmal lightbox size is 300px. Use 300px size then.
+			// It is how the magic goes! :D
 			if ( _imageWidth > _screenWidth ) {
 				_contentWidth = _screenWidth;
 			} else if ( _imageWidth <= _minLightboxWidth ) {
