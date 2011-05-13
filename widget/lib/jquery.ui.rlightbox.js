@@ -752,8 +752,9 @@ $.widget( "ui.rlightbox", {
 	_queueShowOverlay: function( next ) {
 		var self = this;
 
-		// lightbox is not ready
+		// let know that lightbox is not ready now
 		self._setData( "ready", false );
+		
 		// show overlay
 		$( "body" ).css( "overflow", "hidden" );
 		self.$lightbox.overlay.fadeIn( self.options.animationSpeed, next );
