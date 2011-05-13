@@ -658,19 +658,18 @@ $.widget( "ui.rlightbox", {
 	_setNextQueue: function() {
 
 		// for description take a look at _setOpenQueue method
-		var self = this,
-			queueList = [
-				$.proxy( self._queueSlideUpHeader, this ),
-				$.proxy( self._queueHideContent, this ),
-				$.proxy( self._queueLoadContent, this ),
-				$.proxy( self._queueResizeLightbox, this ),
-				$.proxy( self._queueCenterContent, this ),
-				$.proxy( self._queueShowContent, this ),
-				$.proxy( self._queueSlideDownHeader, this )
+		var queueList = [
+				$.proxy( this._queueSlideUpHeader, this ),
+				$.proxy( this._queueHideContent, this ),
+				$.proxy( this._queueLoadContent, this ),
+				$.proxy( this._queueResizeLightbox, this ),
+				$.proxy( this._queueCenterContent, this ),
+				$.proxy( this._queueShowContent, this ),
+				$.proxy( this._queueSlideDownHeader, this )
 			];
 
 		// place start animation queue in the queue container
-		self.$lightbox.queueContainer.next.queue( "lightboxNext", queueList );
+		this.$lightbox.queueContainer.next.queue( "lightboxNext", queueList );
 	},
 
 	_setOpenQueue: function() {
