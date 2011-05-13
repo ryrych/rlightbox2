@@ -683,7 +683,7 @@ $.widget( "ui.rlightbox", {
 		// is run in its internal scope - we need to have an access to such method as _getSizes, _open, etc - one the same level.
 
 		var self = this,
-			queueOpenList = [
+			queueList = [
 				$.proxy( self._queueShowOverlay, this ),
 				$.proxy( self._queueCenterLightbox, this ),
 				$.proxy( self._queueLoadContent, this ),
@@ -694,7 +694,7 @@ $.widget( "ui.rlightbox", {
 			];
 
 		// place start animation queue in the queue container
-		self.$lightbox.queueContainer.open.queue( "lightboxOpen", queueOpenList );
+		self.$lightbox.queueContainer.open.queue( "lightboxOpen", queueList );
 	},
 
 	_setReferences: function() {
