@@ -52,27 +52,7 @@ $.widget( "ui.rlightbox", {
 
 			// in case of categories show relevant cursor indicating that you can go to next or prev content
 			$lb.content
-				.mousemove(function(event) {
-					if ( self._getData("ready") && self._getData("currentCategory") && self._getData("panoramaEnabled") === false ) {
-						var _pos = event.pageX - $( this ).offset().left,
-							_center = Math.round( $(this).width() / 2 );
-
-						if ( _pos <= _center ) {
-
-							// remember the side
-							self._setData( "side", "left" );
-							$( this ).css( "cursor", "w-resize" );
-						} else {
-							self._setData( "side", "right" );
-							$( this ).css( "cursor","e-resize" );
-						}
-					} else {
-
-						// reset state
-						self._setData( "side", "" );
-						$( this ).css( "cursor", "default" );
-					}
-				})
+				.mousemove( $.proxy(self._navigationCheckSide, self) )
 				.click(function() {
 					// prevent multi-clicking and do it only with categories
 					if ( self._getData("ready") && self._getData("currentCategory") ) {
@@ -425,6 +405,31 @@ $.widget( "ui.rlightbox", {
 		// just simulate loading
 		_loadWatch = setInterval( _watch, 100 );
 		return _dfd.promise();
+	},
+
+	_navigationCheckSide: function( event ) {
+		var self = this,
+			$content = self.$lightbox.content;
+
+		// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
+		// clicked image belong to a gallery and we are not in the Panorama™ mode
+		if ( self._getData("ready") && self._getData("currentCategory") && self._getData("panoramaEnabled") === false ) {
+			var _pos = event.pageX - $content.offset().left,
+				_center = Math.round( $content.width() / 2 );
+
+			if ( _pos <= _center ) {
+				self._setData( "side", "left" );
+				$content.css( "cursor", "w-resize" );
+			} else {
+				self._setData( "side", "right" );
+				$content.css( "cursor","e-resize" );
+			}
+		} else {
+
+			// we are no longer hover over the content container
+			self._setData( "side", "" );
+			$content.css( "cursor", "default" );
+		}
 	},
 
 	_open: function() {
