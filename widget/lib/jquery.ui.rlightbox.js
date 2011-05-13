@@ -750,14 +750,13 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_queueShowOverlay: function( next ) {
-		var self = this;
 
 		// let know that lightbox is not ready now
-		self._setData( "ready", false );
-		
+		this._setData( "ready", false );
+
 		// show overlay
 		$( "body" ).css( "overflow", "hidden" );
-		self.$lightbox.overlay.fadeIn( self.options.animationSpeed, next );
+		this.$lightbox.overlay.fadeIn( this.options.animationSpeed, next );
 	},
 
 	_queueCenterLightbox: function( next ) {
