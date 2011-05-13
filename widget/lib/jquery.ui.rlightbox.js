@@ -53,30 +53,7 @@ $.widget( "ui.rlightbox", {
 			// in case of categories show relevant cursor indicating that you can go to next or prev content
 			$lb.content
 				.mousemove( $.proxy(self._navigationCheckSide, self) )
-				.click(function() {
-					// prevent multi-clicking and do it only with categories
-					if ( self._getData("ready") && self._getData("currentCategory") ) {
-						if ( self._getData("currentElementNumber") + 1 <= self._getData("totalElementsNumber") && self._getData("side") === "right" ){
-							self._setData( "currentElementNumber", self._getData("currentElementNumber") + 1 );
-
-							// update current element
-							$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
-
-							// next element - trigger the queue ‘next’ - first update it
-							self._setNextQueue();
-							$lb.queueContainer.next.dequeue( "lightboxNext" );
-						} else if ( self._getData("currentElementNumber") - 1 >= 1 && self._getData("side") === "left" ){
-							self._setData( "currentElementNumber", self._getData("currentElementNumber") - 1 );
-
-							// update current element
-							$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
-
-							// next element - trigger the queue ‘next’ - first update it
-							self._setNextQueue();
-							$lb.queueContainer.next.dequeue( "lightboxNext" );
-						}
-					}
-				})
+				.click( $.proxy(self._navigationNext, self) )
 				.mousedown( $.proxy(self._panoramaStart, self) )
 				.mouseup( $.proxy(self._panoramaStop, self) );
 
@@ -429,6 +406,34 @@ $.widget( "ui.rlightbox", {
 			// we are no longer hover over the content container
 			self._setData( "side", "" );
 			$content.css( "cursor", "default" );
+		}
+	},
+
+	_navigationNext: function() {
+		var self = this,
+			$lb = self.$lightbox;
+
+		// prevent from multi clicking and go to the next image only if it belongs to a gallery
+		if ( self._getData("ready") && self._getData("currentCategory") ) {
+			if ( self._getData("currentElementNumber") + 1 <= self._getData("totalElementsNumber") && self._getData("side") === "right" ){
+				self._setData( "currentElementNumber", self._getData("currentElementNumber") + 1 );
+
+				// update current element
+				$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
+
+				// next element - trigger the queue ‘next’ - first update it
+				self._setNextQueue();
+				$lb.queueContainer.next.dequeue( "lightboxNext" );
+			} else if ( self._getData("currentElementNumber") - 1 >= 1 && self._getData("side") === "left" ){
+				self._setData( "currentElementNumber", self._getData("currentElementNumber") - 1 );
+
+				// update current element
+				$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
+
+				// next element - trigger the queue ‘next’ - first update it
+				self._setNextQueue();
+				$lb.queueContainer.next.dequeue( "lightboxNext" );
+			}
 		}
 	},
 
