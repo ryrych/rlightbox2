@@ -465,6 +465,10 @@ $.widget( "ui.rlightbox", {
 			$content = this.$lightbox.content,
 			$img = $content.find( "img" );
 
+		// if width of an image was bigger than the available screen space and if we divided the both size by two
+		// the left position of the image would be placed outside the content container; e.g. having
+		// the screen size of 1200px wide and an image of 2000px wide, the left css property would
+		// have value of -200px and thus the 200px would not be visible
 		if ( _screenWidth < _imageWidth ) {
 			_left = 0;
 		} else {
