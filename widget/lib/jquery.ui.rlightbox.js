@@ -792,7 +792,6 @@ $.widget( "ui.rlightbox", {
 
 			// save original sizes and status for panorama purposes
 			self._setData( "originalStatus", self._getImageStatus( img.width, img.height) );
-			console.log("początkowy status ", self._getData("originalStatus"));
 
 			// add the loaded image and hide it
 			self.$lightbox.content
@@ -820,8 +819,6 @@ $.widget( "ui.rlightbox", {
 			_img = self.$lightbox.content.find( "img" ),
 			_padding = self._getData( "lightboxPadding" ),
 			_headerHeight = self._getData( "headerHeight" );
-
-		console.log("po przeskalowaniu", _sizes);
 
 		// if you use this method in the context of a queue then use animation; otherwise when used in live resize, don’t animate it
 		if ( $.isFunction(next) ) {
