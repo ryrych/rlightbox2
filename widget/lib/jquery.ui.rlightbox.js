@@ -83,6 +83,7 @@ $.widget( "ui.rlightbox", {
 		// add content into categories if any exists
 		self._addToCategory( self.element );
 
+		// open the lightbox upon click
 		self.element.click(function() {
 			self._open();
 			return false;
