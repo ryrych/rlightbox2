@@ -682,19 +682,18 @@ $.widget( "ui.rlightbox", {
 		// $proxy is needed to have an access to a ‘global’ scope of the plugin – every method that is called in the queue
 		// is run in its internal scope - we need to have an access to such method as _getSizes, _open, etc - one the same level.
 
-		var self = this,
-			queueList = [
-				$.proxy( self._queueShowOverlay, this ),
-				$.proxy( self._queueCenterLightbox, this ),
-				$.proxy( self._queueLoadContent, this ),
-				$.proxy( self._queueResizeLightbox, this ),
-				$.proxy( self._queueCenterContent, this ),
-				$.proxy( self._queueShowContent, this ),
-				$.proxy( self._queueSlideDownHeader, this )
+		var queueList = [
+				$.proxy( this._queueShowOverlay, this ),
+				$.proxy( this._queueCenterLightbox, this ),
+				$.proxy( this._queueLoadContent, this ),
+				$.proxy( this._queueResizeLightbox, this ),
+				$.proxy( this._queueCenterContent, this ),
+				$.proxy( this._queueShowContent, this ),
+				$.proxy( this._queueSlideDownHeader, this )
 			];
 
 		// place start animation queue in the queue container
-		self.$lightbox.queueContainer.open.queue( "lightboxOpen", queueList );
+		this.$lightbox.queueContainer.open.queue( "lightboxOpen", queueList );
 	},
 
 	_setReferences: function() {
