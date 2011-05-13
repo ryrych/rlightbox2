@@ -606,9 +606,9 @@ $.widget( "ui.rlightbox", {
 	_panoramaToggle: function( event ) {
 
 		// switches between _panoramaExpand and _panoramaShrink
-		// we couldn’t use .toggle( expand, shrink ) on panorama icon because when lb is closed after panorama was turned on
+		// we couldn’t use .toggle( expand, shrink ) on panorama icon because when lb is closed after panorama was turned on (we were in the panorama mode)
 		// and open again and next image once again can be zoomed we need to make sure that
-		// expand is the first action – toggle would run shrink as the second function
+		// expand is the first action – using jQuery .toggle() ‘expand’ would be the fist action again (because of its internal queue)
 		var _panoramaOn = this._getData( "panoramaEnabled" );
 
 		if ( _panoramaOn === false ) {
