@@ -50,7 +50,7 @@ $.widget( "ui.rlightbox", {
 				}
 			});
 
-			// in case of categories show relevant cursor indicating that you can go to next or prev content
+			// add handlers to the content container
 			$lb.content
 				.mousemove( $.proxy(self._navigationCheckSide, self) )
 				.click( $.proxy(self._navigationNext, self) )
