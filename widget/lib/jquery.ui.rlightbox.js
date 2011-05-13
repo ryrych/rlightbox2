@@ -718,11 +718,10 @@ $.widget( "ui.rlightbox", {
 
 	_updateCounter: function() {
 		var _current, _total,
-			self = this,
-			$lb = self.$lightbox;
+			$lb = this.$lightbox;
 
-		_current = self._getData( "currentElementNumber" ) || 1;
-		_total = self._getData( "totalElementsNumber" ) || 1;
+		_current = this._getData( "currentElementNumber" ) || 1;
+		_total = this._getData( "totalElementsNumber" ) || 1;
 
 		$lb.counterCurrent
 			.empty()
