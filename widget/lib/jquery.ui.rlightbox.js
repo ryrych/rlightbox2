@@ -250,7 +250,7 @@ $.widget( "ui.rlightbox", {
 
 		// statuses (concern both sides):
 		// 1 - content fits the window and is larger than minimal lightbox size
-		// -1 - content fits the window but is smaller or equal to minial lightbox size
+		// -1 - content fits the window but is smaller or equal to minimal lightbox size
 		// 2 - content is larger than the window
 		// -2 - the window is smaller than minimal lightbox size
 		var _statusWidth, _statusHeight,
