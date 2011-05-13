@@ -659,7 +659,7 @@ $.widget( "ui.rlightbox", {
 
 		// for description take a look at _setOpenQueue method
 		var self = this,
-			queueNextList = [
+			queueList = [
 				$.proxy( self._queueSlideUpHeader, this ),
 				$.proxy( self._queueHideContent, this ),
 				$.proxy( self._queueLoadContent, this ),
@@ -670,7 +670,7 @@ $.widget( "ui.rlightbox", {
 			];
 
 		// place start animation queue in the queue container
-		self.$lightbox.queueContainer.next.queue( "lightboxNext", queueNextList );
+		self.$lightbox.queueContainer.next.queue( "lightboxNext", queueList );
 	},
 
 	_setOpenQueue: function() {
