@@ -560,14 +560,16 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_panoramaShrink: function() {
+
+		// _panoramaShrink retores the previous size of an image
 		this._setData( "panoramaEnabled", false );
 
-		// show the icon
+		// show the zoom in icon – let know that we can run panorama mode again
 		this.$lightbox.panoramaIcon
 			.removeClass( "ui-lightbox-panorama-icon-shrink" )
 			.addClass( "ui-lightbox-panorama-icon-expand" );
 
-		// zoom out
+		// resize an image to its previous size and center it
 		this._queueResizeLightbox();
 		this._queueCenterContent();
 	},
