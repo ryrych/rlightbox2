@@ -489,18 +489,18 @@ $.widget( "ui.rlightbox", {
 
 	_panoramaExpand: function() {
 
-		// give the natural size to an image
+		// _panoramaExpand does the main goal of the Panorama™: it displays the natural image size
 		var _originalSize = this._getData( "originalImageSize" );
 
 		// let know that we can scroll now
 		this._setData( "panoramaEnabled", true );
 
-		// show the icon
+		// show the zoom out icon
 		this.$lightbox.panoramaIcon
 			.removeClass( "ui-lightbox-panorama-icon-expand" )
 			.addClass( "ui-lightbox-panorama-icon-shrink" );
 
-		// zoom in
+		// give the natural size to the image
 		this.$lightbox.content
 			.find( "img" )
 				.width( _originalSize.width )
