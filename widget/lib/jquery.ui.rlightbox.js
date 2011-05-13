@@ -586,11 +586,14 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_panoramaStop: function( event ) {
+
+		// calculate the distance between the starting point from _panoramaStart and this one
+		// we use the oposite vector (-1) because dragging the mouse left we move right
 		var _distX = ( event.pageX - this._getData("panoramaPosition").xStart ) * -1,
 			_distY = ( event.pageY - this._getData("panoramaPosition").yStart ) * -1,
 			$content = this.$lightbox.content;
 
-		// if zooming is possible…
+		// if we are in the panorama mode (the panorama icon was clicked)
 		if ( this._getData("panoramaEnabled") ) {
 			$content
 				.scrollLeft( $content.scrollLeft() + _distX )
