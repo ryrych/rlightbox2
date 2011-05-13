@@ -362,6 +362,8 @@ $.widget( "ui.rlightbox", {
     },
 
 	_liveResize: function() {
+
+		// resizes an image when size of the browser window is changed
 		if ( this._getData("ready") ) {
 			this._queueResizeLightbox();
 			this._queueCenterContent();
