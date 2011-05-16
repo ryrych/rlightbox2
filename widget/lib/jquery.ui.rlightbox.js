@@ -410,11 +410,14 @@ $.widget( "ui.rlightbox", {
 				self._setData( "side", "right" );
 				$content.css( "cursor","e-resize" );
 			}
-		} else {
+		} else if ( self._getData("panoramaDrag") === false ) {
 
 			// we are no longer hover over the content container
 			self._setData( "side", "" );
 			$content.css( "cursor", "default" );
+		} else {
+			self._setData( "side", "" );
+			$content.css( "cursor", "move" );
 		}
 	},
 
@@ -603,6 +606,14 @@ $.widget( "ui.rlightbox", {
 			}
 		});
 
+		// used to show the ‘move’ cursor on ‘content’ container
+		this._setData( "panoramaDrag", true );
+
+		// give clue that we can drag now
+		if ( this._getData("panoramaEnabled") ) {
+			this.$lightbox.content.css( "cursor", "move" );
+		}
+
 		return false;
 	},
 
@@ -613,6 +624,9 @@ $.widget( "ui.rlightbox", {
 		var _distX = ( event.pageX - this._getData("panoramaPosition").xStart ) * -1,
 			_distY = ( event.pageY - this._getData("panoramaPosition").yStart ) * -1,
 			$content = this.$lightbox.content;
+
+		// indicate that we can revert the cursor to the default one
+		this._setData( "panoramaDrag", false );
 
 		// if we are in the panorama mode (the panorama icon was clicked)
 		if ( this._getData("panoramaEnabled") ) {
