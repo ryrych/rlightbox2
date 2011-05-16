@@ -363,8 +363,8 @@ $.widget( "ui.rlightbox", {
 
 	_liveResize: function() {
 
-		// resizes an image when size of the browser window is changed
-		if ( this._getData("ready") ) {
+		// resizes an image when size of the browser window resizes and when Panorama is turned off
+		if ( this._getData("ready") && this._getData("panoramaEnabled") === false ) {
 			this._queueResizeLightbox();
 			this._queueCenterContent();
 		}
