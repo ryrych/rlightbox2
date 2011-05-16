@@ -59,7 +59,11 @@ $.widget( "ui.rlightbox", {
 				lightboxPadding: 12,
 				headerHeight: 57,
 				ready: false,
-				panoramaEnabled: false
+				panoramaEnabled: false,
+				mapSize: {
+					width: parseInt( $lb.map.css("width") ),
+					height: parseInt( $lb.map.css("height") )
+				}
 			});
 
 			// never run it again
@@ -125,6 +129,9 @@ $.widget( "ui.rlightbox", {
 		// remove old title
 		self.$lightbox.title.empty();
 
+		// hide the map
+		self._panoramaHideMap();
+
 		// lightbox is not ready again
 		self._setData( "ready", false );
 
@@ -148,6 +155,7 @@ $.widget( "ui.rlightbox", {
 			.append( "<div id='ui-lightbox-content' class='ui-widget-content'></div>" )
 			.append( "<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'><p id='ui-lightbox-header-wrapper'><span id='ui-lightbox-header-title'></span></p><p id='ui-lightbox-header-counter'><span id='ui-lightbox-header-counter-current'>1</span><span> of </span><span id='ui-lightbox-header-counter-total'>1</span></p><a id='ui-lightbox-header-close' href='#'><span class='ui-icon ui-icon-closethick'>close</span></a></div>" )
 			.appendTo( "body" )
+			.after( "<div id='ui-lightbox-map' style='display: none'><div id='ui-lightbox-map-viewport'></div></div>" )
 			.after( "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>" );
 	},
 
@@ -534,6 +542,22 @@ $.widget( "ui.rlightbox", {
 		// center the content and the whole lightbox
 		this._panoramaCenterContent();
 		this._queueCenterLightbox();
+
+		// show the map
+		this._panoramaShowMap();
+	},
+
+	_panoramaHideMap: function() {
+		var $lb = this.$lightbox;
+
+		// hide the map
+		$lb.map.hide();
+
+		// reset position of the viewport
+		$lb.viewport.css({
+			left: 0,
+			top: 0
+		});
 	},
 
 	_panoramaSetContentSize: function() {
@@ -594,6 +618,39 @@ $.widget( "ui.rlightbox", {
 		// resize an image to its previous size and center it
 		this._queueResizeLightbox();
 		this._queueCenterContent();
+
+		// hide the map
+		this._panoramaHideMap();
+	},
+
+	_panoramaShowMap: function() {
+		var _viewportWidth, _viewportHeight, _viewportWidthRatio, _viewportHeightRatio,
+		_mapSize = this._getData( "mapSize" ),
+		_originalSize = this._getData ( "originalImageSize" ),
+		$lb = this.$lightbox;
+
+		// show the map and give the viewport relevant size
+		// give the viewport relevant size
+		_viewportWidthRatio = _mapSize.width / _originalSize.width;
+		_viewportHeightRatio = _mapSize.height / _originalSize.height;
+
+		_viewportWidth = Math.ceil( $lb.content.width() * _viewportWidthRatio );
+		_viewportHeight = Math.ceil( $lb.content.height() * _viewportHeightRatio );
+
+		$lb.viewport
+			.width( _viewportWidth )
+			.height( _viewportHeight );
+
+		// show the map
+		$lb.map.show();
+
+		// used when you scroll the content
+		this._setData({
+			viewportRatio: {
+				width: _viewportWidthRatio,
+				height: _viewportHeightRatio
+			}
+		});
 	},
 
 	_panoramaStart: function( event ) {
@@ -623,7 +680,8 @@ $.widget( "ui.rlightbox", {
 		// we use the oposite vector (-1) because dragging the mouse left we move right
 		var _distX = ( event.pageX - this._getData("panoramaPosition").xStart ) * -1,
 			_distY = ( event.pageY - this._getData("panoramaPosition").yStart ) * -1,
-			$content = this.$lightbox.content;
+			$content = this.$lightbox.content,
+			_viewportRatio = this._getData( "viewportRatio" );
 
 		// indicate that we can revert the cursor to the default one
 		this._setData( "panoramaDrag", false );
@@ -633,6 +691,12 @@ $.widget( "ui.rlightbox", {
 			$content
 				.scrollLeft( $content.scrollLeft() + _distX )
 				.scrollTop( $content.scrollTop() + _distY );
+
+			// show the relevant part of the map
+			this.$lightbox.viewport.css({
+				left: $content.scrollLeft() * _viewportRatio.width,
+				top: $content.scrollTop() * _viewportRatio.height
+			});
 		}
 
 		event.stopPropagation();
@@ -728,6 +792,8 @@ $.widget( "ui.rlightbox", {
 		$lb.counterCurrent = $lb.root.find( "#ui-lightbox-header-counter-current" );
 		$lb.counterTotal = $lb.root.find( "#ui-lightbox-header-counter-total" );
 		$lb.title = $lb.root.find( "#ui-lightbox-header-title" );
+		$lb.map = $( "#ui-lightbox-map" );
+		$lb.viewport = $lb.map.children().eq( 0 );
 		$lb.queueContainer = {
 			open: $({}),
 			next: $({})
@@ -939,6 +1005,9 @@ $.widget( "ui.rlightbox", {
 			.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
 
 		this._setData( "panoramaEnabled", false );
+
+		// hide the map
+		this._panoramaHideMap();
 	},
 
 	$lightbox: {},

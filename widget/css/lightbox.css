@@ -77,6 +77,25 @@
 	right: 5px;
 }
 
+#ui-lightbox-map {
+	background-color: black;
+	filter:Alpha(Opacity=20);
+	height: 100px;
+	opacity: .30;
+	position: fixed;
+	right: 20px;
+	top: 20px;
+	width: 150px;
+	z-index: 10000;
+}
+
+#ui-lightbox-map-viewport {
+	border: 1px solid white;
+	left: 0;
+	position: absolute;
+	top: 0;
+}
+
 #ui-lightbox-overlay {
 	margin: 0;
 	padding: 0;
