@@ -367,6 +367,10 @@ $.widget( "ui.rlightbox", {
 		if ( this._getData("ready") && this._getData("panoramaEnabled") === false ) {
 			this._queueResizeLightbox();
 			this._queueCenterContent();
+		} else if ( this._getData("ready") && this._getData("panoramaEnabled") ) {
+
+			// otherwise keep the lightbox centered especially when window is bigger than the lightbox
+			this._queueCenterLightbox();
 		}
 	},
 
