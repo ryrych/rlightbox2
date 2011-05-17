@@ -82,7 +82,7 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_addToCategory: function( element ) {
-		var _categoryName = self._getCategoryName( element );
+		var _categoryName = this._getCategoryName( element );
 
 		// one element; exit
 		if ( _categoryName === null ) {
