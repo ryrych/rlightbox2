@@ -19,40 +19,40 @@ $.widget( "ui.rlightbox", {
 
 	_create: function() {
 		var self = this,
-			$lb = self.$lightbox;
+			$lb = this.$lightbox;
 
 		// some actions run only once – dirty flag nom nom nom
 		if ( !$("body" ).data( "HKn5fX_ZtrdfM-FBRHf6" ) ) {
 
 			// there may be many elements to act on: images, flash films but only one structure of the widget
-			self._createStructure();
+			this._createStructure();
 
 			// set references for later use
-			self._setReferences();
+			this._setReferences();
 
 			// set animation queues
-			self._setOpenQueue();
-			self._setNextQueue();
+			this._setOpenQueue();
+			this._setNextQueue();
 
 			// close the lightbox upon clicking on the close button and the overlay
-			$lb.close.add( $lb.overlay ).click( $.proxy(self._closeHandler, self) );
+			$lb.close.add( $lb.overlay ).click( $.proxy(this._closeHandler, this) );
 
 			// add handlers to the content container
 			$lb.content
-				.mousemove( $.proxy(self._navigationCheckSide, self) )
-				.click( $.proxy(self._navigationNext, self) )
-				.mousedown( $.proxy(self._panoramaStart, self) )
-				.mouseup( $.proxy(self._panoramaStop, self) );
+				.mousemove( $.proxy(this._navigationCheckSide, this) )
+				.click( $.proxy(this._navigationNext, this) )
+				.mousedown( $.proxy(this._panoramaStart, this) )
+				.mouseup( $.proxy(this._panoramaStop, this) );
 
 			// zoom in or zoom out an image
-			$lb.panoramaIcon.click( $.proxy(self._panoramaToggle, self) );
+			$lb.panoramaIcon.click( $.proxy(this._panoramaToggle, this) );
 
 			// resize lightbox when window size changes
-			$( window ).bind( "resize.rlightbox", $.proxy(self._liveResize, self) );
+			$( window ).bind( "resize.rlightbox", $.proxy(this._liveResize, this) );
 
 			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
 			// fill with initial data
-			self._setData({
+			this._setData({
 				minimalLightboxSize: {
 					width: 300,
 					height: 300
@@ -72,10 +72,10 @@ $.widget( "ui.rlightbox", {
 		}
 
 		// add content into categories if any exists
-		self._addToCategory( self.element );
+		this._addToCategory( this.element );
 
 		// open the lightbox upon click
-		self.element.click(function() {
+		this.element.click(function() {
 			self._open();
 			return false;
 		});
