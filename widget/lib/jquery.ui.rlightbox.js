@@ -954,13 +954,12 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_queueShowContent: function( next ) {
-		var self = this,
-			$lb = self.$lightbox;
-			_originalStatus = self._getData( "originalStatus" );
+		var $lb = this.$lightbox;
+			_originalStatus = this._getData( "originalStatus" );
 
 		// show content
 		$lb.content.find( "img" )
-			.fadeIn( self.options.animationSpeed, function() {
+			.fadeIn( this.options.animationSpeed, function() {
 
 				// if one of the image sides is bigger than the screen, show panorama icon
 				if ( _originalStatus.statusWidth === 2 || _originalStatus.statusHeight === 2 ) {
