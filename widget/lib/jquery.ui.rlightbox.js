@@ -404,7 +404,7 @@ $.widget( "ui.rlightbox", {
 			$content = self.$lightbox.content;
 
 		// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
-		// clicked image belong to a gallery and we are not in the Panorama™ mode
+		// clicked image belongs to a gallery and we are not in the Panorama™ mode
 		if ( self._getData("ready") && self._getData("currentCategory") && self._getData("panoramaEnabled") === false ) {
 			var _pos = event.pageX - $content.offset().left,
 				_center = Math.round( $content.width() / 2 );
