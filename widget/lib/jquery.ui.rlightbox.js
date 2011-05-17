@@ -120,7 +120,7 @@ $.widget( "ui.rlightbox", {
 		// reset panorama
 		$lb.panoramaIcon
 			.hide()
-			.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink");
+			.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
 		this._setData( "panoramaEnabled", false );
 
 		// reset the counter
