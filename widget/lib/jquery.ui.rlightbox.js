@@ -149,8 +149,6 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_createStructure: function() {
-		var self = this;
-
 		$( "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'></div>" )
 			.append( "<div id='ui-lightbox-panorama-icon' style='display: none'></div> ")
 			.append( "<div id='ui-lightbox-content' class='ui-widget-content'></div>" )
