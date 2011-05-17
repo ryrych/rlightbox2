@@ -972,19 +972,18 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_queueSlideDownHeader: function( next ) {
-		var self = this;
 
 		// show header
-		self.$lightbox.header.slideDown( self.options.animationSpeed, next );
+		this.$lightbox.header.slideDown( this.options.animationSpeed, next );
 
 		// show and update counter
-		self._updateCounter();
+		this._updateCounter();
 
 		// update title
-		self._updateTitle();
+		this._updateTitle();
 
 		// indicate that animation queue is finshed
-		self._setData( "ready", true );
+		this._setData( "ready", true );
 	},
 
 	_queueSlideUpHeader: function( next ) {
