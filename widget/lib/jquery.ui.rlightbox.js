@@ -428,25 +428,28 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_navigationNext: function() {
-		var $lb = this.$lightbox,
+		var _currentElementNumber,
+			$lb = this.$lightbox,
 			_category = this._getData( "currentCategory" );
 
 		// prevent from multi clicking and go to the next image only if it belongs to a gallery
 		if ( this._getData("ready") && _category) {
-			if ( this._getData("currentElementNumber") + 1 <= this._getData("totalElementsNumber") && this._getData("side") === "right" ) {
-				this._setData( "currentElementNumber", this._getData("currentElementNumber") + 1 );
+			_currentElementNumber = this._getData( "currentElementNumber" );
+
+			if ( _currentElementNumber + 1 <= this._getData("totalElementsNumber") && this._getData("side") === "right" ) {
+				this._setData( "currentElementNumber", _currentElementNumber + 1 );
 
 				// update current element
-				$lb.currentElement = this.categories[_category][this._getData("currentElementNumber") - 1];
+				$lb.currentElement = this.categories[_category][_currentElementNumber - 1];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
 				$lb.queueContainer.next.dequeue( "lightboxNext" );
-			} else if ( this._getData("currentElementNumber") - 1 >= 1 && this._getData("side") === "left" ){
-				this._setData( "currentElementNumber", this._getData("currentElementNumber") - 1 );
+			} else if ( _currentElementNumber - 1 >= 1 && this._getData("side") === "left" ){
+				this._setData( "currentElementNumber", _currentElementNumber - 1 );
 
 				// update current element
-				$lb.currentElement = this.categories[_category][this._getData("currentElementNumber") - 1];
+				$lb.currentElement = this.categories[_category][_currentElementNumber - 1];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
