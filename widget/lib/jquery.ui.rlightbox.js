@@ -90,10 +90,12 @@ $.widget( "ui.rlightbox", {
 		}
 
         if ( !this.categories[_categoryName] ) {
+
 			// first time - such category had not been created before
             this.categories[_categoryName] = [];
             this.categories[_categoryName].push( element );
         } else {
+			
 			// category exists yet - just add element to it
             this.categories[_categoryName].push( element );
 		}
