@@ -896,21 +896,20 @@ $.widget( "ui.rlightbox", {
 		// center the lightbox and scale it
 		// get sizes of the lightbox, image and their statuses
 		var _speed, _animate,
-			self = this,
-			_sizes = self._getSizes(),
+			_sizes = this._getSizes(),
 			_imageTargetWidth = _sizes.imageTargetWidth,
 			_imageTargetHeight = _sizes.imageTargetHeight,
 			_lightboxTargetWidth = _sizes.lightboxTargetWidth,
 			_lightboxTargetHeight = _sizes.lightboxTargetHeight,
 			_statusWidth = _sizes.statusWidth,
 			_statusHeight = _sizes.statusHeight,
-			_img = self.$lightbox.content.find( "img" ),
-			_padding = self._getData( "lightboxPadding" ),
-			_headerHeight = self._getData( "headerHeight" );
+			_img = this.$lightbox.content.find( "img" ),
+			_padding = this._getData( "lightboxPadding" ),
+			_headerHeight = this._getData( "headerHeight" );
 
 		// if you use this method in the context of a queue then use animation; otherwise when used in live resize, don’t animate it
 		if ( $.isFunction(next) ) {
-			_speed = self.options.animationSpeed;
+			_speed = this.options.animationSpeed;
 			_animate = true;
 		} else {
 			_speed = 0;
@@ -926,7 +925,7 @@ $.widget( "ui.rlightbox", {
 				.height( _imageTargetHeight );
 
 			// scale and resize the lightbox
-			self.$lightbox.root
+			this.$lightbox.root
 				.find( "#ui-lightbox-content" )
 					.removeClass( "ui-lightbox-loader" )
 					.animate( {width: _lightboxTargetWidth}, _speed )
