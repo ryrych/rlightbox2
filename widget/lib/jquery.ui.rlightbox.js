@@ -459,27 +459,26 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_open: function() {
-		var self = this,
-			$lb = self.$lightbox;
+		var $lb = this.$lightbox;
 
 		// keep a reference to a currentElement element
 		$lb.currentElement = this.element;
 
 		// remember which category content belongs to
-		self._setData( "currentCategory", self._getCategoryName( $lb.currentElement ) );
+		this._setData( "currentCategory", this._getCategoryName( $lb.currentElement ) );
 
 		// determine and remember how many elements belong to a category
 		// determine the current (and clicked) element in a category
-		if ( self._getData("currentCategory") ) {
-			self._setData( "totalElementsNumber", self.categories[self._getData("currentCategory")].length );
-			self._setData( "currentElementNumber", self._getCurrentElementNumber() );
+		if ( this._getData("currentCategory") ) {
+			this._setData( "totalElementsNumber", this.categories[this._getData("currentCategory")].length );
+			this._setData( "currentElementNumber", this._getCurrentElementNumber() );
 		}
 
 		// show counter
-		self._updateCounter();
+		this._updateCounter();
 
 		// show title if any
-		self._updateTitle();
+		this._updateTitle();
 
 		// start opening the lighbox
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
