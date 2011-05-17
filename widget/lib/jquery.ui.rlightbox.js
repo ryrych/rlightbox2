@@ -440,7 +440,7 @@ $.widget( "ui.rlightbox", {
 				this._setData( "currentElementNumber", _currentElementNumber + 1 );
 
 				// update current element
-				$lb.currentElement = this.categories[_category][_currentElementNumber - 1];
+				$lb.currentElement = this.categories[_category][_currentElementNumber];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
@@ -449,7 +449,7 @@ $.widget( "ui.rlightbox", {
 				this._setData( "currentElementNumber", _currentElementNumber - 1 );
 
 				// update current element
-				$lb.currentElement = this.categories[_category][_currentElementNumber - 1];
+				$lb.currentElement = this.categories[_category][_currentElementNumber - 2];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
