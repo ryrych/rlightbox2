@@ -783,8 +783,7 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_setReferences: function() {
-		var self = this,
-			$lb = self.$lightbox;
+		var $lb = this.$lightbox;
 
 		// save references to wrapped set for later use
 		$lb.root = $( "#ui-lightbox" );
