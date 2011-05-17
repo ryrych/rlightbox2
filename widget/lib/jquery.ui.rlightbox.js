@@ -428,15 +428,16 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_navigationNext: function() {
-		var $lb = this.$lightbox;
+		var $lb = this.$lightbox,
+			_category = this._getData( "currentCategory" );
 
 		// prevent from multi clicking and go to the next image only if it belongs to a gallery
-		if ( this._getData("ready") && this._getData("currentCategory") ) {
+		if ( this._getData("ready") && _category) {
 			if ( this._getData("currentElementNumber") + 1 <= this._getData("totalElementsNumber") && this._getData("side") === "right" ) {
 				this._setData( "currentElementNumber", this._getData("currentElementNumber") + 1 );
 
 				// update current element
-				$lb.currentElement = this.categories[this._getData("currentCategory")][this._getData("currentElementNumber") - 1];
+				$lb.currentElement = this.categories[_category][this._getData("currentElementNumber") - 1];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
@@ -445,7 +446,7 @@ $.widget( "ui.rlightbox", {
 				this._setData( "currentElementNumber", this._getData("currentElementNumber") - 1 );
 
 				// update current element
-				$lb.currentElement = this.categories[this._getData("currentCategory")][this._getData("currentElementNumber") - 1];
+				$lb.currentElement = this.categories[_category][this._getData("currentElementNumber") - 1];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
