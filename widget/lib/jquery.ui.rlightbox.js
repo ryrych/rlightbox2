@@ -511,7 +511,7 @@ $.widget( "ui.rlightbox", {
 			_top = $content.height() / 2 - $img.height() / 2;
 		}
 
-		$img.css( {
+		$img.css({
 			top: _top,
 			left: _left
 		});
