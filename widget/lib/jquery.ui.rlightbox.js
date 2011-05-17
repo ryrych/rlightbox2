@@ -428,28 +428,27 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_navigationNext: function() {
-		var self = this,
-			$lb = self.$lightbox;
+		var $lb = this.$lightbox;
 
 		// prevent from multi clicking and go to the next image only if it belongs to a gallery
-		if ( self._getData("ready") && self._getData("currentCategory") ) {
-			if ( self._getData("currentElementNumber") + 1 <= self._getData("totalElementsNumber") && self._getData("side") === "right" ) {
-				self._setData( "currentElementNumber", self._getData("currentElementNumber") + 1 );
+		if ( this._getData("ready") && this._getData("currentCategory") ) {
+			if ( this._getData("currentElementNumber") + 1 <= this._getData("totalElementsNumber") && this._getData("side") === "right" ) {
+				this._setData( "currentElementNumber", this._getData("currentElementNumber") + 1 );
 
 				// update current element
-				$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
+				$lb.currentElement = this.categories[this._getData("currentCategory")][this._getData("currentElementNumber") - 1];
 
 				// next element - trigger the queue ‘next’ - first update it
-				self._setNextQueue();
+				this._setNextQueue();
 				$lb.queueContainer.next.dequeue( "lightboxNext" );
-			} else if ( self._getData("currentElementNumber") - 1 >= 1 && self._getData("side") === "left" ){
-				self._setData( "currentElementNumber", self._getData("currentElementNumber") - 1 );
+			} else if ( this._getData("currentElementNumber") - 1 >= 1 && this._getData("side") === "left" ){
+				this._setData( "currentElementNumber", this._getData("currentElementNumber") - 1 );
 
 				// update current element
-				$lb.currentElement = self.categories[self._getData("currentCategory")][self._getData("currentElementNumber") - 1];
+				$lb.currentElement = this.categories[this._getData("currentCategory")][this._getData("currentElementNumber") - 1];
 
 				// next element - trigger the queue ‘next’ - first update it
-				self._setNextQueue();
+				this._setNextQueue();
 				$lb.queueContainer.next.dequeue( "lightboxNext" );
 			}
 		}
