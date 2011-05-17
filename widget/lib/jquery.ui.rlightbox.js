@@ -433,7 +433,7 @@ $.widget( "ui.rlightbox", {
 
 		// prevent from multi clicking and go to the next image only if it belongs to a gallery
 		if ( self._getData("ready") && self._getData("currentCategory") ) {
-			if ( self._getData("currentElementNumber") + 1 <= self._getData("totalElementsNumber") && self._getData("side") === "right" ){
+			if ( self._getData("currentElementNumber") + 1 <= self._getData("totalElementsNumber") && self._getData("side") === "right" ) {
 				self._setData( "currentElementNumber", self._getData("currentElementNumber") + 1 );
 
 				// update current element
