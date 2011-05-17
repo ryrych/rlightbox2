@@ -13,7 +13,8 @@
 $.widget( "ui.rlightbox", {
 	options: {
 		animationSpeed: "fast",
-		categoryPrefix: "lb"
+		categoryPrefix: "lb",
+		showMap: true
 	},
 
 	_create: function() {
@@ -544,7 +545,9 @@ $.widget( "ui.rlightbox", {
 		this._queueCenterLightbox();
 
 		// show the map
-		this._panoramaShowMap();
+		if ( this.options.showMap ) {
+			this._panoramaShowMap();
+		}
 	},
 
 	_panoramaHideMap: function() {
