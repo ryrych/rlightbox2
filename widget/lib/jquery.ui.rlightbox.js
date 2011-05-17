@@ -213,15 +213,14 @@ $.widget( "ui.rlightbox", {
 		// 2 - content is larger than the window
 		// -2 - the window is smaller than minimal lightbox size
 		var _statusWidth, _statusHeight,
-			self = this,
             _windowWidth = $( window ).width(),
             _windowHeight = $( window ).height(),
-            _minimalLightboxWidth = self._getData( "minimalLightboxSize" ).width,
-            _minimalLightboxHeight = self._getData( "minimalLightboxSize" ).height,
-            _imageWidth = self._getData( "originalImageSize" ).width,
-            _imageHeight = self._getData( "originalImageSize" ).height,
-            _lightboxPadding = self._getData( "lightboxPadding" ),
-			_headerHeight = self._getData( "headerHeight" );
+            _minimalLightboxWidth = this._getData( "minimalLightboxSize" ).width,
+            _minimalLightboxHeight = this._getData( "minimalLightboxSize" ).height,
+            _imageWidth = this._getData( "originalImageSize" ).width,
+            _imageHeight = this._getData( "originalImageSize" ).height,
+            _lightboxPadding = this._getData( "lightboxPadding" ),
+			_headerHeight = this._getData( "headerHeight" );
 
 		if ( _windowWidth < _minimalLightboxWidth + _lightboxPadding ) {
 			_statusWidth = -2;
