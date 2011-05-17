@@ -863,11 +863,12 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_queueLoadContent: function( next ) {
-		var self = this;
+		var self = this,
+			$lb = this.$lightbox;
 
 		// start loading maximized image
-		this.$lightbox.content.addClass( "ui-lightbox-loader" );
-		$.when( this._loadImage($(this.$lightbox.currentElement).attr("href")) ).then(function( img ) {
+		$lb.content.addClass( "ui-lightbox-loader" );
+		$.when( this._loadImage($lb.currentElement.attr("href")) ).then(function( img ) {
 
 			// keep original size of an image – needed when resizing
 			self._setData({
@@ -881,7 +882,7 @@ $.widget( "ui.rlightbox", {
 			self._setData( "originalStatus", self._getImageStatus( img.width, img.height) );
 
 			// add the loaded image and hide it
-			self.$lightbox.content
+			$lb.content
 				.append( img )
 				.find( "img" )
 					.hide();
