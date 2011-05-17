@@ -250,16 +250,16 @@ $.widget( "ui.rlightbox", {
 
 	_getSizes: function() {
         var _statuses, _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
+            $lb = this.$lightbox,
 			self = this,
-            $lb = self.$lightbox,
             _windowWidth = $( window ).width(),
             _windowHeight = $( window ).height(),
-            _minimalLightboxWidth = self._getData( "minimalLightboxSize" ).width,
-            _minimalLightboxHeight = self._getData( "minimalLightboxSize" ).height,
-            _imageWidth = self._getData( "originalImageSize" ).width,
-            _imageHeight = self._getData( "originalImageSize" ).height,
-            _lightboxPadding = self._getData( "lightboxPadding" ),
-			_headerHeight = self._getData( "headerHeight" );
+            _minimalLightboxWidth = this._getData( "minimalLightboxSize" ).width,
+            _minimalLightboxHeight = this._getData( "minimalLightboxSize" ).height,
+            _imageWidth = this._getData( "originalImageSize" ).width,
+            _imageHeight = this._getData( "originalImageSize" ).height,
+            _lightboxPadding = this._getData( "lightboxPadding" ),
+			_headerHeight = this._getData( "headerHeight" );
 
         function _calculateSizes( w, h ) {
             _statuses = self._getImageStatus( w, h );
@@ -353,7 +353,7 @@ $.widget( "ui.rlightbox", {
         _calculateSizes( _imageWidth, _imageHeight );
 
         // final status
-		_statuses = self._getImageStatus( _imageTargetWidth, _imageTargetHeight );
+		_statuses = this._getImageStatus( _imageTargetWidth, _imageTargetHeight );
 		_statusWidth = _statuses.statusWidth;
 		_statusHeight = _statuses.statusHeight;
 
