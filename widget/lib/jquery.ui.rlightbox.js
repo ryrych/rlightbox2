@@ -82,21 +82,20 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_addToCategory: function( element ) {
-		var self = this,
-			_categoryName = self._getCategoryName( element );
+		var _categoryName = self._getCategoryName( element );
 
 		// one element; exit
 		if ( _categoryName === null ) {
 			return;
 		}
 
-        if ( !self.categories[_categoryName] ) {
+        if ( !this.categories[_categoryName] ) {
 			// first time - such category had not been created before
-            self.categories[_categoryName] = [];
-            self.categories[_categoryName].push( element );
+            this.categories[_categoryName] = [];
+            this.categories[_categoryName].push( element );
         } else {
 			// category exists yet - just add element to it
-            self.categories[_categoryName].push( element );
+            this.categories[_categoryName].push( element );
 		}
 	},
 
