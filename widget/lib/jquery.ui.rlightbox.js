@@ -849,14 +849,12 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_queueCenterLightbox: function( next ) {
-		var self = this;
-
 		var _screenWidth = $( window ).width(),
 			_screenHeight = $( window ).height();
-			_lbWidth = self.$lightbox.root.outerWidth(),
-			_lbHeight = self.$lightbox.root.outerHeight();
+			_lbWidth = this.$lightbox.root.outerWidth(),
+			_lbHeight = this.$lightbox.root.outerHeight();
 
-		self.$lightbox.root
+		this.$lightbox.root
 			.css({
 				left: Math.round( (_screenWidth - _lbWidth) / 2 ) + "px",
 				top: Math.round( (_screenHeight - _lbHeight) / 2 ) + "px"
