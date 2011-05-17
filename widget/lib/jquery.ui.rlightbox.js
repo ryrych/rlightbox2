@@ -832,6 +832,8 @@ $.widget( "ui.rlightbox", {
 				.empty()
 				.append( _label );
 		} else {
+
+			// keep the line height – prevent counter from popping up in the title line
 			this.$lightbox.title.append( "&nbsp;" );
 		}
 	},
