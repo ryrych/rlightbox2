@@ -95,15 +95,14 @@ $.widget( "ui.rlightbox", {
             this.categories[_categoryName] = [];
             this.categories[_categoryName].push( element );
         } else {
-			
+
 			// category exists yet - just add element to it
             this.categories[_categoryName].push( element );
 		}
 	},
 
 	_close: function() {
-		var self = this,
-			$lb = self.$lightbox;
+		var $lb = this.$lightbox;
 
 		$lb.overlay
 			.add( $lb.root )
@@ -122,23 +121,23 @@ $.widget( "ui.rlightbox", {
 		$lb.panoramaIcon
 			.hide()
 			.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink");
-		self._setData( "panoramaEnabled", false );
+		this._setData( "panoramaEnabled", false );
 
 		// reset the counter
-		self._setData( "currentElementNumber", null );
-		self._setData( "totalElementsNumber", null );
+		this._setData( "currentElementNumber", null );
+		this._setData( "totalElementsNumber", null );
 
 		// remove old title
-		self.$lightbox.title.empty();
+		this.$lightbox.title.empty();
 
 		// hide the map
-		self._panoramaHideMap();
+		this._panoramaHideMap();
 
 		// lightbox is not ready again
-		self._setData( "ready", false );
+		this._setData( "ready", false );
 
 		// get ready to next time - fill in queue
-		self._setOpenQueue();
+		this._setOpenQueue();
 	},
 
 	_closeHandler: function( event ) {
