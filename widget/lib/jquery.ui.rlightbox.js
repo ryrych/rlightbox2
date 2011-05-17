@@ -22,7 +22,7 @@ $.widget( "ui.rlightbox", {
 			$lb = this.$lightbox;
 
 		// some actions run only once – dirty flag nom nom nom
-		if ( !$("body" ).data( "HKn5fX_ZtrdfM-FBRHf6" ) ) {
+		if ( !$("body").data("HKn5fX_ZtrdfM-FBRHf6") ) {
 
 			// there may be many elements to act on: images, flash films but only one structure of the widget
 			this._createStructure();
