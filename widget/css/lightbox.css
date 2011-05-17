@@ -79,6 +79,7 @@
 
 #ui-lightbox-map {
 	background-color: black;
+	border: 1px solid white;
 	filter:Alpha(Opacity=20);
 	height: 100px;
 	opacity: .30;
