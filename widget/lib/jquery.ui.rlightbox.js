@@ -557,9 +557,10 @@ $.widget( "ui.rlightbox", {
 		$lb.map.hide();
 
 		// reset position of the viewport
+		// -1 prevents from overlapping the map border
 		$lb.viewport.css({
-			left: 0,
-			top: 0
+			left: -1,
+			top: -1
 		});
 	},
 
@@ -696,9 +697,10 @@ $.widget( "ui.rlightbox", {
 				.scrollTop( $content.scrollTop() + _distY );
 
 			// show the relevant part of the map
+			// subtrack 1 so that the viewport doesn’t overlap the map border
 			this.$lightbox.viewport.css({
-				left: $content.scrollLeft() * _viewportRatio.width,
-				top: $content.scrollTop() * _viewportRatio.height
+				left: $content.scrollLeft() * _viewportRatio.width - 1,
+				top: $content.scrollTop() * _viewportRatio.height - 1
 			});
 		}
 

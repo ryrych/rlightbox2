@@ -92,9 +92,9 @@
 
 #ui-lightbox-map-viewport {
 	border: 1px solid white;
-	left: 0;
+	left: -1px; /*prevent from overlapping the map border*/
 	position: absolute;
-	top: 0;
+	top: -1px; /*prevent from overlapping the map border*/
 }
 
 #ui-lightbox-overlay {
