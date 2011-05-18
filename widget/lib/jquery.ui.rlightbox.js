@@ -72,7 +72,7 @@ $.widget( "ui.rlightbox", {
 			$( "body" ).data( "HKn5fX_ZtrdfM-FBRHf6", true );
 		}
 
-		// add content into categories if any exists
+		// add content into sets if any exists
 		this._addToSet( this.element );
 
 		// open the lightbox upon click
@@ -90,15 +90,15 @@ $.widget( "ui.rlightbox", {
 			return;
 		}
 
-        if ( !this.categories[_setName] ) {
+        if ( !this.sets[_setName] ) {
 
 			// first time - such set had not been created before
-            this.categories[_setName] = [];
-            this.categories[_setName].push( element );
+            this.sets[_setName] = [];
+            this.sets[_setName].push( element );
         } else {
 
 			// set exists yet - just add element to it
-            this.categories[_setName].push( element );
+            this.sets[_setName].push( element );
 		}
 	},
 
@@ -205,7 +205,7 @@ $.widget( "ui.rlightbox", {
 			self = this;
 
 		// returns a 1 based ordinal number of an image in a set
-		$.each( this.categories[this._getData("currentSet")], function(i, v) {
+		$.each( this.sets[this._getData("currentSet")], function(i, v) {
 
 			// compare DOM elements
 			if ( self.$lightbox.currentElement.get( 0 ) === $( v ).get( 0 ) ) {
@@ -459,7 +459,7 @@ $.widget( "ui.rlightbox", {
 				this._setData( "currentElementNumber", _currentElementNumber + 1 );
 
 				// update current element
-				$lb.currentElement = this.categories[_set][_currentElementNumber];
+				$lb.currentElement = this.sets[_set][_currentElementNumber];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
@@ -468,7 +468,7 @@ $.widget( "ui.rlightbox", {
 				this._setData( "currentElementNumber", _currentElementNumber - 1 );
 
 				// update current element
-				$lb.currentElement = this.categories[_set][_currentElementNumber - 2];
+				$lb.currentElement = this.sets[_set][_currentElementNumber - 2];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
@@ -490,7 +490,7 @@ $.widget( "ui.rlightbox", {
 		// determine and remember how many elements belong to a set
 		// determine the current (and clicked) element in a set
 		if ( _currentSet ) {
-			this._setData( "totalElementsNumber", this.categories[_currentSet].length );
+			this._setData( "totalElementsNumber", this.sets[_currentSet].length );
 			this._setData( "currentElementNumber", this._getCurrentElementNumber() );
 		}
 
@@ -1025,7 +1025,7 @@ $.widget( "ui.rlightbox", {
 	},
 
 	$lightbox: {},
-	categories: {}
+	sets: {}
 });
 
 })( jQuery );
