@@ -14,7 +14,8 @@ $.widget( "ui.rlightbox", {
 	options: {
 		animationSpeed: "fast",
 		categoryPrefix: "lb",
-		showMap: true
+		showMap: true,
+		counterDelimiter: " / "
 	},
 
 	_create: function() {
@@ -156,11 +157,7 @@ $.widget( "ui.rlightbox", {
 								<p id='ui-lightbox-header-wrapper'>\
 									<span id='ui-lightbox-header-title'></span>\
 								</p>\
-								<p id='ui-lightbox-header-counter'>\
-									<span id='ui-lightbox-header-counter-current'>1</span>\
-									<span> of </span>\
-									<span id='ui-lightbox-header-counter-total'>1</span>\
-								</p>\
+								<p id='ui-lightbox-header-counter'></p>\
 								<a id='ui-lightbox-header-close' href='#'>\
 									<span class='ui-icon ui-icon-closethick'>close</span>\
 								</a>\
@@ -815,8 +812,7 @@ $.widget( "ui.rlightbox", {
 		$lb.header = $lb.root.find( "#ui-lightbox-header" );
 		$lb.overlay = $( "#ui-lightbox-overlay" );
 		$lb.close = $( "#ui-lightbox-header-close" );
-		$lb.counterCurrent = $lb.root.find( "#ui-lightbox-header-counter-current" );
-		$lb.counterTotal = $lb.root.find( "#ui-lightbox-header-counter-total" );
+		$lb.counter = $lb.root.find( "#ui-lightbox-header-counter" );
 		$lb.title = $lb.root.find( "#ui-lightbox-header-title" );
 		$lb.map = $( "#ui-lightbox-map" );
 		$lb.viewport = $lb.map.children().eq( 0 );
@@ -828,18 +824,12 @@ $.widget( "ui.rlightbox", {
 
 	_updateCounter: function() {
 		var _current, _total,
-			$lb = this.$lightbox;
+			$lb = this.$lightbox,
+			_current = this._getData( "currentElementNumber" ) || 1,
+			_total = this._getData( "totalElementsNumber" ) || 1,
+			_newCounter = _current + this.options.counterDelimiter + _total;
 
-		_current = this._getData( "currentElementNumber" ) || 1;
-		_total = this._getData( "totalElementsNumber" ) || 1;
-
-		$lb.counterCurrent
-			.empty()
-			.append( _current );
-
-		$lb.counterTotal
-			.empty()
-			.append( _total );
+		$lb.counter.text( _newCounter );
 	},
 
 	_updateTitle: function() {
