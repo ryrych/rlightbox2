@@ -482,7 +482,7 @@ $.widget( "ui.rlightbox", {
 
 	_open: function() {
 		var $lb = this.$lightbox,
-			_currentCatetory = this._getCategoryName( this.element );
+			_currentCategory = this._getCategoryName( this.element );
 
 		// keep a reference to a currentElement element
 		$lb.currentElement = this.element;
