@@ -13,7 +13,7 @@
 $.widget( "ui.rlightbox", {
 	options: {
 		animationSpeed: "fast",
-		categoryPrefix: "lb",
+		setPrefix: "lb",
 		showMap: true,
 		counterDelimiter: " / "
 	},
@@ -73,7 +73,7 @@ $.widget( "ui.rlightbox", {
 		}
 
 		// add content into categories if any exists
-		this._addToCategory( this.element );
+		this._addToSet( this.element );
 
 		// open the lightbox upon click
 		this.element.click(function() {
@@ -82,23 +82,23 @@ $.widget( "ui.rlightbox", {
 		});
 	},
 
-	_addToCategory: function( element ) {
-		var _categoryName = this._getCategoryName( element );
+	_addToSet: function( element ) {
+		var _setName = this._getSetName( element );
 
 		// one element; exit
-		if ( _categoryName === null ) {
+		if ( _setName === null ) {
 			return;
 		}
 
-        if ( !this.categories[_categoryName] ) {
+        if ( !this.categories[_setName] ) {
 
-			// first time - such category had not been created before
-            this.categories[_categoryName] = [];
-            this.categories[_categoryName].push( element );
+			// first time - such set had not been created before
+            this.categories[_setName] = [];
+            this.categories[_setName].push( element );
         } else {
 
-			// category exists yet - just add element to it
-            this.categories[_categoryName].push( element );
+			// set exists yet - just add element to it
+            this.categories[_setName].push( element );
 		}
 	},
 
@@ -189,11 +189,11 @@ $.widget( "ui.rlightbox", {
 		}
 	},
 
-	_getCategoryName: function( element ) {
+	_getSetName: function( element ) {
 
-		// if an anchor has class of e.g. ‘lb_gallery’ _getCategoryName() returns ‘gallery’ string as a category
+		// if an anchor has class of e.g. ‘lb_gallery’ _getSetName() returns ‘gallery’ string as a set
         var _classNames = $( element ).attr( "class" ),
-			_classPrefix = this.options.categoryPrefix + "_",
+			_classPrefix = this.options.setPrefix + "_",
 			_classPattern = new RegExp( _classPrefix + "(\\w+)" ),
 			_name = _classPattern.exec( _classNames );
 
@@ -204,8 +204,8 @@ $.widget( "ui.rlightbox", {
 		var _current,
 			self = this;
 
-		// returns an 1 based ordinal number of an image in a category
-		$.each( this.categories[this._getData("currentCategory")], function(i, v) {
+		// returns a 1 based ordinal number of an image in a set
+		$.each( this.categories[this._getData("currentSet")], function(i, v) {
 
 			// compare DOM elements
 			if ( self.$lightbox.currentElement.get( 0 ) === $( v ).get( 0 ) ) {
@@ -424,7 +424,7 @@ $.widget( "ui.rlightbox", {
 
 		// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
 		// clicked image belongs to a gallery and we are not in the Panorama™ mode
-		if ( self._getData("ready") && self._getData("currentCategory") && self._getData("panoramaEnabled") === false ) {
+		if ( self._getData("ready") && self._getData("currentSet") && self._getData("panoramaEnabled") === false ) {
 			var _pos = event.pageX - $content.offset().left,
 				_center = Math.round( $content.width() / 2 );
 
@@ -449,17 +449,17 @@ $.widget( "ui.rlightbox", {
 	_navigationNext: function() {
 		var _currentElementNumber,
 			$lb = this.$lightbox,
-			_category = this._getData( "currentCategory" );
+			_set = this._getData( "currentSet" );
 
 		// prevent from multi clicking and go to the next image only if it belongs to a gallery
-		if ( this._getData("ready") && _category) {
+		if ( this._getData("ready") && _set) {
 			_currentElementNumber = this._getData( "currentElementNumber" );
 
 			if ( _currentElementNumber + 1 <= this._getData("totalElementsNumber") && this._getData("side") === "right" ) {
 				this._setData( "currentElementNumber", _currentElementNumber + 1 );
 
 				// update current element
-				$lb.currentElement = this.categories[_category][_currentElementNumber];
+				$lb.currentElement = this.categories[_set][_currentElementNumber];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
@@ -468,7 +468,7 @@ $.widget( "ui.rlightbox", {
 				this._setData( "currentElementNumber", _currentElementNumber - 1 );
 
 				// update current element
-				$lb.currentElement = this.categories[_category][_currentElementNumber - 2];
+				$lb.currentElement = this.categories[_set][_currentElementNumber - 2];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
@@ -479,18 +479,18 @@ $.widget( "ui.rlightbox", {
 
 	_open: function() {
 		var $lb = this.$lightbox,
-			_currentCategory = this._getCategoryName( this.element );
+			_currentSet = this._getSetName( this.element );
 
 		// keep a reference to a currentElement element
 		$lb.currentElement = this.element;
 
-		// remember which category content belongs to
-		this._setData( "currentCategory", _currentCategory );
+		// remember which set content belongs to
+		this._setData( "currentSet", _currentSet );
 
-		// determine and remember how many elements belong to a category
-		// determine the current (and clicked) element in a category
-		if ( _currentCategory ) {
-			this._setData( "totalElementsNumber", this.categories[_currentCategory].length );
+		// determine and remember how many elements belong to a set
+		// determine the current (and clicked) element in a set
+		if ( _currentSet ) {
+			this._setData( "totalElementsNumber", this.categories[_currentSet].length );
 			this._setData( "currentElementNumber", this._getCurrentElementNumber() );
 		}
 
