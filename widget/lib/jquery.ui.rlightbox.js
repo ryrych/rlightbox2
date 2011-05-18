@@ -149,13 +149,35 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_createStructure: function() {
-		$( "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'></div>" )
-			.append( "<div id='ui-lightbox-panorama-icon' style='display: none'></div> ")
-			.append( "<div id='ui-lightbox-content' class='ui-widget-content'></div>" )
-			.append( "<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'><p id='ui-lightbox-header-wrapper'><span id='ui-lightbox-header-title'></span></p><p id='ui-lightbox-header-counter'><span id='ui-lightbox-header-counter-current'>1</span><span> of </span><span id='ui-lightbox-header-counter-total'>1</span></p><a id='ui-lightbox-header-close' href='#'><span class='ui-icon ui-icon-closethick'>close</span></a></div>" )
+		var _lightbox = "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>\
+							<div id='ui-lightbox-panorama-icon' style='display: none'></div>\
+							<div id='ui-lightbox-content' class='ui-widget-content'></div>\
+							<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'>\
+								<p id='ui-lightbox-header-wrapper'>\
+									<span id='ui-lightbox-header-title'></span>\
+								</p>\
+								<p id='ui-lightbox-header-counter'>\
+									<span id='ui-lightbox-header-counter-current'>1</span>\
+									<span> of </span>\
+									<span id='ui-lightbox-header-counter-total'>1</span>\
+								</p>\
+								<a id='ui-lightbox-header-close' href='#'>\
+									<span class='ui-icon ui-icon-closethick'>close</span>\
+								</a>\
+							</div>\
+						</div>",
+
+			_map = "<div id='ui-lightbox-map' style='display: none'>\
+						<div id='ui-lightbox-map-viewport'></div>\
+					</div>",
+
+			_overlay = "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>";
+
+		// append the structure
+		$( _lightbox )
 			.appendTo( "body" )
-			.after( "<div id='ui-lightbox-map' style='display: none'><div id='ui-lightbox-map-viewport'></div></div>" )
-			.after( "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>" );
+			.after( _map )
+			.after( _overlay );
 	},
 
 	destroy: function() {
