@@ -90,15 +90,15 @@ $.widget( "ui.rlightbox", {
 			return;
 		}
 
-        if ( !this.sets[_setName] ) {
+		if ( !this.sets[_setName] ) {
 
 			// first time - such set had not been created before
-            this.sets[_setName] = [];
-            this.sets[_setName].push( element );
-        } else {
+			this.sets[_setName] = [];
+			this.sets[_setName].push( element );
+		} else {
 
 			// set exists yet - just add element to it
-            this.sets[_setName].push( element );
+			this.sets[_setName].push( element );
 		}
 	},
 
@@ -151,22 +151,22 @@ $.widget( "ui.rlightbox", {
 
 	_createStructure: function() {
 		var _lightbox = "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>\
-							<div id='ui-lightbox-panorama-icon' style='display: none'></div>\
-							<div id='ui-lightbox-content' class='ui-widget-content'></div>\
-							<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'>\
-								<p id='ui-lightbox-header-wrapper'>\
-									<span id='ui-lightbox-header-title'></span>\
-								</p>\
-								<p id='ui-lightbox-header-counter'></p>\
-								<a id='ui-lightbox-header-close' href='#'>\
-									<span class='ui-icon ui-icon-closethick'>close</span>\
-								</a>\
-							</div>\
-						</div>",
+					<div id='ui-lightbox-panorama-icon' style='display: none'></div>\
+					<div id='ui-lightbox-content' class='ui-widget-content'></div>\
+					<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'>\
+						<p id='ui-lightbox-header-wrapper'>\
+							<span id='ui-lightbox-header-title'></span>\
+						</p>\
+						<p id='ui-lightbox-header-counter'></p>\
+						<a id='ui-lightbox-header-close' href='#'>\
+							<span class='ui-icon ui-icon-closethick'>close</span>\
+						</a>\
+					</div>\
+				</div>",
 
 			_map = "<div id='ui-lightbox-map' style='display: none'>\
-						<div id='ui-lightbox-map-viewport'></div>\
-					</div>",
+					<div id='ui-lightbox-map-viewport'></div>\
+				</div>",
 
 			_overlay = "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>";
 
@@ -192,12 +192,12 @@ $.widget( "ui.rlightbox", {
 	_getSetName: function( element ) {
 
 		// if an anchor has class of e.g. ‘lb_gallery’ _getSetName() returns ‘gallery’ string as a set
-        var _classNames = $( element ).attr( "class" ),
+		var _classNames = $( element ).attr( "class" ),
 			_classPrefix = this.options.setPrefix + "_",
 			_classPattern = new RegExp( _classPrefix + "(\\w+)" ),
 			_name = _classPattern.exec( _classNames );
 
-        return _name ? _name[1] : null;
+		return _name ? _name[1] : null;
 	},
 
 	_getCurrentElementNumber: function() {
@@ -232,13 +232,13 @@ $.widget( "ui.rlightbox", {
 		// 2 - content is larger than the window
 		// -2 - the window is smaller than minimal lightbox size
 		var _statusWidth, _statusHeight,
-            _windowWidth = $( window ).width(),
-            _windowHeight = $( window ).height(),
-            _minimalLightboxWidth = this._getData( "minimalLightboxSize" ).width,
-            _minimalLightboxHeight = this._getData( "minimalLightboxSize" ).height,
-            _imageWidth = this._getData( "originalImageSize" ).width,
-            _imageHeight = this._getData( "originalImageSize" ).height,
-            _lightboxPadding = this._getData( "lightboxPadding" ),
+			_windowWidth = $( window ).width(),
+			_windowHeight = $( window ).height(),
+			_minimalLightboxWidth = this._getData( "minimalLightboxSize" ).width,
+			_minimalLightboxHeight = this._getData( "minimalLightboxSize" ).height,
+			_imageWidth = this._getData( "originalImageSize" ).width,
+			_imageHeight = this._getData( "originalImageSize" ).height,
+			_lightboxPadding = this._getData( "lightboxPadding" ),
 			_headerHeight = this._getData( "headerHeight" );
 
 		if ( _windowWidth < _minimalLightboxWidth + _lightboxPadding ) {
@@ -268,123 +268,123 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_getSizes: function() {
-        var _statuses, _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
-            $lb = this.$lightbox,
-			self = this,
-            _windowWidth = $( window ).width(),
-            _windowHeight = $( window ).height(),
-            _minimalLightboxWidth = this._getData( "minimalLightboxSize" ).width,
-            _minimalLightboxHeight = this._getData( "minimalLightboxSize" ).height,
-            _imageWidth = this._getData( "originalImageSize" ).width,
-            _imageHeight = this._getData( "originalImageSize" ).height,
-            _lightboxPadding = this._getData( "lightboxPadding" ),
-			_headerHeight = this._getData( "headerHeight" );
+		var _statuses, _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
+			$lb = this.$lightbox,
+				self = this,
+				_windowWidth = $( window ).width(),
+				_windowHeight = $( window ).height(),
+				_minimalLightboxWidth = this._getData( "minimalLightboxSize" ).width,
+				_minimalLightboxHeight = this._getData( "minimalLightboxSize" ).height,
+				_imageWidth = this._getData( "originalImageSize" ).width,
+				_imageHeight = this._getData( "originalImageSize" ).height,
+				_lightboxPadding = this._getData( "lightboxPadding" ),
+				_headerHeight = this._getData( "headerHeight" );
 
-        function _calculateSizes( w, h ) {
-            _statuses = self._getImageStatus( w, h );
+		function _calculateSizes( w, h ) {
+			_statuses = self._getImageStatus( w, h );
 			_statusWidth = _statuses.statusWidth;
 			_statusHeight = _statuses.statusHeight;
 
-            // if image fits the window
-            if ( ((_statusWidth === 1 || _statusWidth === -1) && _statusHeight !== 2) && ((_statusHeight === 1 || _statusHeight === -1) && _statusWidth !== 2) ) {
-                if ( _statusWidth === 1 ) {
-                    _lightboxTargetWidth = w;
-                } else if ( _statusWidth === -1 ) {
-                    _lightboxTargetWidth = _minimalLightboxWidth;
+			// if image fits the window
+			if ( ((_statusWidth === 1 || _statusWidth === -1) && _statusHeight !== 2) && ((_statusHeight === 1 || _statusHeight === -1) && _statusWidth !== 2) ) {
+				if ( _statusWidth === 1 ) {
+					_lightboxTargetWidth = w;
+				} else if ( _statusWidth === -1 ) {
+					_lightboxTargetWidth = _minimalLightboxWidth;
 				}
 				_imageTargetWidth = w;
 
-                if ( _statusHeight === 1 ) {
-                    _lightboxTargetHeight = h;
-                } else if ( _statusHeight === -1 ) {
-                    _lightboxTargetHeight = _minimalLightboxHeight;
+				if ( _statusHeight === 1 ) {
+					lightboxTargetHeight = h;
+				} else if ( _statusHeight === -1 ) {
+					_lightboxTargetHeight = _minimalLightboxHeight;
 				}
 				_imageTargetHeight = h;
-            } else if ( _statusWidth === 2 || _statusHeight === 2 ) {
+			} else if ( _statusWidth === 2 || _statusHeight === 2 ) {
 
-                // height is larger than window, width fits the window
-                if ( _statusWidth === 1 || _statusWidth === -1 ) {
-                    _lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;
+				// height is larger than window, width fits the window
+				if ( _statusWidth === 1 || _statusWidth === -1 ) {
+					_lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;
 					_heightRatio = _lightboxTargetHeight / _imageHeight;
 					_imageTargetHeight = _lightboxTargetHeight;
 
-                    if (_statusWidth === -1) {
-                        _lightboxTargetWidth = _minimalLightboxWidth;
+					if (_statusWidth === -1) {
+						_lightboxTargetWidth = _minimalLightboxWidth;
 						_imageTargetWidth = Math.ceil( w * _heightRatio );
 					} else {
-                        _lightboxTargetWidth = Math.ceil( _imageWidth * _heightRatio );
+						_lightboxTargetWidth = Math.ceil( _imageWidth * _heightRatio );
 						_imageTargetWidth = _lightboxTargetWidth;
-
-                        if ( _lightboxTargetWidth <= _minimalLightboxWidth ) {
-                            _calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
+	
+						if ( _lightboxTargetWidth <= _minimalLightboxWidth ) {
+							_calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
 						}
-                    }
-                } else if ( _statusHeight === 1 || _statusHeight === -1 ) {
+					}
+				} else if ( _statusHeight === 1 || _statusHeight === -1 ) {
 
 					// width is larger than window, height fit the window
-                    _lightboxTargetWidth = _windowWidth - _lightboxPadding;
+					_lightboxTargetWidth = _windowWidth - _lightboxPadding;
 					_widthRatio = _lightboxTargetWidth / _imageWidth;
 					_imageTargetWidth = _lightboxTargetWidth;
-
-                    if ( _statusHeight === -1 ) {
-                        _lightboxTargetHeight = _minimalLightboxHeight;
+					
+					if ( _statusHeight === -1 ) {
+						_lightboxTargetHeight = _minimalLightboxHeight;
 						_imageTargetHeight = Math.ceil( h * _widthRatio );
 					} else {
-                        _lightboxTargetHeight = Math.ceil( _imageHeight * _widthRatio );
+						_lightboxTargetHeight = Math.ceil( _imageHeight * _widthRatio );
 						_imageTargetHeight = _lightboxTargetHeight;
 
-                        if ( _lightboxTargetHeight <= _minimalLightboxHeight ) {
-                            _calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
+						if ( _lightboxTargetHeight <= _minimalLightboxHeight ) {
+							_calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
 						}
-                    }
+					}
                 } else {
 
 					// both width and height are larger than window
-                    if ( _imageWidth > _imageHeight ) {
-                        _lightboxTargetWidth = _windowWidth - _lightboxPadding;
+					if ( _imageWidth > _imageHeight ) {
+						_lightboxTargetWidth = _windowWidth - _lightboxPadding;
 						_imageTargetWidth = _lightboxTargetWidth;
-                        _widthRatio = _lightboxTargetWidth / _imageWidth;
-                        _lightboxTargetHeight = _imageHeight * _widthRatio - _lightboxPadding - _headerHeight;
+						_widthRatio = _lightboxTargetWidth / _imageWidth;
+						_lightboxTargetHeight = _imageHeight * _widthRatio - _lightboxPadding - _headerHeight;
 						_imageTargetHeight = _lightboxTargetHeight;
 
-                        // check if height fits the window
-                        // if no, then scale height to fit the window and re-scale the width
-                        if ( (_windowHeight < _lightboxTargetHeight + _lightboxPadding + _headerHeight) || _lightboxTargetHeight <= _minimalLightboxHeight ) {
-                            _calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
+						// check if height fits the window
+						// if no, then scale height to fit the window and re-scale the width
+						if ( (_windowHeight < _lightboxTargetHeight + _lightboxPadding + _headerHeight) || _lightboxTargetHeight <= _minimalLightboxHeight ) {
+							_calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
 						}
-                    } else {
-                        _lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;
-                        _heightRatio = _lightboxTargetHeight / _imageHeight;
+					} else {
+						_lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;
+						_heightRatio = _lightboxTargetHeight / _imageHeight;
 						_imageTargetHeight = _lightboxTargetHeight;
-
-                        // check if width fits window after scaling
-                        _lightboxTargetWidth = _imageWidth * _heightRatio;
+	
+						// check if width fits window after scaling
+						_lightboxTargetWidth = _imageWidth * _heightRatio;
 						_imageTargetHeight = _lightboxTargetHeight;
-
-                        // no, then scale width to fit the window and re-scale width
-                        if ( _lightboxTargetWidth + _lightboxPadding > _windowWidth || _lightboxTargetWidth < _minimalLightboxWidth ) {
-                            _calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
+	
+						// no, then scale width to fit the window and re-scale width
+						if ( _lightboxTargetWidth + _lightboxPadding > _windowWidth || _lightboxTargetWidth < _minimalLightboxWidth ) {
+							_calculateSizes( _lightboxTargetWidth, _lightboxTargetHeight );
 						}
-                    }
-                }
-            }
-        }
-        _calculateSizes( _imageWidth, _imageHeight );
+					}
+				}
+			}
+		}
+		_calculateSizes( _imageWidth, _imageHeight );
 
-        // final status
+		// final status
 		_statuses = this._getImageStatus( _imageTargetWidth, _imageTargetHeight );
 		_statusWidth = _statuses.statusWidth;
 		_statusHeight = _statuses.statusHeight;
 
-        return {
+		return {
 			imageTargetWidth: _imageTargetWidth,
 			imageTargetHeight: _imageTargetHeight,
-            lightboxTargetWidth: _lightboxTargetWidth,
-            lightboxTargetHeight: _lightboxTargetHeight,
-            statusWidth: _statusWidth,
+			lightboxTargetWidth: _lightboxTargetWidth,
+			lightboxTargetHeight: _lightboxTargetHeight,
+			statusWidth: _statusWidth,
 			statusHeight: _statusHeight
-        };
-    },
+		};
+	},
 
 	_liveResize: function() {
 
