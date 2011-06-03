@@ -109,12 +109,6 @@ $.widget( "ui.rlightbox", {
 		//
 		var _setName = this._getSetName( setElement.element );
 
-		// one element; exit
-		// TODO: pojedyncze elementy także powinny być zapisane
-		if ( _setName === null ) {
-			return;
-		}
-
 		if ( !this.sets[_setName] ) {
 
 			// first time - such set had not been created before
@@ -261,12 +255,13 @@ $.widget( "ui.rlightbox", {
 	_getSetName: function( element ) {
 
 		// if an anchor has class of e.g. ‘lb_gallery’ _getSetName() returns ‘gallery’ string as a set
+		// otherwise it returns "single" - single content is placed under "single" set  
 		var _classNames = $( element ).attr( "class" ),
 			_classPrefix = this.options.setPrefix + "_",
 			_classPattern = new RegExp( _classPrefix + "(\\w+)" ),
 			_name = _classPattern.exec( _classNames );
 
-		return _name ? _name[1] : null;
+		return _name ? _name[1] : "single";
 	},
 
 	_getCurrentElementNumber: function( element ) {
@@ -597,7 +592,7 @@ $.widget( "ui.rlightbox", {
 
 		// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
 		// clicked image belongs to a gallery and we are not in the Panorama™ mode
-		if ( self._getData("ready") && self._getData("currentSet") && self._getData("panoramaEnabled") === false ) {
+		if ( self._getData("ready") && self._getData("currentSet") !== "single" && self._getData("panoramaEnabled") === false ) {
 			var _pos = event.pageX - $content.offset().left,
 				_center = Math.round( $content.width() / 2 );
 
@@ -625,7 +620,7 @@ $.widget( "ui.rlightbox", {
 			_set = this._getData( "currentSet" );
 
 		// prevent from multi clicking and go to the next image only if it belongs to a gallery
-		if ( this._getData("ready") && _set) {
+		if ( this._getData("ready") && _set !== "single" ) {
 			_currentElementNumber = this._getData( "currentElementNumber" );
 
 			if ( _currentElementNumber + 1 <= this._getData("totalElementsNumber") && this._getData("side") === "right" ) {
@@ -660,10 +655,8 @@ $.widget( "ui.rlightbox", {
 
 		// determine and remember how many elements belong to a set
 		// determine the current (and clicked) element in a set
-		if ( _currentSet ) {
-			this._setData( "totalElementsNumber", this.sets[_currentSet].length );
-			this._setData( "currentElementNumber", this._getCurrentElementNumber( this.element ) );
-		}
+		this._setData( "totalElementsNumber", this.sets[_currentSet].length );
+		this._setData( "currentElementNumber", this._getCurrentElementNumber( this.element ) );
 
 		// keep a reference to a current element in a set (consisting of a url, type…)
 		this._setData( "currentSetElement", this.sets[_currentSet][this._getData("currentElementNumber") - 1] );
@@ -991,10 +984,18 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_updateCounter: function() {
-		var _current, _total,
+		var _current, _total, _newCounter,
 			$lb = this.$lightbox,
-			_current = this._getData( "currentElementNumber" ) || 1,
-			_total = this._getData( "totalElementsNumber" ) || 1,
+			_currentSet = this._getData( "currentSet" );
+			
+			if ( _currentSet !== "single" ) {
+				_current = this._getData( "currentElementNumber" );
+				_total = this._getData( "totalElementsNumber" );
+			} else {
+				_current = 1;
+				_total = 1;
+			}
+			
 			_newCounter = _current + this.options.counterDelimiter + _total;
 
 		$lb.counter.text( _newCounter );
