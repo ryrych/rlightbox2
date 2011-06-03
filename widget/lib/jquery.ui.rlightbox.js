@@ -458,6 +458,7 @@ $.widget( "ui.rlightbox", {
 		// resizes an image when size of the browser window resizes and when Panorama is turned off
 		if ( this._getData("ready") && this._getData("panoramaEnabled") === false ) {
 			this._queueResizeLightbox();
+			this._updateTitleHeight();
 			this._queueCenterContent();
 		} else if ( this._getData("ready") && this._getData("panoramaEnabled") ) {
 
@@ -1006,9 +1007,6 @@ $.widget( "ui.rlightbox", {
 		// 20px is a safety distance between text and the close button
 		if ( _currentElement.title !== "" ) {
 			this.$lightbox.title
-				.parent()
-					.width( this.$lightbox.content.width() - 20 )
-					.end()
 				.empty()
 				.append( _currentElement.title );
 		} else {
@@ -1016,6 +1014,10 @@ $.widget( "ui.rlightbox", {
 			// keep the line height – prevent counter from popping up in the title line
 			this.$lightbox.title.append( "&nbsp;" );
 		}
+	},
+	
+	_updateTitleHeight: function() {
+		this.$lightbox.title.width( this.$lightbox.content.width() - 20 );
 	},
 
 	_queueShowOverlay: function( next ) {
@@ -1175,6 +1177,7 @@ $.widget( "ui.rlightbox", {
 		this._updateCounter();
 
 		// update title
+		this._updateTitleHeight();
 		this._updateTitle();
 
 		// indicate that animation queue is finshed
