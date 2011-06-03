@@ -15,11 +15,14 @@ $.widget( "ui.rlightbox", {
 		animationSpeed: "fast",
 		setPrefix: "lb",
 		showMap: true,
-		counterDelimiter: " / "
+		counterDelimiter: " / ",
+		videoWidth: 640,
+		videoHeight: 385
 	},
 
 	_create: function() {
-		var self = this,
+		var _content,
+			self = this,
 			$lb = this.$lightbox;
 
 		// some actions run only once – dirty flag nom nom nom
@@ -65,27 +68,49 @@ $.widget( "ui.rlightbox", {
 				mapSize: {
 					width: parseInt( $lb.map.css("width") ),
 					height: parseInt( $lb.map.css("height") )
-				}
+				},
+				oembedProvider: "http://oohembed.com/oohembed?callback=?"
 			});
 
 			// never run it again
 			$( "body" ).data( "HKn5fX_ZtrdfM-FBRHf6", true );
 		}
 
-		// add content into sets if any exists
-		this._addToSet( this.element );
-
-		// open the lightbox upon click
-		this.element.click(function() {
-			self._open();
-			return false;
-		});
+		// which type content belongs to: youtube, vimeo, flash, image, etc.;
+		// what is its url, title (for images)
+		_content = this._extractAnchor( this.element );
+		
+		// add type, url, jQuery element and title of content to a set if content is supported by the lightbox
+		// otherwise fall silently
+		if ( _content.type !== undefined ) {
+			
+			this._addToSet( _content );
+		
+			// open the lightbox upon click
+			this.element.click(function() {
+				self._open();
+				return false;// TODO use preventDefault
+			});
+		}
 	},
 
-	_addToSet: function( element ) {
-		var _setName = this._getSetName( element );
+	_addToSet: function( setElement ) {
+		
+		// set structure is following:
+		// sets: {
+		//		setName: [
+		//			{
+		//				url: "http://www.youtube.com?v=u408408598,
+		//				type: "youtube"
+		//			},
+		//			{…}
+		//		],
+		//		setName2: […]
+		//
+		var _setName = this._getSetName( setElement.element );
 
 		// one element; exit
+		// TODO: pojedyncze elementy także powinny być zapisane
 		if ( _setName === null ) {
 			return;
 		}
@@ -94,11 +119,11 @@ $.widget( "ui.rlightbox", {
 
 			// first time - such set had not been created before
 			this.sets[_setName] = [];
-			this.sets[_setName].push( element );
+			this.sets[_setName].push( setElement );
 		} else {
 
 			// set exists yet - just add element to it
-			this.sets[_setName].push( element );
+			this.sets[_setName].push( setElement );
 		}
 	},
 
@@ -179,6 +204,50 @@ $.widget( "ui.rlightbox", {
 
 	destroy: function() {
 	},
+	
+	_extractAnchor: function( anchor ) {
+		
+		// _extractAnchor elicits information from anchor element (DOM A element)
+		// @url are used for loading content such as images, youtube videos, etc
+		// @type is needed to choose suitable loading method in _queueLoadContent
+		// @title is used to dispay title of an image or flash content (.flv) –
+		// since youtube and vimeo content is got via oembed, title is got later after loading the content
+		// $element keeps jQuery object of an anchor and it’s used for example
+		// in _getCurrentElementNumber to get the index in array in a set of clicked content
+		var _ytUrl,
+			$anchor = $( anchor ),
+			_url = $anchor.attr( "href" ),
+			_regExps = {
+				youtube: /(youtube\.com\/watch\?v=([\w-_]+))&?/,
+				image: /.jpg$|.png$|.gif$/
+			};
+		
+		// youtube link
+		if ( _regExps.youtube.exec(_url) !== null ) {
+			
+			// return normalised url (without parameters)			
+			_ytUrl = _regExps.youtube.exec( _url )[1];
+			
+			return {
+				url: _url,
+				type: "youtube",
+				element: $anchor
+			}
+		} else if ( _regExps.image.exec(_url) ) {
+			return {
+				url: _url,
+				type: "image",
+				title: $anchor.attr( "title" ),
+				element: $anchor
+			}
+		} else {
+			
+			// the content will be excluded – no click handler on this anchor
+			return {
+				type: undefined
+			}
+		}
+	},		
 
 	_getAvailableScreenSize: function() {
 		var _padding = this._getData( "lightboxPadding" );
@@ -200,22 +269,23 @@ $.widget( "ui.rlightbox", {
 		return _name ? _name[1] : null;
 	},
 
-	_getCurrentElementNumber: function() {
-		var _current,
-			self = this;
+	_getCurrentElementNumber: function( element ) {
+		var _currentNumber,
+			self = this,
+			_currentSet = this.sets[this._getData("currentSet")];
 
 		// returns a 1 based ordinal number of an image in a set
-		$.each( this.sets[this._getData("currentSet")], function(i, v) {
-
+		$.each(_currentSet, function(i, v) {
+		
 			// compare DOM elements
-			if ( self.$lightbox.currentElement.get( 0 ) === $( v ).get( 0 ) ) {
-				_current = i + 1;
-
+			if ( $(element).get(0) === v.element.get(0) ) {
+				_currentNumber = i + 1;
+		
 				// exit $.each()
 				return false;
 			}
 		});
-		return _current;
+		return _currentNumber;
 	},
 
 	_getData: function( key ) {
@@ -279,7 +349,7 @@ $.widget( "ui.rlightbox", {
 				_imageHeight = this._getData( "originalImageSize" ).height,
 				_lightboxPadding = this._getData( "lightboxPadding" ),
 				_headerHeight = this._getData( "headerHeight" );
-
+				
 		function _calculateSizes( w, h ) {
 			_statuses = self._getImageStatus( w, h );
 			_statusWidth = _statuses.statusWidth;
@@ -295,7 +365,7 @@ $.widget( "ui.rlightbox", {
 				_imageTargetWidth = w;
 
 				if ( _statusHeight === 1 ) {
-					lightboxTargetHeight = h;
+					_lightboxTargetHeight = h;
 				} else if ( _statusHeight === -1 ) {
 					_lightboxTargetHeight = _minimalLightboxHeight;
 				}
@@ -398,12 +468,115 @@ $.widget( "ui.rlightbox", {
 			this._queueCenterLightbox();
 		}
 	},
+	
+	_loadContentImage: function( url ) {
+		var self = this,
+			$lb = this.$lightbox,
+			_dfd = $.Deferred();
+			
+		// start loading maximized image
+		$lb.content.addClass( "ui-lightbox-loader" );
+		$.when( this._loadImage(url) ).then(function( img ) {
+		
+			// keep original size of an image – needed when resizing
+			// TODO: zapisać width i height w secie
+			self._setData({
+				originalImageSize: {
+					width: img.width,
+					height: img.height
+				}
+			});
+		
+			// save original sizes and status for panorama purposes
+			self._setData( "originalStatus", self._getImageStatus( img.width, img.height) );
+		
+			// add the loaded image and hide it
+			$lb.content
+				.removeClass( "ui-lightbox-loader" )			
+				.empty()
+				.append( img )
+				.children()
+					.hide();
+		
+			_dfd.resolve();
+		});
+		
+		return _dfd.promise();
+	},
+	
+	_loadContentYoutube: function( url ) {
+		var _width, _height,
+			self = this,
+			_dfd = $.Deferred(),
+			_apiEnd = this._getData( "oembedProvider" ),
+			$lb = this.$lightbox,
+			_currentElement = this._getData( "currentSetElement" ),
+			_minimalLightboxSize = this._getData( "minimalLightboxSize" );
+		
+		// show loader
+		$lb.content.addClass( "ui-lightbox-loader" );
+		
+		$.ajax(
+			{
+				url: _apiEnd,
+				data: {
+					url: url,
+					maxwidth: this.options.videoWidth,
+					maxheight: this.options.videoHeight
+				},
+				dataType: "jsonp",
+				timeout: 5000
+			}
+		)
+		.success(
+			function( data ) {
+
+				// add embedded code
+				$lb.content
+					.removeClass( "ui-lightbox-loader" )
+					.empty()
+					.append( data.html )
+					.children()
+						.wrap( "<div style='display: none'></div>" );
+				
+				// remember video title
+				_currentElement.title = data.title;
+				
+				// and returned width and height
+				if ( data.width < _minimalLightboxSize.width ) {
+					_width = _minimalLightboxSize.width;
+				} else {
+					_width = data.width;
+				}
+				
+				if ( data.height < _minimalLightboxSize.height ) {
+					_height = _minimalLightboxSize.height;
+				} else {
+					_height = data.height;
+				}
+				
+				_currentElement.width = _width;
+				_currentElement.height = _height;
+				
+				_dfd.resolve();
+			}
+		)
+		.error(function() {
+			// TODO: pokazać ładny obrazek z błędem w lightboksie
+			// umozliwic normalna nawigacje/pomijanie blednego contentu
+			alert( "oops, something went wrong!" );
+			
+			_dfd.resolve();
+		});
+		
+		return _dfd.promise();
+	},
 
 	_loadImage: function( path ) {
 		var _image = new Image(),
 			_loadWatch,
 			_dfd = $.Deferred();
-
+			
 		_image.src = path;
 
 		function _watch() {
@@ -459,7 +632,7 @@ $.widget( "ui.rlightbox", {
 				this._setData( "currentElementNumber", _currentElementNumber + 1 );
 
 				// update current element
-				$lb.currentElement = this.sets[_set][_currentElementNumber];
+				this._setData( "currentSetElement", this.sets[_set][_currentElementNumber] );
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
@@ -468,7 +641,7 @@ $.widget( "ui.rlightbox", {
 				this._setData( "currentElementNumber", _currentElementNumber - 1 );
 
 				// update current element
-				$lb.currentElement = this.sets[_set][_currentElementNumber - 2];
+				this._setData( "currentSetElement", this.sets[_set][_currentElementNumber - 2] );
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
@@ -479,10 +652,8 @@ $.widget( "ui.rlightbox", {
 
 	_open: function() {
 		var $lb = this.$lightbox,
-			_currentSet = this._getSetName( this.element );
-
-		// keep a reference to a currentElement element
-		$lb.currentElement = this.element;
+			_currentSet = this._getSetName( this.element ),
+			_currentUrl = $( this.element ).attr( "href" );
 
 		// remember which set content belongs to
 		this._setData( "currentSet", _currentSet );
@@ -491,15 +662,12 @@ $.widget( "ui.rlightbox", {
 		// determine the current (and clicked) element in a set
 		if ( _currentSet ) {
 			this._setData( "totalElementsNumber", this.sets[_currentSet].length );
-			this._setData( "currentElementNumber", this._getCurrentElementNumber() );
+			this._setData( "currentElementNumber", this._getCurrentElementNumber( this.element ) );
 		}
 
-		// show counter
-		this._updateCounter();
-
-		// show title if any
-		this._updateTitle();
-
+		// keep a reference to a current element in a set (consisting of a url, type…)
+		this._setData( "currentSetElement", this.sets[_currentSet][this._getData("currentElementNumber") - 1] );
+		
 		// start opening the lighbox
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
 	},
@@ -833,17 +1001,17 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_updateTitle: function() {
-		var _label = this.$lightbox.currentElement.attr( "title" );
-
+		var _currentElement = this._getData( "currentSetElement" );
+		
 		// set new label for the title and trim it if it is too long - no scrolling at the moment
 		// 20px is a safety distance between text and the close button
-		if ( _label !== "" ) {
+		if ( _currentElement.title !== "" ) {
 			this.$lightbox.title
 				.parent()
 					.width( this.$lightbox.content.width() - 20 )
 					.end()
 				.empty()
-				.append( _label );
+				.append( _currentElement.title );
 		} else {
 
 			// keep the line height – prevent counter from popping up in the title line
@@ -876,39 +1044,37 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_queueLoadContent: function( next ) {
-		var self = this,
-			$lb = this.$lightbox;
+		
+		// loads appropriate content using right method
+		var _loadContentMethod,
+			_currentSetElement = this._getData( "currentSetElement" );
+		
+		switch ( _currentSetElement.type ) {
+			case "image":
+				_loadContentMethod = "_loadContentImage";
+				break;
+			
+			case "youtube":
+				_loadContentMethod = "_loadContentYoutube";
+				break;
+		}
 
-		// start loading maximized image
-		$lb.content.addClass( "ui-lightbox-loader" );
-		$.when( this._loadImage($lb.currentElement.attr("href")) ).then(function( img ) {
-
-			// keep original size of an image – needed when resizing
-			self._setData({
-				originalImageSize: {
-					width: img.width,
-					height: img.height
-				}
-			});
-
-			// save original sizes and status for panorama purposes
-			self._setData( "originalStatus", self._getImageStatus( img.width, img.height) );
-
-			// add the loaded image and hide it
-			$lb.content
-				.append( img )
-				.find( "img" )
-					.hide();
-
+		$.when( this[_loadContentMethod](_currentSetElement.url) ).then(function() {
 			next();
 		});
 	},
 
 	_queueResizeLightbox: function( next ) {
 
-		// center the lightbox and scale it
-		// get sizes of the lightbox, image and their statuses
-		var _speed, _animate,
+		// resizes the lightbox to to house content and centers it on the screen
+		var _isAllowed, _speed, _animate, _sizes, _imageTargetWidth, _imageTargetHeight,
+			_lightboxTargetWidth, _lightboxTargetHeight, _statusWidth, _statusHeight, _img,
+			_padding = this._getData( "lightboxPadding" ),
+			_headerHeight = this._getData( "headerHeight" ),
+			_currentElement = this._getData( "currentSetElement" );
+
+		// if content is type of image, resize it to fit the screen
+		if ( _currentElement.type === "image" ) {
 			_sizes = this._getSizes(),
 			_imageTargetWidth = _sizes.imageTargetWidth,
 			_imageTargetHeight = _sizes.imageTargetHeight,
@@ -916,31 +1082,43 @@ $.widget( "ui.rlightbox", {
 			_lightboxTargetHeight = _sizes.lightboxTargetHeight,
 			_statusWidth = _sizes.statusWidth,
 			_statusHeight = _sizes.statusHeight,
-			_img = this.$lightbox.content.find( "img" ),
-			_padding = this._getData( "lightboxPadding" ),
-			_headerHeight = this._getData( "headerHeight" );
+			_img = this.$lightbox.content.find( "img" );			
 
-		// if you use this method in the context of a queue then use animation; otherwise when used in live resize, don’t animate it
-		if ( $.isFunction(next) ) {
-			_speed = this.options.animationSpeed;
-			_animate = true;
+			// scale an image only if the minimal size of the lightbox fits on the screen
+			// for example if minimal lightbox size if of 300px, the image is scaled only if
+			// the browser window is bigger or equal to 300px
+			if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
+				_isAllowed = true;
+				
+				// scale the image
+				_img
+					.width( _imageTargetWidth )
+					.height( _imageTargetHeight );
+				
+				// if you use this method in the context of a queue then use animation; otherwise when used in live resize, don’t animate it
+				if ( $.isFunction(next) ) {
+					_speed = this.options.animationSpeed;
+				} else {
+					_speed = 0;
+				}
+			} else {
+				// TODO: pokaz informacje kiedy przegladarka jest uruchomiona w rozmiarze mniejszym od minimalnego rozmiaru
+				_isAllowed = false;
+			}
 		} else {
-			_speed = 0;
-			_animate = false;
+			
+			// if content is flash video
+			_isAllowed = true;
+			_speed = this.options.animationSpeed;
+			_lightboxTargetWidth = _currentElement.width;
+			_lightboxTargetHeight = _currentElement.height;
 		}
 
-		// only if window is larger than minial size of the lightbox
-		if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
-
-			// scale the image to fit the window or container
-			_img
-				.width( _imageTargetWidth )
-				.height( _imageTargetHeight );
+		if ( _isAllowed) {
 
 			// scale and resize the lightbox
 			this.$lightbox.root
 				.find( "#ui-lightbox-content" )
-					.removeClass( "ui-lightbox-loader" )
 					.animate( {width: _lightboxTargetWidth}, _speed )
 					.animate( {height: _lightboxTargetHeight}, _speed )
 					.end()
@@ -950,14 +1128,15 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_queueCenterContent: function( next ) {
-		var $content = this.$lightbox.content,
-			$img = $content.find( "img" );
-
-		$content
-			.find( "img" )
+		var _content,
+			$contentContainer = this.$lightbox.content,
+			_content = $contentContainer.children();
+			
+		$contentContainer
+			.children()
 				.css({
-					top: $content.height() / 2 - $img.height() / 2,
-					left: $content.width() / 2 - $img.width() / 2
+					top: $contentContainer.height() / 2 - _content.height() / 2,
+					left: $contentContainer.width() / 2 - _content.width() / 2
 				});
 
 		// if we don’t run it in the live resize but in the queue
@@ -968,18 +1147,22 @@ $.widget( "ui.rlightbox", {
 
 	_queueShowContent: function( next ) {
 		var $lb = this.$lightbox;
-			_originalStatus = this._getData( "originalStatus" );
+			_originalStatus = this._getData( "originalStatus" ),
+			_currentElement = this._getData( "currentSetElement" );
 
 		// show content
-		$lb.content.find( "img" )
+		$lb.content.children()
 			.fadeIn( this.options.animationSpeed, function() {
 
 				// if one of the image sides is bigger than the screen, show panorama icon
-				if ( _originalStatus.statusWidth === 2 || _originalStatus.statusHeight === 2 ) {
-					$lb.panoramaIcon
-						.show()
-						.addClass( "ui-lightbox-panorama-icon-expand" );
+				if ( _currentElement.type === "image" ) {
+					if ( _originalStatus.statusWidth === 2 || _originalStatus.statusHeight === 2 ) {
+						$lb.panoramaIcon
+							.show()
+							.addClass( "ui-lightbox-panorama-icon-expand" );
+					}
 				}
+
 				next();
 			});
 	},
@@ -1007,7 +1190,7 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_queueHideContent: function( next ) {
-		this.$lightbox.content.find( "img" )
+		this.$lightbox.content.children()
 			.fadeOut( this.options.animationSpeed, function() {
 				$( this ).remove();
 				next();

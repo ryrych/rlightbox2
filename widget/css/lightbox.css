@@ -18,7 +18,7 @@
 	height: 20px;
 }
 
-#ui-lightbox-content > img {
+#ui-lightbox-content > * {
 	display: block;
 	position: absolute;
 	z-index: 100;
