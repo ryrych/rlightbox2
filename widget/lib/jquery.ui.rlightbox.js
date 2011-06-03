@@ -481,7 +481,7 @@ $.widget( "ui.rlightbox", {
 			_currentElement.height = img.height;
 		
 			// save original sizes and status for panorama purposes
-			self._setData( "originalStatus", self._getImageStatus( img.width, img.height) );
+			_currentElement.originalStatus = self._getImageStatus( img.width, img.height);
 		
 			// add the loaded image and hide it
 			$lb.content
@@ -1146,8 +1146,8 @@ $.widget( "ui.rlightbox", {
 
 	_queueShowContent: function( next ) {
 		var $lb = this.$lightbox;
-			_originalStatus = this._getData( "originalStatus" ),
-			_currentElement = this._getData( "currentSetElement" );
+			_currentElement = this._getData( "currentSetElement" ),
+			_originalStatus = _currentElement.originalStatus;
 
 		// show content
 		$lb.content.children()
