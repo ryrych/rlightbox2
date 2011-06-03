@@ -297,12 +297,13 @@ $.widget( "ui.rlightbox", {
 		// 2 - content is larger than the window
 		// -2 - the window is smaller than minimal lightbox size
 		var _statusWidth, _statusHeight,
+			_currentElement = this._getData( "currentSetElement" ),
 			_windowWidth = $( window ).width(),
 			_windowHeight = $( window ).height(),
 			_minimalLightboxWidth = this._getData( "minimalLightboxSize" ).width,
 			_minimalLightboxHeight = this._getData( "minimalLightboxSize" ).height,
-			_imageWidth = this._getData( "originalImageSize" ).width,
-			_imageHeight = this._getData( "originalImageSize" ).height,
+			_imageWidth = _currentElement.width,
+			_imageHeight = _currentElement.height,
 			_lightboxPadding = this._getData( "lightboxPadding" ),
 			_headerHeight = this._getData( "headerHeight" );
 
@@ -336,12 +337,13 @@ $.widget( "ui.rlightbox", {
 		var _statuses, _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
 			$lb = this.$lightbox,
 				self = this,
+				_currentElement = this._getData( "currentSetElement" ),
 				_windowWidth = $( window ).width(),
 				_windowHeight = $( window ).height(),
 				_minimalLightboxWidth = this._getData( "minimalLightboxSize" ).width,
 				_minimalLightboxHeight = this._getData( "minimalLightboxSize" ).height,
-				_imageWidth = this._getData( "originalImageSize" ).width,
-				_imageHeight = this._getData( "originalImageSize" ).height,
+				_imageWidth = _currentElement.width,
+				_imageHeight = _currentElement.height,
 				_lightboxPadding = this._getData( "lightboxPadding" ),
 				_headerHeight = this._getData( "headerHeight" );
 				
@@ -467,6 +469,7 @@ $.widget( "ui.rlightbox", {
 	_loadContentImage: function( url ) {
 		var self = this,
 			$lb = this.$lightbox,
+			_currentElement = this._getData( "currentSetElement" )
 			_dfd = $.Deferred();
 			
 		// start loading maximized image
@@ -474,13 +477,8 @@ $.widget( "ui.rlightbox", {
 		$.when( this._loadImage(url) ).then(function( img ) {
 		
 			// keep original size of an image – needed when resizing
-			// TODO: zapisać width i height w secie
-			self._setData({
-				originalImageSize: {
-					width: img.width,
-					height: img.height
-				}
-			});
+			_currentElement.width = img.width;
+			_currentElement.height = img.height;
 		
 			// save original sizes and status for panorama purposes
 			self._setData( "originalStatus", self._getImageStatus( img.width, img.height) );
@@ -667,12 +665,12 @@ $.widget( "ui.rlightbox", {
 
 	_panoramaCenterContent: function() {
 		var _left, _top,
+			_currentElement = this._getData( "currentSetElement" ),
 			_screenSize = this._getAvailableScreenSize(),
 			_screenWidth = _screenSize.width,
 			_screenHeight = _screenSize.height,
-			_imageSize = this._getData( "originalImageSize" ),
-			_imageWidth = _imageSize.width,
-			_imageHeight = _imageSize.height,
+			_imageWidth = _currentElement.width,
+			_imageHeight = _currentElement.height,
 			$content = this.$lightbox.content,
 			$img = $content.find( "img" );
 
@@ -701,7 +699,7 @@ $.widget( "ui.rlightbox", {
 	_panoramaExpand: function() {
 
 		// _panoramaExpand does the main goal of the Panorama™: it displays the natural image size
-		var _originalSize = this._getData( "originalImageSize" );
+		var _currentElement = this._getData( "currentSetElement" );
 
 		// let know that we can scroll now
 		this._setData( "panoramaEnabled", true );
@@ -714,8 +712,8 @@ $.widget( "ui.rlightbox", {
 		// give the natural size to the image
 		this.$lightbox.content
 			.find( "img" )
-				.width( _originalSize.width )
-				.height( _originalSize.height );
+				.width( _currentElement.width )
+				.height( _currentElement.height );
 
 		// enlarge lightbox’s content to fit the screen best
 		this._panoramaSetContentSize();
@@ -746,15 +744,15 @@ $.widget( "ui.rlightbox", {
 
 	_panoramaSetContentSize: function() {
 		var _contentWidth, _contentHeight,
+			_currentElement = this._getData( "currentSetElement" ),
 			_minLightboxSize = this._getData( "minimalLightboxSize" ),
 			_minLightboxWidth = _minLightboxSize.width,
 			_minLightboxHeight = _minLightboxSize.height,
 			_screenSize = this._getAvailableScreenSize(),
 			_screenWidth = _screenSize.width,
 			_screenHeight = _screenSize.height,
-			_imageSize = this._getData( "originalImageSize" ),
-			_imageWidth = _imageSize.width,
-			_imageHeight = _imageSize.height;
+			_imageWidth = _currentElement.width,
+			_imageHeight = _currentElement.height;
 
 			// show the most part of an image
 			// e.g. suppose that we have an image of 3600px × 500px size and the available space in the browser
@@ -809,14 +807,14 @@ $.widget( "ui.rlightbox", {
 
 	_panoramaShowMap: function() {
 		var _viewportWidth, _viewportHeight, _viewportWidthRatio, _viewportHeightRatio,
+		_currentElement = this._getData( "currentSetElement" ),
 		_mapSize = this._getData( "mapSize" ),
-		_originalSize = this._getData ( "originalImageSize" ),
 		$lb = this.$lightbox;
 
 		// show the map and give the viewport relevant size
 		// give the viewport relevant size
-		_viewportWidthRatio = _mapSize.width / _originalSize.width;
-		_viewportHeightRatio = _mapSize.height / _originalSize.height;
+		_viewportWidthRatio = _mapSize.width / _currentElement.width;
+		_viewportHeightRatio = _mapSize.height / _currentElement.height;
 
 		_viewportWidth = Math.ceil( $lb.content.width() * _viewportWidthRatio );
 		_viewportHeight = Math.ceil( $lb.content.height() * _viewportHeightRatio );
