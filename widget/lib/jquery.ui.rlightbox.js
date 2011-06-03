@@ -87,9 +87,9 @@ $.widget( "ui.rlightbox", {
 			this._addToSet( _content );
 		
 			// open the lightbox upon click
-			this.element.click(function() {
+			this.element.click(function(event) {
 				self._open();
-				return false;// TODO use preventDefault
+				event.preventDefault();
 			});
 		}
 	},
