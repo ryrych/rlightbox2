@@ -471,29 +471,40 @@ $.widget( "ui.rlightbox", {
 		var self = this,
 			$lb = this.$lightbox,
 			_currentElement = this._getData( "currentSetElement" )
-			_dfd = $.Deferred();
+			_dfd = $.Deferred(),
+			$newImage = $( "<img />" );
 			
 		// start loading maximized image
 		$lb.content.addClass( "ui-lightbox-loader" );
-		$.when( this._loadImage(url) ).then(function( img ) {
 		
-			// keep original size of an image – needed when resizing
-			_currentElement.width = img.width;
-			_currentElement.height = img.height;
-		
-			// save original sizes and status for panorama purposes
-			_currentElement.originalStatus = self._getImageStatus( img.width, img.height);
-		
-			// add the loaded image and hide it
-			$lb.content
-				.removeClass( "ui-lightbox-loader" )			
-				.empty()
-				.append( img )
-				.children()
-					.hide();
-		
-			_dfd.resolve();
-		});
+		// new Date().getTime() is used because of IEs caching problem
+		$newImage
+			.attr( "src", url + "?" + new Date().getTime() )
+			.load(
+				function() {
+					// keep original size of an image – needed when resizing
+					_currentElement.width = this.width;
+					_currentElement.height = this.height;
+				
+					// save original sizes and status for panorama purposes
+					_currentElement.originalStatus = self._getImageStatus( this.width, this.height );
+				
+					// add the loaded image and hide it
+					$lb.content
+						.removeClass( "ui-lightbox-loader" )			
+						.empty()
+						.append( this )
+						.children()
+							.hide();
+				
+					_dfd.resolve();					
+				}
+			)
+			.error(
+				function() {
+					alert( "oops something went wrong" );
+				}
+			);
 		
 		return _dfd.promise();
 	},
@@ -563,25 +574,6 @@ $.widget( "ui.rlightbox", {
 			_dfd.resolve();
 		});
 		
-		return _dfd.promise();
-	},
-
-	_loadImage: function( path ) {
-		var _image = new Image(),
-			_loadWatch,
-			_dfd = $.Deferred();
-			
-		_image.src = path;
-
-		function _watch() {
-			if ( _image.complete ) {
-				clearInterval( _loadWatch );
-				_dfd.resolve( _image );
-			}
-		}
-
-		// just simulate loading
-		_loadWatch = setInterval( _watch, 100 );
 		return _dfd.promise();
 	},
 
