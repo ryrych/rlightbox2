@@ -458,7 +458,7 @@ $.widget( "ui.rlightbox", {
 		// resizes an image when size of the browser window resizes and when Panorama is turned off
 		if ( this._getData("ready") && this._getData("panoramaEnabled") === false ) {
 			this._queueResizeLightbox();
-			this._updateTitleHeight();
+			this._updateTitleWidth();
 			this._queueCenterContent();
 		} else if ( this._getData("ready") && this._getData("panoramaEnabled") ) {
 
@@ -962,6 +962,7 @@ $.widget( "ui.rlightbox", {
 		$lb.panoramaIcon = $lb.root.find( "#ui-lightbox-panorama-icon" );
 		$lb.content = $lb.root.find( "#ui-lightbox-content" );
 		$lb.header = $lb.root.find( "#ui-lightbox-header" );
+		$lb.headerWrapper = $lb.header.find( "#ui-lightbox-header-wrapper" );		
 		$lb.overlay = $( "#ui-lightbox-overlay" );
 		$lb.close = $( "#ui-lightbox-header-close" );
 		$lb.counter = $lb.root.find( "#ui-lightbox-header-counter" );
@@ -1008,8 +1009,11 @@ $.widget( "ui.rlightbox", {
 		}
 	},
 	
-	_updateTitleHeight: function() {
-		this.$lightbox.title.width( this.$lightbox.content.width() - 20 );
+	_updateTitleWidth: function() {
+		
+		// 12px – 2 × border + 2 × padding
+		// 20px – safe distance from the close button
+		this.$lightbox.headerWrapper.width( this.$lightbox.content.width() - 20 - 12 );
 	},
 
 	_queueShowOverlay: function( next ) {
@@ -1169,7 +1173,7 @@ $.widget( "ui.rlightbox", {
 		this._updateCounter();
 
 		// update title
-		this._updateTitleHeight();
+		this._updateTitleWidth();
 		this._updateTitle();
 
 		// indicate that animation queue is finshed
