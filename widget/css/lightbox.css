@@ -35,11 +35,19 @@
 }
 
 .ui-lightbox-panorama-icon-expand {
-	background: url(panorama.png) center left no-repeat;
+	background: url(panorama.png) top left no-repeat;
+}
+
+.ui-lightbox-panorama-icon-expand-hover {
+	background: url(panorama.png) bottom left no-repeat;
 }
 
 .ui-lightbox-panorama-icon-shrink {
-	background: url(panorama.png) center right no-repeat;
+	background: url(panorama.png) top right no-repeat;
+}
+
+.ui-lightbox-panorama-icon-shrink-hover {
+	background: url(panorama.png) bottom right no-repeat;
 }
 
 .ui-lightbox-loader {

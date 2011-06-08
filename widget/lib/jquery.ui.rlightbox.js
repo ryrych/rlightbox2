@@ -59,7 +59,9 @@ $.widget( "ui.rlightbox", {
 				.mouseup( $.proxy(this._panoramaStop, this) );
 
 			// zoom in or zoom out an image
-			$lb.panoramaIcon.click( $.proxy(this._panoramaToggle, this) );
+			$lb.panoramaIcon
+				.click( $.proxy(this._panoramaToggle, this) )
+				.hover( $.proxy(this._panoramaHighlight, this) );
 
 			// resize lightbox when window size changes
 			$( window ).bind( "resize.rlightbox", $.proxy(this._liveResize, this) );
@@ -743,8 +745,8 @@ $.widget( "ui.rlightbox", {
 
 		// show the zoom out icon
 		this.$lightbox.panoramaIcon
-			.removeClass( "ui-lightbox-panorama-icon-expand" )
-			.addClass( "ui-lightbox-panorama-icon-shrink" );
+			.removeClass()
+			.addClass( "ui-lightbox-panorama-icon-shrink-hover" );
 
 		// give the natural size to the image
 		this.$lightbox.content
@@ -777,6 +779,21 @@ $.widget( "ui.rlightbox", {
 			left: -1,
 			top: -1
 		});
+	},
+	
+	_panoramaHighlight: function() {
+		var _suffixPosition,
+			_suffix = "-hover";
+
+		this.$lightbox.panoramaIcon.attr("class",
+			function(index, oldValue) {
+				_suffixPosition = oldValue.indexOf( _suffix );
+				if ( _suffixPosition !== -1 ) {
+					return oldValue.slice( 0, _suffixPosition );
+				} else {
+					return oldValue + _suffix;
+				}
+			});		
 	},
 
 	_panoramaSetContentSize: function() {
@@ -831,8 +848,8 @@ $.widget( "ui.rlightbox", {
 
 		// show the zoom in icon – let know that we can run panorama mode again
 		this.$lightbox.panoramaIcon
-			.removeClass( "ui-lightbox-panorama-icon-shrink" )
-			.addClass( "ui-lightbox-panorama-icon-expand" );
+			.removeClass()
+			.addClass( "ui-lightbox-panorama-icon-expand-hover" );
 
 		// resize an image to its previous size and center it
 		this._queueResizeLightbox();
