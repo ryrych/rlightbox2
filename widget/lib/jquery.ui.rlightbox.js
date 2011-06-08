@@ -239,15 +239,15 @@ $.widget( "ui.rlightbox", {
 			_service = {
 				youtube: {
 					urls: [/(youtube\.com\/watch\?v=([\w-_]+))&?/],
-					type: "youtube",
+					type: "youtube"
 				},
 				image: {
 					urls: [/.jpg$|.png$|.gif$/],
-					type: "image",
+					type: "image"
 				},
 				vimeo: {
-					urls: [/(vimeo\.com\/\w+)&?/, /(vimeo\.com\/groups\/groups\/w+\/videos\/\w+)&?/],
-					type: "vimeo",
+					urls: [/(http:\/\/vimeo\.com\/groups\/\w+\/videos\/\w+)&?/, /(http:\/\/vimeo\.com\/\w+)&?/],
+					type: "vimeo"
 				}
 			};
 			
@@ -1236,6 +1236,10 @@ $.widget( "ui.rlightbox", {
 			case "youtube":
 				_loadContentMethod = "_loadContentYoutube";
 				break;
+			
+			case "vimeo":
+				_loadContentMethod = "_loadContentYoutube";
+				break;
 		}
 
 		$.when( this[_loadContentMethod](_currentSetElement.url) ).then(function() {
@@ -1285,7 +1289,7 @@ $.widget( "ui.rlightbox", {
 				// TODO: pokaz informacje kiedy przegladarka jest uruchomiona w rozmiarze mniejszym od minimalnego rozmiaru
 				_isAllowed = false;
 			}
-		} else if ( _currentElement.type === "youtube" && _isError === false ){
+		} else if ( (_currentElement.type === "youtube" || _currentElement.type === "vimeo") && _isError === false ){
 
 			// if content is flash video
 			_isAllowed = true;
