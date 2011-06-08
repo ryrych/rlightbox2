@@ -17,7 +17,10 @@ $.widget( "ui.rlightbox", {
 		showMap: true,
 		counterDelimiter: " / ",
 		videoWidth: 640,
-		videoHeight: 385
+		videoHeight: 385,
+		errorMessage: "Oops! Something is wrong! If the problem repeats itself, let the page’s admin know. Would you like to try again or reject this content?",
+		againButtonLabel: "Try again",
+		rejectButtonLabel: "Reject this content"
 	},
 
 	_create: function() {
@@ -69,7 +72,8 @@ $.widget( "ui.rlightbox", {
 					width: parseInt( $lb.map.css("width") ),
 					height: parseInt( $lb.map.css("height") )
 				},
-				oembedProvider: "http://oohembed.com/oohembed?callback=?"
+				oembedProvider: "http://oohembed.com/oohembed?callback=?",
+				showErrorMessage: false
 			});
 
 			// never run it again
@@ -195,8 +199,20 @@ $.widget( "ui.rlightbox", {
 			.after( _map )
 			.after( _overlay );
 	},
-
-	destroy: function() {
+	
+	destroy: function() {
+		
+		// unwrap $currentElement from jQuery wrapped object and
+		// prevents it from being acted upon, unbinding event handlers
+		var $currentElement = this._getData( "currentSetElement" ).element;
+		
+		// code taken from jqury.ui.widget.js – it is the default behaviour
+		// from the widget factory but we can’t call it because it acts upon
+		// this.element – we have to act on a arbitrary one
+		$currentElement
+			.unbind( "." + this.widgetName )
+			.unbind( "click" )
+			.removeData( this.widgetName );
 	},
 	
 	_extractAnchor: function( anchor ) {
@@ -497,12 +513,17 @@ $.widget( "ui.rlightbox", {
 						.children()
 							.hide();
 				
+					// continue the animation queue
 					_dfd.resolve();					
 				}
 			)
 			.error(
 				function() {
-					alert( "oops something went wrong" );
+					$lb.content.removeClass( "ui-lightbox-loader" );
+					self._showErrorMessage();
+					
+					// continue the animation queue
+					_dfd.resolve();
 				}
 			);
 		
@@ -563,14 +584,15 @@ $.widget( "ui.rlightbox", {
 				_currentElement.width = _width;
 				_currentElement.height = _height;
 				
+				// continue the animation queue
 				_dfd.resolve();
 			}
 		)
 		.error(function() {
-			// TODO: pokazać ładny obrazek z błędem w lightboksie
-			// umozliwic normalna nawigacje/pomijanie blednego contentu
-			alert( "oops, something went wrong!" );
+			$lb.content.removeClass( "ui-lightbox-loader" );
+			self._showErrorMessage();
 			
+			// continue the animation queue
 			_dfd.resolve();
 		});
 		
@@ -603,6 +625,21 @@ $.widget( "ui.rlightbox", {
 			self._setData( "side", "" );
 			$content.css( "cursor", "move" );
 		}
+	},
+	
+	_navigationGoToElement: function( number ) {
+		
+		// goes to a custom element
+		var $lb = this.$lightbox,
+			_currentSet = this._getData( "currentSet" );
+		
+		// which element go to
+		this._setData( "currentElementNumber", number);
+		this._setData( "currentSetElement", this.sets[_currentSet][number - 1] );
+		
+		// reload animation queue and trigger it
+		this._setNextQueue();
+		$lb.queueContainer.next.dequeue( "lightboxNext" );
 	},
 
 	_navigationNext: function() {
@@ -892,6 +929,35 @@ $.widget( "ui.rlightbox", {
 			this._panoramaShrink();
 		}
 	},
+	
+	_removeSetElement: function( number ) {
+		// when there is an error while loading content, in the error screen
+		// there is a possibility to reject content that might have a wrong
+		// url; _removeSetElement removes rejects such content in order to
+		// the error message not appear again;
+		// the method prevents rlightbox from being acted upon such content
+		var _currentSet = this._getData( "currentSet" ),
+			_total = this._getData( "totalElementsNumber" );
+
+		// remove given element from a set
+		this.sets[_currentSet].splice( number - 1, 1 );
+		
+		// if there is only one element left, close the lightbox, otherwise load next element
+		if( _total === 1 || _currentSet === "single" ) {
+			this._close();
+
+			// remove the instance from encapsulated DOM element (jquery one)
+			this.destroy();
+		} else {
+			this.destroy();
+			
+			// update total element numbers
+			this._setData( "totalElementsNumber", this.sets[_currentSet].length );
+			
+			// go to a new element
+			this._navigationGoToElement( number );
+		}
+	},
 
 	_setData: function( data ) {
 
@@ -974,6 +1040,70 @@ $.widget( "ui.rlightbox", {
 			next: $({})
 		}
 	},
+	
+	_showErrorMessage: function() {
+		
+		// shows a screen with a message that content could not be loaded
+		// and two buttons: one to try to load content again and one to
+		// reject the content; in order to keep the dependencie to minimum
+		// buttons are not jQuery UI widgets but use their CSS classes
+		var self = this,
+			$lb = this.$lightbox,
+			_currentElementNumber = this._getData( "currentElementNumber" ),
+			_errorMessage = this.options.errorMessage,
+			_againLabel = this.options.againButtonLabel,
+			_rejectLabel = this.options.rejectButtonLabel,
+			$structure = $("<div id='ui-lightbox-error'>" +
+							"<div id='ui-lightbox-error-message'>" +
+								_errorMessage +
+							"</div>" +
+							"<div id='ui-lightbox-error-footer'>" +
+								"<a href='#' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+									"<span class='ui-icon ui-icon-refresh'></span>" +
+									"<span class='ui-button-text'>" + _againLabel + "</span>" +
+								"</a>" +
+								"<a href='#' id='ui-lightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+									"<span class='ui-icon ui-icon-trash'></span>" +
+									"<span class='ui-button-text'>" + _rejectLabel + "</span>" +
+								"</a>" + 
+							"</div>" +
+						"</div>"),
+			$again = $structure.find( "#ui-lightbox-error-footer-again" ),
+			$reject = $structure.find( "#ui-lightbox-error-footer-reject" );
+		
+		// ‘again’ button give a user a chance to try loading content again
+		$again
+			.click(function() {
+				self._navigationGoToElement( _currentElementNumber );
+			})
+			.hover(
+				function() {
+					$( this ).toggleClass( "ui-state-hover" );
+				}
+			);
+		
+		// removes the broken content from list of known contents
+		$reject
+			.click(function() {
+				self._removeSetElement( _currentElementNumber );
+			})
+			.hover(
+				function() {
+					$( this ).toggleClass( "ui-state-hover" );
+				}
+			);			
+		
+		// treat the message as a normal content
+		$lb.content
+			.empty()
+			.append( $structure )
+			.children()
+				.hide();
+		
+		// because we don’t want to break the animation queue we need to tell
+		// subsequent functions in the queue that an error occured
+		this._setData( "showErrorMessage", true );				
+	},	
 
 	_updateCounter: function() {
 		var _current, _total, _newCounter,
@@ -1046,6 +1176,9 @@ $.widget( "ui.rlightbox", {
 		var _loadContentMethod,
 			_currentSetElement = this._getData( "currentSetElement" );
 		
+		// assume that there will be no error
+		this._setData( "showErrorMessage", false );
+		
 		switch ( _currentSetElement.type ) {
 			case "image":
 				_loadContentMethod = "_loadContentImage";
@@ -1068,10 +1201,11 @@ $.widget( "ui.rlightbox", {
 			_lightboxTargetWidth, _lightboxTargetHeight, _statusWidth, _statusHeight, _img,
 			_padding = this._getData( "lightboxPadding" ),
 			_headerHeight = this._getData( "headerHeight" ),
-			_currentElement = this._getData( "currentSetElement" );
+			_currentElement = this._getData( "currentSetElement" ),
+			_isError = this._getData( "showErrorMessage" );
 
 		// if content is type of image, resize it to fit the screen
-		if ( _currentElement.type === "image" ) {
+		if ( _currentElement.type === "image" && _isError === false ) {
 			_sizes = this._getSizes(),
 			_imageTargetWidth = _sizes.imageTargetWidth,
 			_imageTargetHeight = _sizes.imageTargetHeight,
@@ -1102,13 +1236,18 @@ $.widget( "ui.rlightbox", {
 				// TODO: pokaz informacje kiedy przegladarka jest uruchomiona w rozmiarze mniejszym od minimalnego rozmiaru
 				_isAllowed = false;
 			}
-		} else {
-			
+		} else if ( _currentElement.type === "youtube" && _isError === false ){
+
 			// if content is flash video
 			_isAllowed = true;
 			_speed = this.options.animationSpeed;
 			_lightboxTargetWidth = _currentElement.width;
 			_lightboxTargetHeight = _currentElement.height;
+		} else if ( _isError ) {
+			_isAllowed = true;
+			_speed = this.options.animationSpeed;
+			_lightboxTargetWidth = 500;
+			_lightboxTargetHeight = 300;
 		}
 
 		if ( _isAllowed) {
@@ -1128,12 +1267,12 @@ $.widget( "ui.rlightbox", {
 		var _content,
 			$contentContainer = this.$lightbox.content,
 			_content = $contentContainer.children();
-			
+
 		$contentContainer
 			.children()
 				.css({
-					top: $contentContainer.height() / 2 - _content.height() / 2,
-					left: $contentContainer.width() / 2 - _content.width() / 2
+					top: $contentContainer.height() / 2 - _content.outerHeight() / 2,
+					left: $contentContainer.width() / 2 - _content.outerWidth() / 2
 				});
 
 		// if we don’t run it in the live resize but in the queue
@@ -1145,14 +1284,15 @@ $.widget( "ui.rlightbox", {
 	_queueShowContent: function( next ) {
 		var $lb = this.$lightbox;
 			_currentElement = this._getData( "currentSetElement" ),
-			_originalStatus = _currentElement.originalStatus;
+			_originalStatus = _currentElement.originalStatus,
+			_isError = this._getData( "showErrorMessage" );
 
 		// show content
 		$lb.content.children()
 			.fadeIn( this.options.animationSpeed, function() {
 
 				// if one of the image sides is bigger than the screen, show panorama icon
-				if ( _currentElement.type === "image" ) {
+				if ( _currentElement.type === "image" && _isError === false ) {
 					if ( _originalStatus.statusWidth === 2 || _originalStatus.statusHeight === 2 ) {
 						$lb.panoramaIcon
 							.show()

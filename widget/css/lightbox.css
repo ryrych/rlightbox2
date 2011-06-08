@@ -103,3 +103,29 @@
 	position: fixed;
 	border: 0;
 }
+
+#ui-lightbox-error {
+	background: url(error_bg.png) repeat left top;
+	height: 300px;
+	width: 500px;
+	margin: 0;
+}
+
+#ui-lightbox-error-message{
+	background: url(error_sign.png) no-repeat left center;
+	color: #ffee00;
+	font-size: 17px;
+	height: 120px;
+	margin: 0;
+	margin-top: 80px;
+	padding: 10px;
+	padding-left: 130px;
+}
+
+#ui-lightbox-error-footer {
+	text-align: center;
+}
+
+#ui-lightbox-error-footer > a {
+	margin-right: 15px;
+}
