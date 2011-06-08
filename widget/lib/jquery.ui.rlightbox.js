@@ -43,6 +43,13 @@ $.widget( "ui.rlightbox", {
 
 			// close the lightbox upon clicking on the close button and the overlay
 			$lb.close.add( $lb.overlay ).click( $.proxy(this._closeHandler, this) );
+			
+			// highlight the close button when mouse hovers over it
+			$lb.close.hover(
+				function() {
+					$( this ).toggleClass( "ui-state-hover" );
+				}
+			);
 
 			// add handlers to the content container
 			$lb.content
