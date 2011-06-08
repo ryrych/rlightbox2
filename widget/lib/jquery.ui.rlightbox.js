@@ -233,39 +233,64 @@ $.widget( "ui.rlightbox", {
 		// since youtube and vimeo content is got via oembed, title is got later after loading the content
 		// $element keeps jQuery object of an anchor and it’s used for example
 		// in _getCurrentElementNumber to get the index in array in a set of clicked content
-		var _ytUrl,
+		var _result = {type: undefined},
 			$anchor = $( anchor ),
 			_url = $anchor.attr( "href" ),
-			_regExps = {
-				youtube: /(youtube\.com\/watch\?v=([\w-_]+))&?/,
-				image: /.jpg$|.png$|.gif$/
+			_service = {
+				youtube: {
+					urls: [/(youtube\.com\/watch\?v=([\w-_]+))&?/],
+					type: "youtube",
+				},
+				image: {
+					urls: [/.jpg$|.png$|.gif$/],
+					type: "image",
+				},
+				vimeo: {
+					urls: [/(vimeo\.com\/\w+)&?/, /(vimeo\.com\/groups\/groups\/w+\/videos\/\w+)&?/],
+					type: "vimeo",
+				}
 			};
+			
+		$.each(_service,
+			function(name, content) {
+				var _found = false;
+
+				// outer loop: _content.youtube, _content.image, etc.
+				$.each(content.urls,
+					function( index, regExp ) {
+						var _res = regExp.exec( _url );
+						
+						// inner loop: urls array
+						if ( _res !== null ) {
+							
+							// for Youtube, Vimeo we return a normalised url
+							// without additional parameters
+							_result = {
+								url: _res[1],
+								type: content.type,
+								element: $anchor
+							}
+							
+							if ( content.type === "image" ) {
+								_result.title = $anchor.attr( "title" );
+								_result.url = _url;
+							}
+							
+							_found = true;
+							
+							// break the loop
+							return false;
+						}
+					});
+				
+				if ( _found ) {
+					
+					// no need to loop
+					return false;
+				}
+			});
 		
-		// youtube link
-		if ( _regExps.youtube.exec(_url) !== null ) {
-			
-			// return normalised url (without parameters)			
-			_ytUrl = _regExps.youtube.exec( _url )[1];
-			
-			return {
-				url: _url,
-				type: "youtube",
-				element: $anchor
-			}
-		} else if ( _regExps.image.exec(_url) ) {
-			return {
-				url: _url,
-				type: "image",
-				title: $anchor.attr( "title" ),
-				element: $anchor
-			}
-		} else {
-			
-			// the content will be excluded – no click handler on this anchor
-			return {
-				type: undefined
-			}
-		}
+		return _result;
 	},		
 
 	_getAvailableScreenSize: function() {
