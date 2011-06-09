@@ -476,7 +476,7 @@ $.widget( "ui.rlightbox", {
 	
 						// check if width fits window after scaling
 						_lightboxTargetWidth = _imageWidth * _heightRatio;
-						_imageTargetHeight = _lightboxTargetHeight;
+						_imageTargetWidth = _lightboxTargetWidth;
 	
 						// no, then scale width to fit the window and re-scale width
 						if ( _lightboxTargetWidth + _lightboxPadding > _windowWidth || _lightboxTargetWidth < _minimalLightboxWidth ) {
@@ -1273,7 +1273,7 @@ $.widget( "ui.rlightbox", {
 			// the browser window is bigger or equal to 300px
 			if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
 				_isAllowed = true;
-				
+
 				// scale the image
 				_img
 					.width( _imageTargetWidth )
