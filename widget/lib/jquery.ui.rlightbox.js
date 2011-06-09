@@ -1004,7 +1004,11 @@ $.widget( "ui.rlightbox", {
 			this._setData( "totalElementsNumber", this.sets[_currentSet].length );
 			
 			// go to a new element
-			this._navigationGoToElement( number );
+			if ( number === _total ) {
+				this._navigationGoToElement( number - 1 );
+			} else {
+				this._navigationGoToElement( number );
+			}
 		}
 	},
 
