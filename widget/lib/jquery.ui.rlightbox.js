@@ -634,29 +634,28 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_navigationCheckSide: function( event ) {
-		var self = this,
-			$content = self.$lightbox.content;
+		var $content = this.$lightbox.content;
 
 		// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
 		// clicked image belongs to a gallery and we are not in the Panorama™ mode
-		if ( self._getData("ready") && self._getData("currentSet") !== "single" && this._getData("currentSetElement").type === "image" && self._getData("panoramaEnabled") === false ) {
+		if ( this._getData("ready") && this._getData("currentSet") !== "single" && this._getData("currentSetElement").type === "image" && this._getData("panoramaEnabled") === false ) {
 			var _pos = event.pageX - $content.offset().left,
 				_center = Math.round( $content.width() / 2 );
 
 			if ( _pos <= _center ) {
-				self._setData( "side", "left" );
+				this._setData( "side", "left" );
 				$content.css( "cursor", "w-resize" );
 			} else {
-				self._setData( "side", "right" );
+				this._setData( "side", "right" );
 				$content.css( "cursor","e-resize" );
 			}
-		} else if ( self._getData("panoramaDrag") === false ) {
+		} else if ( this._getData("panoramaDrag") === false ) {
 
 			// we are no longer hover over the content container
-			self._setData( "side", "" );
+			this._setData( "side", "" );
 			$content.css( "cursor", "default" );
 		} else {
-			self._setData( "side", "" );
+			this._setData( "side", "" );
 			$content.css( "cursor", "move" );
 		}
 	},
