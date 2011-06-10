@@ -20,7 +20,8 @@ $.widget( "ui.rlightbox", {
 		videoHeight: 385,
 		errorMessage: "Oops! Something is wrong! If the problem repeats itself, let the page’s admin know. Would you like to try again or reject this content?",
 		againButtonLabel: "Try again",
-		rejectButtonLabel: "Reject this content"
+		rejectButtonLabel: "Reject this content",
+		overwriteTitle: false
 	},
 
 	_create: function() {
@@ -233,7 +234,8 @@ $.widget( "ui.rlightbox", {
 		// since youtube and vimeo content is got via oembed, title is got later after loading the content
 		// $element keeps jQuery object of an anchor and it’s used for example
 		// in _getCurrentElementNumber to get the index in array in a set of clicked content
-		var _result = {type: undefined},
+		var self = this,
+			_result = {type: undefined},
 			$anchor = $( anchor ),
 			_url = $anchor.attr( "href" ),
 			_service = {
@@ -271,7 +273,7 @@ $.widget( "ui.rlightbox", {
 								element: $anchor
 							}
 							
-							if ( content.type === "image" ) {
+							if ( content.type === "image" || self.options.overwriteTitle ) {
 								_result.title = $anchor.attr( "title" );
 								_result.url = _url;
 							}
@@ -572,7 +574,7 @@ $.widget( "ui.rlightbox", {
 			$lb = this.$lightbox,
 			_currentElement = this._getData( "currentSetElement" ),
 			_minimalLightboxSize = this._getData( "minimalLightboxSize" );
-		
+
 		// show loader
 		$lb.content.addClass( "ui-lightbox-loader" );
 		
@@ -600,7 +602,9 @@ $.widget( "ui.rlightbox", {
 						.wrap( "<div style='display: none'></div>" );
 				
 				// remember video title
-				_currentElement.title = data.title;
+				if ( self.options.overwriteTitle === false ) {
+					_currentElement.title = data.title;
+				}
 				
 				// and returned width and height
 				if ( data.width < _minimalLightboxSize.width ) {
@@ -721,7 +725,7 @@ $.widget( "ui.rlightbox", {
 
 		// keep a reference to a current element in a set (consisting of a url, type…)
 		this._setData( "currentSetElement", this.sets[_currentSet][this._getData("currentElementNumber") - 1] );
-		
+
 		// start opening the lighbox
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
 	},
