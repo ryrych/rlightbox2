@@ -67,25 +67,6 @@ $.widget( "ui.rlightbox", {
 			// resize lightbox when window size changes
 			$( window ).bind( "resize.rlightbox", $.proxy(this._liveResize, this) );
 
-			// keep miscellaneous data like minimal size of the lightbox, flags, etc.
-			// fill with initial data
-			this._setData({
-				minimalLightboxSize: {
-					width: 300,
-					height: 300
-				},
-				lightboxPadding: 12,
-				headerHeight: 57,
-				ready: false,
-				panoramaEnabled: false,
-				mapSize: {
-					width: parseInt( $lb.map.css("width") ),
-					height: parseInt( $lb.map.css("height") )
-				},
-				oembedProvider: "http://oohembed.com/oohembed?callback=?",
-				showErrorMessage: false
-			});
-
 			// never run it again
 			$( "body" ).data( "HKn5fX_ZtrdfM-FBRHf6", true );
 		}
@@ -155,11 +136,11 @@ $.widget( "ui.rlightbox", {
 		$lb.panoramaIcon
 			.hide()
 			.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
-		this._setData( "panoramaEnabled", false );
+		this.data.panoramaEnabled = false;
 
 		// reset the counter
-		this._setData( "currentElementNumber", null );
-		this._setData( "totalElementsNumber", null );
+		this.data.currentElementNumber = null;
+		this.data.totalElementsNumber = null;
 
 		// remove old title
 		this.$lightbox.title.empty();
@@ -168,14 +149,14 @@ $.widget( "ui.rlightbox", {
 		this._panoramaHideMap();
 
 		// lightbox is not ready again
-		this._setData( "ready", false );
+		this.data.ready = false;
 
 		// get ready to next time - fill in queue
 		this._setOpenQueue();
 	},
 
 	_closeHandler: function( event ) {
-		if ( this._getData("ready") ) {
+		if ( this.data.ready ) {
 			this._close();
 			event.preventDefault();
 			event.stopPropagation();
@@ -214,7 +195,7 @@ $.widget( "ui.rlightbox", {
 		
 		// unwrap $currentElement from jQuery wrapped object and
 		// prevents it from being acted upon, unbinding event handlers
-		var $currentElement = this._getData( "currentSetElement" ).element;
+		var $currentElement = this.data.currentSetElement.element;
 		
 		// code taken from jqury.ui.widget.js – it is the default behaviour
 		// from the widget factory but we can’t call it because it acts upon
@@ -296,11 +277,11 @@ $.widget( "ui.rlightbox", {
 	},		
 
 	_getAvailableScreenSize: function() {
-		var _padding = this._getData( "lightboxPadding" );
+		var _padding = this.data.lightboxPadding;
 
 		return {
 			width: $( window ).width() - _padding,
-			height: $( window ).height() - this._getData( "headerHeight" ) - _padding
+			height: $( window ).height() - this.data.headerHeight - _padding
 		}
 	},
 
@@ -319,7 +300,7 @@ $.widget( "ui.rlightbox", {
 	_getCurrentElementNumber: function( element ) {
 		var _currentNumber,
 			self = this,
-			_currentSet = this.sets[this._getData("currentSet")];
+			_currentSet = this.sets[this.data.currentSet];
 
 		// returns a 1 based ordinal number of an image in a set
 		$.each(_currentSet, function(i, v) {
@@ -335,12 +316,6 @@ $.widget( "ui.rlightbox", {
 		return _currentNumber;
 	},
 
-	_getData: function( key ) {
-
-		// it is only a wrapper for ‘this.$lightbox.root.data()’
-		return this.$lightbox.root.data( key );
-	},
-
 	_getImageStatus: function( width, height ) {
 
 		// statuses (concern both sides):
@@ -349,15 +324,15 @@ $.widget( "ui.rlightbox", {
 		// 2 - content is larger than the window
 		// -2 - the window is smaller than minimal lightbox size
 		var _statusWidth, _statusHeight,
-			_currentElement = this._getData( "currentSetElement" ),
+			_currentElement = this.data.currentSetElement,
 			_windowWidth = $( window ).width(),
 			_windowHeight = $( window ).height(),
-			_minimalLightboxWidth = this._getData( "minimalLightboxSize" ).width,
-			_minimalLightboxHeight = this._getData( "minimalLightboxSize" ).height,
+			_minimalLightboxWidth = this.data.minimalLightboxSize.width,
+			_minimalLightboxHeight = this.data.minimalLightboxSize.height,
 			_imageWidth = _currentElement.width,
 			_imageHeight = _currentElement.height,
-			_lightboxPadding = this._getData( "lightboxPadding" ),
-			_headerHeight = this._getData( "headerHeight" );
+			_lightboxPadding = this.data.lightboxPadding,
+			_headerHeight = this.data.headerHeight;
 
 		if ( _windowWidth < _minimalLightboxWidth + _lightboxPadding ) {
 			_statusWidth = -2;
@@ -389,15 +364,15 @@ $.widget( "ui.rlightbox", {
 		var _statuses, _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
 			$lb = this.$lightbox,
 				self = this,
-				_currentElement = this._getData( "currentSetElement" ),
+				_currentElement = this.data.currentSetElement,
 				_windowWidth = $( window ).width(),
 				_windowHeight = $( window ).height(),
-				_minimalLightboxWidth = this._getData( "minimalLightboxSize" ).width,
-				_minimalLightboxHeight = this._getData( "minimalLightboxSize" ).height,
+				_minimalLightboxWidth = this.data.minimalLightboxSize.width,
+				_minimalLightboxHeight = this.data.minimalLightboxSize.height,
 				_imageWidth = _currentElement.width,
 				_imageHeight = _currentElement.height,
-				_lightboxPadding = this._getData( "lightboxPadding" ),
-				_headerHeight = this._getData( "headerHeight" );
+				_lightboxPadding = this.data.lightboxPadding,
+				_headerHeight = this.data.headerHeight;
 				
 		function _calculateSizes( w, h ) {
 			_statuses = self._getImageStatus( w, h );
@@ -508,11 +483,11 @@ $.widget( "ui.rlightbox", {
 	_liveResize: function() {
 
 		// resizes an image when size of the browser window resizes and when Panorama is turned off
-		if ( this._getData("ready") && this._getData("panoramaEnabled") === false ) {
+		if ( this.data.ready && this.data.panoramaEnabled === false ) {
 			this._queueResizeLightbox();
 			this._updateTitleWidth();
 			this._queueCenterContent();
-		} else if ( this._getData("ready") && this._getData("panoramaEnabled") ) {
+		} else if ( this.data.ready && this.data.panoramaEnabled ) {
 
 			// otherwise keep the lightbox centered especially when window is bigger than the lightbox
 			this._queueCenterLightbox();
@@ -522,7 +497,7 @@ $.widget( "ui.rlightbox", {
 	_loadContentImage: function( url ) {
 		var self = this,
 			$lb = this.$lightbox,
-			_currentElement = this._getData( "currentSetElement" )
+			_currentElement = this.data.currentSetElement,
 			_dfd = $.Deferred(),
 			$newImage = $( "<img />" );
 			
@@ -570,10 +545,10 @@ $.widget( "ui.rlightbox", {
 		var _width, _height,
 			self = this,
 			_dfd = $.Deferred(),
-			_apiEnd = this._getData( "oembedProvider" ),
+			_apiEnd = this.data.oembedProvider,
 			$lb = this.$lightbox,
-			_currentElement = this._getData( "currentSetElement" ),
-			_minimalLightboxSize = this._getData( "minimalLightboxSize" );
+			_currentElement = this.data.currentSetElement,
+			_minimalLightboxSize = this.data.minimalLightboxSize;
 
 		// show loader
 		$lb.content.addClass( "ui-lightbox-loader" );
@@ -642,24 +617,24 @@ $.widget( "ui.rlightbox", {
 
 		// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
 		// clicked image belongs to a gallery and we are not in the Panorama™ mode
-		if ( this._getData("ready") && this._getData("currentSet") !== "single" && this._getData("currentSetElement").type === "image" && this._getData("panoramaEnabled") === false ) {
+		if ( this.data.ready && this.data.currentSet !== "single" && this.data.currentSetElement.type === "image" && this.data.panoramaEnabled === false ) {
 			var _pos = event.pageX - $content.offset().left,
 				_center = Math.round( $content.width() / 2 );
 
 			if ( _pos <= _center ) {
-				this._setData( "side", "left" );
+				this.data.side = "left";
 				$content.css( "cursor", "w-resize" );
 			} else {
-				this._setData( "side", "right" );
+				this.data.side = "right"
 				$content.css( "cursor","e-resize" );
 			}
-		} else if ( this._getData("panoramaDrag") === false ) {
+		} else if ( this.data.panoramaDrag === false ) {
 
 			// we are no longer hover over the content container
-			this._setData( "side", "" );
+			this.data.side = "";
 			$content.css( "cursor", "default" );
 		} else {
-			this._setData( "side", "" );
+			this.data.side = "";
 			$content.css( "cursor", "move" );
 		}
 	},
@@ -668,11 +643,11 @@ $.widget( "ui.rlightbox", {
 		
 		// goes to a custom element
 		var $lb = this.$lightbox,
-			_currentSet = this._getData( "currentSet" );
+			_currentSet = this.data.currentSet;
 		
 		// which element go to
-		this._setData( "currentElementNumber", number);
-		this._setData( "currentSetElement", this.sets[_currentSet][number - 1] );
+		this.data.currentElementNumber = number;
+		this.data.currentSetElement = this.sets[_currentSet][number - 1];
 		
 		// reload animation queue and trigger it
 		this._setNextQueue();
@@ -682,26 +657,26 @@ $.widget( "ui.rlightbox", {
 	_navigationNext: function() {
 		var _currentElementNumber,
 			$lb = this.$lightbox,
-			_set = this._getData( "currentSet" );
+			_set = this.data.currentSet;
 
 		// prevent from multi clicking and go to the next image only if it belongs to a gallery
-		if ( this._getData("ready") && _set !== "single" ) {
-			_currentElementNumber = this._getData( "currentElementNumber" );
+		if ( this.data.ready && _set !== "single" ) {
+			_currentElementNumber = this.data.currentElementNumber;
 
-			if ( _currentElementNumber + 1 <= this._getData("totalElementsNumber") && this._getData("side") === "right" ) {
-				this._setData( "currentElementNumber", _currentElementNumber + 1 );
+			if ( _currentElementNumber + 1 <= this.data.totalElementsNumber && this.data.side === "right" ) {
+				this.data.currentElementNumber = _currentElementNumber + 1;
 
 				// update current element
-				this._setData( "currentSetElement", this.sets[_set][_currentElementNumber] );
+				this.data.currentSetElement = this.sets[_set][_currentElementNumber];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
 				$lb.queueContainer.next.dequeue( "lightboxNext" );
-			} else if ( _currentElementNumber - 1 >= 1 && this._getData("side") === "left" ){
-				this._setData( "currentElementNumber", _currentElementNumber - 1 );
+			} else if ( _currentElementNumber - 1 >= 1 && this.data.side === "left" ){
+				this.data.currentElementNumber = _currentElementNumber - 1;
 
 				// update current element
-				this._setData( "currentSetElement", this.sets[_set][_currentElementNumber - 2] );
+				this.data.currentSetElement = this.sets[_set][_currentElementNumber - 2];
 
 				// next element - trigger the queue ‘next’ - first update it
 				this._setNextQueue();
@@ -716,15 +691,15 @@ $.widget( "ui.rlightbox", {
 			_currentUrl = $( this.element ).attr( "href" );
 
 		// remember which set content belongs to
-		this._setData( "currentSet", _currentSet );
+		this.data.currentSet = _currentSet;
 
 		// determine and remember how many elements belong to a set
 		// determine the current (and clicked) element in a set
-		this._setData( "totalElementsNumber", this.sets[_currentSet].length );
-		this._setData( "currentElementNumber", this._getCurrentElementNumber( this.element ) );
+		this.data.totalElementsNumber = this.sets[_currentSet].length;
+		this.data.currentElementNumber = this._getCurrentElementNumber( this.element );
 
 		// keep a reference to a current element in a set (consisting of a url, type…)
-		this._setData( "currentSetElement", this.sets[_currentSet][this._getData("currentElementNumber") - 1] );
+		this.data.currentSetElement = this.sets[_currentSet][this.data.currentElementNumber - 1];
 
 		// start opening the lighbox
 		$lb.queueContainer.open.dequeue( "lightboxOpen" );
@@ -732,7 +707,7 @@ $.widget( "ui.rlightbox", {
 
 	_panoramaCenterContent: function() {
 		var _left, _top,
-			_currentElement = this._getData( "currentSetElement" ),
+			_currentElement = this.data.currentSetElement,
 			_screenSize = this._getAvailableScreenSize(),
 			_screenWidth = _screenSize.width,
 			_screenHeight = _screenSize.height,
@@ -766,10 +741,10 @@ $.widget( "ui.rlightbox", {
 	_panoramaExpand: function() {
 
 		// _panoramaExpand does the main goal of the Panorama™: it displays the natural image size
-		var _currentElement = this._getData( "currentSetElement" );
+		var _currentElement = this.data.currentSetElement;
 
 		// let know that we can scroll now
-		this._setData( "panoramaEnabled", true );
+		this.data.panoramaEnabled = true;
 
 		// show the zoom out icon
 		this.$lightbox.panoramaIcon
@@ -826,8 +801,8 @@ $.widget( "ui.rlightbox", {
 
 	_panoramaSetContentSize: function() {
 		var _contentWidth, _contentHeight,
-			_currentElement = this._getData( "currentSetElement" ),
-			_minLightboxSize = this._getData( "minimalLightboxSize" ),
+			_currentElement = this.data.currentSetElement,
+			_minLightboxSize = this.data.minimalLightboxSize,
 			_minLightboxWidth = _minLightboxSize.width,
 			_minLightboxHeight = _minLightboxSize.height,
 			_screenSize = this._getAvailableScreenSize(),
@@ -872,7 +847,7 @@ $.widget( "ui.rlightbox", {
 	_panoramaShrink: function() {
 
 		// _panoramaShrink retores the previous size of an image
-		this._setData( "panoramaEnabled", false );
+		this.data.panoramaEnabled = false;
 
 		// show the zoom in icon – let know that we can run panorama mode again
 		this.$lightbox.panoramaIcon
@@ -889,8 +864,8 @@ $.widget( "ui.rlightbox", {
 
 	_panoramaShowMap: function() {
 		var _viewportWidth, _viewportHeight, _viewportWidthRatio, _viewportHeightRatio,
-		_currentElement = this._getData( "currentSetElement" ),
-		_mapSize = this._getData( "mapSize" ),
+		_currentElement = this.data.currentSetElement,
+		_mapSize = this.data.mapSize,
 		$lb = this.$lightbox;
 
 		// show the map and give the viewport relevant size
@@ -909,29 +884,27 @@ $.widget( "ui.rlightbox", {
 		$lb.map.show();
 
 		// used when you scroll the content
-		this._setData({
-			viewportRatio: {
-				width: _viewportWidthRatio,
-				height: _viewportHeightRatio
-			}
-		});
+		this.data.viewportRatio = {
+			width: _viewportWidthRatio,
+			height: _viewportHeightRatio
+		}
+
 	},
 
 	_panoramaStart: function( event ) {
 
 		// remember starting point to calculate distance in _panoramaStop()
-		this._setData({
-			panoramaPosition: {
+		this.data.panoramaPosition =
+			{
 				xStart: event.pageX,
 				yStart: event.pageY
-			}
-		});
+			};
 
 		// used to show the ‘move’ cursor on ‘content’ container
-		this._setData( "panoramaDrag", true );
+		this.data.panoramaDrag = true;
 
 		// give clue that we can drag now
-		if ( this._getData("panoramaEnabled") ) {
+		if ( this.data.panoramaEnabled ) {
 			this.$lightbox.content.css( "cursor", "move" );
 		}
 
@@ -942,16 +915,16 @@ $.widget( "ui.rlightbox", {
 
 		// calculate the distance between the starting point from _panoramaStart and this one
 		// we use the oposite vector (-1) because dragging the mouse left we move right
-		var _distX = ( event.pageX - this._getData("panoramaPosition").xStart ) * -1,
-			_distY = ( event.pageY - this._getData("panoramaPosition").yStart ) * -1,
+		var _distX = ( event.pageX - this.data.panoramaPosition.xStart ) * -1,
+			_distY = ( event.pageY - this.data.panoramaPosition.yStart ) * -1,
 			$content = this.$lightbox.content,
-			_viewportRatio = this._getData( "viewportRatio" );
+			_viewportRatio = this.data.viewportRatio;
 
 		// indicate that we can revert the cursor to the default one
-		this._setData( "panoramaDrag", false );
+		this.data.panoramaDrag = false;
 
 		// if we are in the panorama mode (the panorama icon was clicked)
-		if ( this._getData("panoramaEnabled") ) {
+		if ( this.data.panoramaEnabled ) {
 			$content
 				.scrollLeft( $content.scrollLeft() + _distX )
 				.scrollTop( $content.scrollTop() + _distY );
@@ -973,7 +946,7 @@ $.widget( "ui.rlightbox", {
 		// we couldn’t use .toggle( expand, shrink ) on panorama icon because when lb is closed after panorama was turned on (we were in the panorama mode)
 		// and open again and next image once again can be zoomed we need to make sure that
 		// expand is the first action – using jQuery .toggle() ‘expand’ would be the fist action again (because of its internal queue)
-		var _panoramaOn = this._getData( "panoramaEnabled" );
+		var _panoramaOn = this.data.panoramaEnabled;
 
 		if ( _panoramaOn === false ) {
 			this._panoramaExpand();
@@ -988,8 +961,8 @@ $.widget( "ui.rlightbox", {
 		// url; _removeSetElement removes rejects such content in order to
 		// the error message not appear again;
 		// the method prevents rlightbox from being acted upon such content
-		var _currentSet = this._getData( "currentSet" ),
-			_total = this._getData( "totalElementsNumber" );
+		var _currentSet = this.data.currentSet,
+			_total = this.data.totalElementsNumber;
 
 		// remove given element from a set
 		this.sets[_currentSet].splice( number - 1, 1 );
@@ -1004,7 +977,7 @@ $.widget( "ui.rlightbox", {
 			this.destroy();
 			
 			// update total element numbers
-			this._setData( "totalElementsNumber", this.sets[_currentSet].length );
+			this.data.totalElementsNumber = this.sets[_currentSet].length;
 			
 			// go to a new element
 			if ( number === _total ) {
@@ -1012,23 +985,6 @@ $.widget( "ui.rlightbox", {
 			} else {
 				this._navigationGoToElement( number );
 			}
-		}
-	},
-
-	_setData: function( data ) {
-
-		// it is only a wrapper for ‘this.$lightbox.root.data()’
-		var $root = this.$lightbox.root,
-			_arg1 = arguments[0],
-			_arg2 = arguments[1];
-
-		// if you pass an object
-		if ( arguments.length === 1 && $.isPlainObject( _arg1 ) ) {
-			$root.data( _arg1 );
-		} else if ( arguments.length === 2 && typeof _arg1 === "string" ) {
-
-			// key and value
-			$root.data( _arg1, _arg2 );
 		}
 	},
 
@@ -1105,7 +1061,7 @@ $.widget( "ui.rlightbox", {
 		// buttons are not jQuery UI widgets but use their CSS classes
 		var self = this,
 			$lb = this.$lightbox,
-			_currentElementNumber = this._getData( "currentElementNumber" ),
+			_currentElementNumber = this.data.currentElementNumber,
 			_errorMessage = this.options.errorMessage,
 			_againLabel = this.options.againButtonLabel,
 			_rejectLabel = this.options.rejectButtonLabel,
@@ -1158,17 +1114,17 @@ $.widget( "ui.rlightbox", {
 		
 		// because we don’t want to break the animation queue we need to tell
 		// subsequent functions in the queue that an error occured
-		this._setData( "showErrorMessage", true );				
+		this.data.showErrorMessage = true;
 	},	
 
 	_updateCounter: function() {
 		var _current, _total, _newCounter,
 			$lb = this.$lightbox,
-			_currentSet = this._getData( "currentSet" );
+			_currentSet = this.data.currentSet;
 			
 			if ( _currentSet !== "single" ) {
-				_current = this._getData( "currentElementNumber" );
-				_total = this._getData( "totalElementsNumber" );
+				_current = this.data.currentElementNumber;
+				_total = this.data.totalElementsNumber;
 			} else {
 				_current = 1;
 				_total = 1;
@@ -1180,7 +1136,7 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_updateTitle: function() {
-		var _currentElement = this._getData( "currentSetElement" );
+		var _currentElement = this.data.currentSetElement;
 		
 		// set new label for the title and trim it if it is too long - no scrolling at the moment
 		// 20px is a safety distance between text and the close button
@@ -1205,7 +1161,7 @@ $.widget( "ui.rlightbox", {
 	_queueShowOverlay: function( next ) {
 
 		// let know that lightbox is not ready now
-		this._setData( "ready", false );
+		this.data.ready = false;
 
 		// show overlay
 		$( "body" ).css( "overflow", "hidden" );
@@ -1230,10 +1186,10 @@ $.widget( "ui.rlightbox", {
 		
 		// loads appropriate content using right method
 		var _loadContentMethod,
-			_currentSetElement = this._getData( "currentSetElement" );
+			_currentSetElement = this.data.currentSetElement;
 		
 		// assume that there will be no error
-		this._setData( "showErrorMessage", false );
+		this.data.showErrorMessage = false;
 		
 		switch ( _currentSetElement.type ) {
 			case "image":
@@ -1259,10 +1215,10 @@ $.widget( "ui.rlightbox", {
 		// resizes the lightbox to to house content and centers it on the screen
 		var _isAllowed, _speed, _animate, _sizes, _imageTargetWidth, _imageTargetHeight,
 			_lightboxTargetWidth, _lightboxTargetHeight, _statusWidth, _statusHeight, _img,
-			_padding = this._getData( "lightboxPadding" ),
-			_headerHeight = this._getData( "headerHeight" ),
-			_currentElement = this._getData( "currentSetElement" ),
-			_isError = this._getData( "showErrorMessage" );
+			_padding = this.data.lightboxPadding,
+			_headerHeight = this.data.headerHeight,
+			_currentElement = this.data.currentSetElement,
+			_isError = this.data.showErrorMessage;
 
 		// if content is type of image, resize it to fit the screen
 		if ( _currentElement.type === "image" && _isError === false ) {
@@ -1343,9 +1299,9 @@ $.widget( "ui.rlightbox", {
 
 	_queueShowContent: function( next ) {
 		var $lb = this.$lightbox;
-			_currentElement = this._getData( "currentSetElement" ),
+			_currentElement = this.data.currentSetElement,
 			_originalStatus = _currentElement.originalStatus,
-			_isError = this._getData( "showErrorMessage" );
+			_isError = this.data.showErrorMessage;
 
 		// show content
 		$lb.content.children()
@@ -1377,13 +1333,13 @@ $.widget( "ui.rlightbox", {
 		this._updateTitle();
 
 		// indicate that animation queue is finshed
-		this._setData( "ready", true );
+		this.data.ready = true;
 	},
 
 	_queueSlideUpHeader: function( next ) {
 
 		// structure is not ready - start an animation
-		this._setData( "ready", false );
+		this.data.ready = false;
 		this.$lightbox.header.slideUp ( this.options.animationSpeed, next );
 	},
 
@@ -1399,14 +1355,31 @@ $.widget( "ui.rlightbox", {
 			.hide()
 			.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
 
-		this._setData( "panoramaEnabled", false );
+		this.data.panoramaEnabled = false;
 
 		// hide the map
 		this._panoramaHideMap();
 	},
 
 	$lightbox: {},
-	sets: {}
+	sets: {},
+	data: {
+		minimalLightboxSize: {
+			width: 300,
+			height: 300
+		},
+		lightboxPadding: 12,
+		headerHeight: 57,
+		ready: false,
+		panoramaEnabled: false,
+		mapSize: {
+			width: 150,
+			height: 100
+		},
+		oembedProvider: "http://oohembed.com/oohembed?callback=?",
+		showErrorMessage: false,
+		currentSetElement: {}
+	}	
 });
 
 })( jQuery );
