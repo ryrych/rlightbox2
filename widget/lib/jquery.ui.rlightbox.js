@@ -10,7 +10,7 @@
  */
 (function( $, undefined ) {
 
-// TODO: nazwa setu może zawierać minus; wyłączyć animację centrowania
+// TODO: wyłączyć animację centrowania
 // podczas liveresize dla filmów flash
 $.widget( "ui.rlightbox", {
 	options: {
@@ -376,7 +376,7 @@ $.extend($.ui.rlightbox, {
 			// otherwise it returns "single" - single content is placed under "single" set  
 			var _classNames = $( thisElement.element ).attr( "class" ),
 				_classPrefix = thisElement.options.setPrefix + "_",
-				_classPattern = new RegExp( _classPrefix + "(\\w+)" ),
+				_classPattern = new RegExp( _classPrefix + "([\\w-_]+)" ),
 				_name = _classPattern.exec( _classNames );
 	
 			return _name ? _name[1] : "single";
