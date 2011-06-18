@@ -10,8 +10,6 @@
  */
 (function( $, undefined ) {
 
-// TODO: wyłączyć animację centrowania
-// podczas liveresize dla filmów flash
 $.widget( "ui.rlightbox", {
 	options: {
 		animationSpeed: "fast",
@@ -504,14 +502,15 @@ $.extend($.ui.rlightbox, {
 		},
 		
 		liveResize: function() {
-			var data = this.data;
+			var data = this.data,
+				_elementType = data.currentSetElement.type;
 	
 			// resizes an image when size of the browser window resizes and when Panorama is turned off
-			if ( data.ready && data.panoramaEnabled === false ) {
+			if ( data.ready && data.panoramaEnabled === false && _elementType === "image" ) {
 				this.queueResizeLightbox();
 				this.updateTitleWidth();
 				this.queueCenterContent();
-			} else if ( data.ready && data.panoramaEnabled ) {
+			} else if ( data.ready && (data.panoramaEnabled === false && _elementType !== "image") || (data.panoramaEnabled && _elementType === "image") ) {
 	
 				// otherwise keep the lightbox centered especially when window is bigger than the lightbox
 				this.queueCenterLightbox();
