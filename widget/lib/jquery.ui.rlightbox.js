@@ -288,12 +288,11 @@ $.extend($.ui.rlightbox, {
 			// 1 - content fits the window and is larger than minimal lightbox size
 			// -1 - content fits the window but is smaller or equal to minimal lightbox size
 			// 2 - content is larger than the window
-			// -2 - the window is smaller than minimal lightbox size
 			var _statusWidth, _statusHeight,
 				data = this.data,
 				_currentElement = data.currentSetElement,
-				_windowWidth = this._getWindowSize( "w" ),
-				_windowHeight = this._getWindowSize( "h" ),
+				_windowWidth = this._getWindowSize( "width" ),
+				_windowHeight = this._getWindowSize( "height" ),
 				_minimalLightboxWidth = data.minimalLightboxSize.width,
 				_minimalLightboxHeight = data.minimalLightboxSize.height,
 				_imageWidth = _currentElement.width,
@@ -301,9 +300,7 @@ $.extend($.ui.rlightbox, {
 				_lightboxPadding = data.lightboxPadding,
 				_headerHeight = data.headerHeight;
 	
-			if ( _windowWidth < _minimalLightboxWidth + _lightboxPadding ) {
-				_statusWidth = -2;
-			} else if ( width <= _minimalLightboxWidth ) {
+			if ( width <= _minimalLightboxWidth ) {
 				_statusWidth = -1;
 			} else if ( width > _minimalLightboxWidth && width + _lightboxPadding <= _windowWidth ) {
 				_statusWidth = 1;
@@ -311,9 +308,7 @@ $.extend($.ui.rlightbox, {
 				_statusWidth = 2;
 			}
 	
-			if ( _windowHeight < _minimalLightboxHeight + _lightboxPadding + _headerHeight ) {
-				_statusHeight = -2;
-			} else if ( height <= _minimalLightboxHeight ) {
+			if ( height <= _minimalLightboxHeight ) {
 				_statusHeight = -1;
 			} else if ( height > _minimalLightboxHeight && _windowHeight >= height + _lightboxPadding + _headerHeight ) {
 				_statusHeight = 1;
@@ -386,8 +381,8 @@ $.extend($.ui.rlightbox, {
 				data = this.data,
 				self = this,
 				_currentElement = data.currentSetElement,
-				_windowWidth = this._getWindowSize( "w" ),
-				_windowHeight = this._getWindowSize( "h" ),
+				_windowWidth = this._getWindowSize( "width" ),
+				_windowHeight = this._getWindowSize( "height" ),
 				_minimalLightboxWidth = data.minimalLightboxSize.width,
 				_minimalLightboxHeight = data.minimalLightboxSize.height,
 				_imageWidth = _currentElement.width,
@@ -462,22 +457,17 @@ $.extend($.ui.rlightbox, {
 							_lightboxTargetHeight = Math.ceil( h * _widthRatio ) - _lightboxPadding - _headerHeight;
 							_imageTargetHeight = Math.ceil( h * _widthRatio );
 
-							// check if lightbox height fits the window
-							// if no, then scale height
-							// TODO sprawdzić pierwszą część wyrażenia jak będzie gotowe -2
-							if ( (_windowHeight < _lightboxTargetHeight + _lightboxPadding + _headerHeight) || (_imageTargetHeight <= _minimalLightboxHeight) ) {
+							if ( _imageTargetHeight <= _minimalLightboxHeight ) {
 								_calculateSizes( _imageTargetWidth, _imageTargetHeight );
 							}
 						} else {
-							_lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;
+							_lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;				
 							_heightRatio = _lightboxTargetHeight / h;
 							_imageTargetHeight = _lightboxTargetHeight;
 							_lightboxTargetWidth = Math.ceil( w * _heightRatio ) - _lightboxPadding;
 							_imageTargetWidth = Math.ceil( w * _heightRatio );
-							// TODO sprawdzić czy pierwszy człon warunku jest potrzebny; patrz wyżej ↑
-							if ( (_lightboxTargetWidth + _lightboxPadding > _windowWidth) || (_imageTargetWidth <= _minimalLightboxWidth) ) {
 
-								// check if width fits window after scaling
+							if ( _imageTargetWidth <= _minimalLightboxWidth ) {
 								_calculateSizes( _imageTargetWidth, _imageTargetHeight );
 							}
 						}
@@ -500,6 +490,31 @@ $.extend($.ui.rlightbox, {
 				statusHeight: _statusHeight
 			};
 		},
+		
+		_getWindowSize: function( size ) {
+			var data = this.data,
+				_windowWidth = $( window ).width(),
+				_windowHeight = $( window ).height(),
+				_minimalLightboxSize = data.minimalLightboxSize,
+				_lightboxPadding = data.lightboxPadding,
+				_headerHeight = data.headerHeight,
+				_minimalLightboxWidth = _minimalLightboxSize.width + _lightboxPadding,
+				_minimalLightboxHeight = _minimalLightboxSize.height + _lightboxPadding + _headerHeight;
+				
+			if ( size === "width" ) {
+				if ( _windowWidth < _minimalLightboxWidth ) {
+					return _minimalLightboxWidth;
+				} else {
+					return _windowWidth;
+				}
+			} else {
+				if ( _windowHeight < _minimalLightboxHeight ) {
+					return _minimalLightboxHeight;
+				} else {
+					return _windowHeight;
+				}
+			}
+		},		
 		
 		liveResize: function() {
 			var data = this.data,
@@ -1310,7 +1325,7 @@ $.extend($.ui.rlightbox, {
 		queueResizeLightbox: function( next ) {
 	
 			// resizes the lightbox to to house content and centers it on the screen
-			var _isAllowed, _speed, _animate, _sizes, _imageTargetWidth, _imageTargetHeight,
+			var _speed, _animate, _sizes, _imageTargetWidth, _imageTargetHeight,
 				_lightboxTargetWidth, _lightboxTargetHeight, _statusWidth, _statusHeight, _img,
 				data = this.data,
 				$lb = this.$lightbox,
@@ -1331,52 +1346,40 @@ $.extend($.ui.rlightbox, {
 				_statusHeight = _sizes.statusHeight,
 				_img = $lb.content.find( "img" );
 	
-				// scale an image only if the minimal size of the lightbox fits on the screen
-				// for example if minimal lightbox size if of 300px, the image is scaled only if
-				// the browser window is bigger or equal to 300px
-				if ( _statusWidth !== -2 && _statusHeight !== -2 ) {
-					_isAllowed = true;
-					console.dir(_sizes);
-					// scale the image
-					_img
-						.width( _imageTargetWidth )
-						.height( _imageTargetHeight );
-					
-					// if you use this method in the context of a queue then use animation; otherwise when used in live resize, don’t animate it
-					if ( $.isFunction(next) ) {
-						_speed = _options.animationSpeed;
-					} else {
-						_speed = 0;
-					}
+				// scale the image
+				_img
+					.width( _imageTargetWidth )
+					.height( _imageTargetHeight );
+				
+				// if you use this method in the context of a queue then use animation; otherwise when used in live resize, don’t animate it
+				if ( $.isFunction(next) ) {
+					_speed = _options.animationSpeed;
 				} else {
-					// TODO: pokaz informacje kiedy przegladarka jest uruchomiona w rozmiarze mniejszym od minimalnego rozmiaru
-					_isAllowed = false;
+					_speed = 0;
 				}
+
 			} else if ( (_currentElement.type === "youtube" || _currentElement.type === "vimeo") && _isError === false ){
 	
 				// if content is flash video
-				_isAllowed = true;
 				_speed = _options.animationSpeed;
 				_lightboxTargetWidth = _currentElement.width;
 				_lightboxTargetHeight = _currentElement.height;
 			} else if ( _isError ) {
-				_isAllowed = true;
 				_speed = _options.animationSpeed;
+				// TODO: zapisać w data
 				_lightboxTargetWidth = 500;
 				_lightboxTargetHeight = 300;
 			}
 	
-			if ( _isAllowed) {
 	
-				// scale and resize the lightbox
-				$lb.root
-					.find( "#ui-lightbox-content" )
-						.animate( {width: _lightboxTargetWidth}, _speed )
-						.animate( {height: _lightboxTargetHeight}, _speed )
-						.end()
-					.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, _speed )
-					.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, next);
-			}
+			// scale and resize the lightbox
+			$lb.root
+				.find( "#ui-lightbox-content" )
+					.animate( {width: _lightboxTargetWidth}, _speed )
+					.animate( {height: _lightboxTargetHeight}, _speed )
+					.end()
+				.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, _speed )
+				.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, next);
 		},
 		
 		queueCenterContent: function( next ) {
@@ -1451,14 +1454,6 @@ $.extend($.ui.rlightbox, {
 			// structure is not ready - start an animation
 			data.ready = false;
 			$lb.header.slideUp ( _options.animationSpeed, next );
-		},
-		
-		_getWindowSize: function( size ) {
-			if ( size === "w" ) {
-				return 1000 + 12;
-			} else {
-				return 800 + 12 + 57;
-			}
 		},
 		
 		$lightbox: {},
