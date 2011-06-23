@@ -256,8 +256,8 @@ $.extend($.ui.rlightbox, {
 				_padding = data.lightboxPadding;
 	
 			return {
-				width: $( window ).width() - _padding,
-				height: $( window ).height() - data.headerHeight - _padding
+				width: this._getWindowSize( "width" ) - _padding,
+				height: this._getWindowSize( "height" ) - data.headerHeight - _padding
 			}
 		},		
 		
@@ -909,31 +909,50 @@ $.extend($.ui.rlightbox, {
 		},		
 		
 		panoramaShowMap: function() {
-			var _viewportWidth, _viewportHeight, _viewportWidthRatio, _viewportHeightRatio,
+			var _mapViewportWidth, _mapViewportHeight, _mapViewportWidthRatio, _mapViewportHeightRatio,
+				_contentViewportWidth, _contentViewportHeight,
 				data = this.data,
+				_minimalLightboxSize = data.minimalLightboxSize,
 				$lb = this.$lightbox,
+				$content = $lb.content,
+				$image = $content.find( "img" ),
+				_imageWidth = $image.width(),
+				_imageHeight = $image.height();
 				_currentElement = data.currentSetElement,
 				_mapSize = data.mapSize;
 	
 			// show the map and give the viewport relevant size
 			// give the viewport relevant size
-			_viewportWidthRatio = _mapSize.width / _currentElement.width;
-			_viewportHeightRatio = _mapSize.height / _currentElement.height;
-	
-			_viewportWidth = Math.ceil( $lb.content.width() * _viewportWidthRatio );
-			_viewportHeight = Math.ceil( $lb.content.height() * _viewportHeightRatio );
+			_mapViewportWidthRatio = _mapSize.width / _currentElement.width;
+			_mapViewportHeightRatio = _mapSize.height / _currentElement.height;
+			
+			// content doesn't cover whole container
+			if ( _imageWidth < _minimalLightboxSize.width ) {
+				_contentViewportWidth = _imageWidth;
+			} else {
+				_contentViewportWidth = $content.width();
+			}
+			
+			if ( _imageHeight < _minimalLightboxSize.height ) {
+				_contentViewportHeight = _imageHeight;
+			} else {
+				_contentViewportHeight = $content.height();
+			}
+			
+			_mapViewportWidth = Math.ceil( _contentViewportWidth * _mapViewportWidthRatio );
+			_mapViewportHeight = Math.ceil( _contentViewportHeight * _mapViewportHeightRatio );
 	
 			$lb.viewport
-				.width( _viewportWidth )
-				.height( _viewportHeight );
+				.width( _mapViewportWidth )
+				.height( _mapViewportHeight );
 	
 			// show the map
 			$lb.map.show();
 	
 			// used when you scroll the content
 			data.viewportRatio = {
-				width: _viewportWidthRatio,
-				height: _viewportHeightRatio
+				width: _mapViewportWidthRatio,
+				height: _mapViewportHeightRatio
 			}
 	
 		},
@@ -1280,8 +1299,8 @@ $.extend($.ui.rlightbox, {
 		queueCenterLightbox: function( next ) {
 			var $lb = this.$lightbox,
 				$root = $lb.root,
-				_screenWidth = $( window ).width(),
-				_screenHeight = $( window ).height(),
+				_screenWidth = this._getWindowSize( "width" ),
+				_screenHeight = this._getWindowSize( "height" ),
 				_lbWidth = $root.outerWidth(),
 				_lbHeight = $root.outerHeight();
 	
@@ -1378,8 +1397,8 @@ $.extend($.ui.rlightbox, {
 					.animate( {width: _lightboxTargetWidth}, _speed )
 					.animate( {height: _lightboxTargetHeight}, _speed )
 					.end()
-				.animate( {left: ($(window).width() - _lightboxTargetWidth - _padding) / 2}, _speed )
-				.animate( {top: ($(window).height() - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, next);
+				.animate( {left: (this._getWindowSize("width") - _lightboxTargetWidth - _padding) / 2}, _speed )
+				.animate( {top: (this._getWindowSize("height") - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, next);
 		},
 		
 		queueCenterContent: function( next ) {
