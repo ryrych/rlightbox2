@@ -21,7 +21,13 @@ $.widget( "ui.rlightbox", {
 		errorMessage: "Oops! Something is wrong! If the problem repeats itself, let the page’s admin know. Would you like to try again or reject this content?",
 		againButtonLabel: "Try again",
 		rejectButtonLabel: "Reject this content",
-		overwriteTitle: false
+		overwriteTitle: false,
+		keys: {
+			next: [78, 39],
+			previous: [80, 37],
+			close: [67, 27],
+			panorama: [90, null]
+		}
 	},
 
 	_create: function() {
@@ -360,6 +366,9 @@ $.extend($.ui.rlightbox, {
 		
 				// resize lightbox when window size changes
 				$( window ).bind( "resize.rlightbox", $.proxy(this.liveResize, this) );
+				
+				// keyboard navigation
+				$( document ).keyup( $.proxy(this.handleKeyboard, this) );			
 			}
 		},
 		
@@ -515,7 +524,46 @@ $.extend($.ui.rlightbox, {
 					return _windowHeight;
 				}
 			}
-		},		
+		},
+		
+		handleKeyboard: function( event ) {
+			var data = this.data,
+				_currentElement = data.currentSetElement,
+				_options = _currentElement.self.options,
+				_keys = _options.keys,
+				_key = event.which;
+			
+			if ( data.ready === false ) {
+				return;
+			}
+console.log(_key);
+			// handle pressing keys
+			if ( _key === _keys.next[0] || _key === _keys.next[1] ) {
+				
+				// next keys: [N] & [→]
+				// simulate checking side
+				data.side = "right"
+				
+				// load next content if possible
+				this.navigationNext();
+			} else if ( _key === _keys.previous[0] || _key === _keys.previous[1] ) {
+				
+				// prev keys: [P] & [←]
+				// simulate checking side
+				data.side = "left";
+				
+				// load previous content if possible
+				this.navigationNext();
+			} else if ( _key === _keys.close[0] || _key === _keys.close[1] ) {
+				
+				// close keys: [C] & [ESC]
+				this.closeLightbox();
+			} else if ( _key === _keys.panorama[0] || _key === _keys.panorama[1] ) {
+				
+				// panorama keys: [Z]
+				this.panoramaToggle();
+			}
+		},
 		
 		liveResize: function() {
 			var data = this.data,
