@@ -415,15 +415,15 @@ $.extend($.ui.rlightbox, {
 					// height is larger than window, width fits the window
 					if ( _statusWidth === 1 || _statusWidth === -1 ) {
 						_lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;
+						_imageTargetHeight = _lightboxTargetHeight;						
 						_heightRatio = _lightboxTargetHeight / h;
-						_imageTargetHeight = _lightboxTargetHeight;
 	
 						if (_statusWidth === -1) {
 							_lightboxTargetWidth = _minimalLightboxWidth;
 							_imageTargetWidth = Math.ceil( w * _heightRatio );
 						} else {
 							_lightboxTargetWidth = Math.ceil( w * _heightRatio ) - _lightboxPadding;
-							_imageTargetWidth = Math.ceil ( w * _heightRatio );
+							_imageTargetWidth = _lightboxTargetWidth;
 		
 							if ( _imageTargetWidth <= _minimalLightboxWidth ) {
 								_calculateSizes( _imageTargetWidth, _imageTargetHeight );
@@ -433,15 +433,15 @@ $.extend($.ui.rlightbox, {
 	
 						// width is larger than window, height fit the window
 						_lightboxTargetWidth = _windowWidth - _lightboxPadding;
+						_imageTargetWidth = _lightboxTargetWidth;						
 						_widthRatio = _lightboxTargetWidth / w;
-						_imageTargetWidth = _lightboxTargetWidth;
 						
 						if ( _statusHeight === -1 ) {
 							_lightboxTargetHeight = _minimalLightboxHeight;
 							_imageTargetHeight = Math.ceil( h * _widthRatio );
 						} else {
 							_lightboxTargetHeight = Math.ceil( h * _widthRatio ) - _headerHeight - _lightboxPadding;
-							_imageTargetHeight = Math.ceil( h * _widthRatio );
+							_imageTargetHeight = _lightboxTargetHeight;
 	
 							if ( _imageTargetHeight <= _minimalLightboxHeight ) {
 								_calculateSizes( _imageTargetWidth, _imageTargetHeight );
@@ -455,19 +455,20 @@ $.extend($.ui.rlightbox, {
 							_imageTargetWidth = _lightboxTargetWidth;
 							_widthRatio = _lightboxTargetWidth / w;
 							_lightboxTargetHeight = Math.ceil( h * _widthRatio ) - _lightboxPadding - _headerHeight;
-							_imageTargetHeight = Math.ceil( h * _widthRatio );
-
-							if ( _imageTargetHeight <= _minimalLightboxHeight ) {
+							_imageTargetHeight = _lightboxTargetHeight;
+							
+							// if after scaling an image is smaller or bigger
+							if ( _imageTargetHeight <= _minimalLightboxHeight || _lightboxTargetHeight > _windowHeight ) {
 								_calculateSizes( _imageTargetWidth, _imageTargetHeight );
 							}
 						} else {
-							_lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;				
+							_lightboxTargetHeight = _windowHeight - _headerHeight - _lightboxPadding;
+							_imageTargetHeight = _lightboxTargetHeight;							
 							_heightRatio = _lightboxTargetHeight / h;
-							_imageTargetHeight = _lightboxTargetHeight;
 							_lightboxTargetWidth = Math.ceil( w * _heightRatio ) - _lightboxPadding;
-							_imageTargetWidth = Math.ceil( w * _heightRatio );
+							_imageTargetWidth = _lightboxTargetWidth;
 
-							if ( _imageTargetWidth <= _minimalLightboxWidth ) {
+							if ( _imageTargetWidth <= _minimalLightboxWidth || _lightboxTargetWidth > _windowWidth ) {
 								_calculateSizes( _imageTargetWidth, _imageTargetHeight );
 							}
 						}
