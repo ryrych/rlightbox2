@@ -256,8 +256,8 @@ $.extend($.ui.rlightbox, {
 				_padding = data.lightboxPadding;
 	
 			return {
-				width: this._getWindowSize( "width" ) - _padding,
-				height: this._getWindowSize( "height" ) - data.headerHeight - _padding
+				width: this.getWindowSize( "width" ) - _padding,
+				height: this.getWindowSize( "height" ) - data.headerHeight - _padding
 			}
 		},		
 		
@@ -291,8 +291,8 @@ $.extend($.ui.rlightbox, {
 			var _statusWidth, _statusHeight,
 				data = this.data,
 				_currentElement = data.currentSetElement,
-				_windowWidth = this._getWindowSize( "width" ),
-				_windowHeight = this._getWindowSize( "height" ),
+				_windowWidth = this.getWindowSize( "width" ),
+				_windowHeight = this.getWindowSize( "height" ),
 				_minimalLightboxWidth = data.minimalLightboxSize.width,
 				_minimalLightboxHeight = data.minimalLightboxSize.height,
 				_imageWidth = _currentElement.width,
@@ -381,8 +381,8 @@ $.extend($.ui.rlightbox, {
 				data = this.data,
 				self = this,
 				_currentElement = data.currentSetElement,
-				_windowWidth = this._getWindowSize( "width" ),
-				_windowHeight = this._getWindowSize( "height" ),
+				_windowWidth = this.getWindowSize( "width" ),
+				_windowHeight = this.getWindowSize( "height" ),
 				_minimalLightboxWidth = data.minimalLightboxSize.width,
 				_minimalLightboxHeight = data.minimalLightboxSize.height,
 				_imageWidth = _currentElement.width,
@@ -492,7 +492,7 @@ $.extend($.ui.rlightbox, {
 			};
 		},
 		
-		_getWindowSize: function( size ) {
+		getWindowSize: function( size ) {
 			var data = this.data,
 				_windowWidth = $( window ).width(),
 				_windowHeight = $( window ).height(),
@@ -1305,8 +1305,8 @@ $.extend($.ui.rlightbox, {
 		queueCenterLightbox: function( next ) {
 			var $lb = this.$lightbox,
 				$root = $lb.root,
-				_screenWidth = this._getWindowSize( "width" ),
-				_screenHeight = this._getWindowSize( "height" ),
+				_screenWidth = this.getWindowSize( "width" ),
+				_screenHeight = this.getWindowSize( "height" ),
 				_lbWidth = $root.outerWidth(),
 				_lbHeight = $root.outerHeight();
 	
@@ -1403,8 +1403,8 @@ $.extend($.ui.rlightbox, {
 					.animate( {width: _lightboxTargetWidth}, _speed )
 					.animate( {height: _lightboxTargetHeight}, _speed )
 					.end()
-				.animate( {left: (this._getWindowSize("width") - _lightboxTargetWidth - _padding) / 2}, _speed )
-				.animate( {top: (this._getWindowSize("height") - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, next);
+				.animate( {left: (this.getWindowSize("width") - _lightboxTargetWidth - _padding) / 2}, _speed )
+				.animate( {top: (this.getWindowSize("height") - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, next);
 		},
 		
 		queueCenterContent: function( next ) {
