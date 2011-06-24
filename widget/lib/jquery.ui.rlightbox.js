@@ -656,7 +656,9 @@ $.extend($.ui.rlightbox, {
 		navigationCheckSide: function( event ) {
 			var data = this.data,
 				$lb = this.$lightbox,
-				$content = $lb.content;
+				$content = $lb.content,
+				_currentElementNumber = data.currentElementNumber,
+				_totalElementsNumber = data.totalElementsNumber;
 	
 			// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
 			// clicked image belongs to a gallery and we are not in the Panorama™ mode
@@ -664,12 +666,15 @@ $.extend($.ui.rlightbox, {
 				var _pos = event.pageX - $content.offset().left,
 					_center = Math.round( $content.width() / 2 );
 	
-				if ( _pos <= _center ) {
+				if ( _pos <= _center && _currentElementNumber > 1 ) {
 					data.side = "left";
 					$content.css( "cursor", "w-resize" );
-				} else {
+				} else if ( _pos > _center && _currentElementNumber < _totalElementsNumber ) {
 					data.side = "right"
 					$content.css( "cursor","e-resize" );
+				} else {
+					data.side = "";
+					$content.css( "cursor", "default" );
 				}
 			} else if ( data.panoramaDrag === false ) {
 	
