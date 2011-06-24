@@ -536,7 +536,7 @@ $.extend($.ui.rlightbox, {
 			if ( data.ready === false ) {
 				return;
 			}
-console.log(_key);
+
 			// handle pressing keys
 			if ( _key === _keys.next[0] || _key === _keys.next[1] ) {
 				
@@ -1092,11 +1092,11 @@ console.log(_key);
 			// expand is the first action – using jQuery .toggle() ‘expand’ would be the fist action again (because of its internal queue)
 			var data = this.data,
 				_panoramaOn = data.panoramaEnabled,
-				_localScope = data.currentSetElement.self;
-	
-			if ( _panoramaOn === false ) {
+				_enabled = data.enablePanorama;
+				
+			if ( _panoramaOn === false && _enabled ) {
 				this.panoramaExpand();
-			} else {
+			} else if ( _panoramaOn && _enabled ) {
 				this.panoramaShrink();			
 			}
 		},
@@ -1489,9 +1489,12 @@ console.log(_key);
 					// if one of the image sides is bigger than the screen, show panorama icon
 					if ( _currentElement.type === "image" && _isError === false ) {
 						if ( _originalStatus.statusWidth === 2 || _originalStatus.statusHeight === 2 ) {
+							data.enablePanorama = true;
 							$lb.panoramaIcon
 								.show()
 								.addClass( "ui-lightbox-panorama-icon-expand" );
+						} else {
+							data.enablePanorama = false;
 						}
 					}
 	
@@ -1546,7 +1549,8 @@ console.log(_key);
 			},
 			oembedProvider: "http://oohembed.com/oohembed?callback=?",
 			showErrorMessage: false,
-			currentSetElement: {}
+			currentSetElement: {},
+			enablePanorama: false
 		}
 	}
 });
