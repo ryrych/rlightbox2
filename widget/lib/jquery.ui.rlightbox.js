@@ -561,7 +561,7 @@ $.extend($.ui.rlightbox, {
 			} else if ( _key === _keys.panorama[0] || _key === _keys.panorama[1] ) {
 				
 				// panorama keys: [Z]
-				this.panoramaToggle();
+				this.panoramaToggle( event );
 			}
 		},
 		
@@ -850,7 +850,7 @@ $.extend($.ui.rlightbox, {
 			});
 		},		
 		
-		panoramaExpand: function() {
+		panoramaExpand: function( event ) {
 	
 			// _panoramaExpand does the main goal of the Panorama™: it displays the natural image size
 			var data = this.data,
@@ -861,11 +861,15 @@ $.extend($.ui.rlightbox, {
 			// let know that we can scroll now
 			data.panoramaEnabled = true;
 	
-			// show the zoom out icon
-			$lb.panoramaIcon
-				.removeClass()
-				.addClass( "ui-lightbox-panorama-icon-shrink-hover" );
-	
+			// show the zoom out icon; we add hover state because when we click
+			// the icon we lose focus and state end up with normal state
+			// not when key is pressed
+			if ( event.type === "click" ) {
+				this.panoramaShowIcon( "shrink", "-hover" );
+			} else {
+				this.panoramaShowIcon( "shrink" );
+			}
+
 			// give the natural size to the image
 			$lb.content
 				.find( "img" )
@@ -960,7 +964,18 @@ $.extend($.ui.rlightbox, {
 				$lb.content
 					.width( _contentWidth )
 					.height( _contentHeight );
-		},		
+		},
+		
+		panoramaShowIcon: function( icon, state ) {
+			var $lb = this.$lightbox,
+				_state = state || "",
+				_newClass = "ui-lightbox-panorama-icon-" + icon + _state;
+				
+				$lb.panoramaIcon
+					.show()
+					.removeClass()
+					.addClass( _newClass );			
+		},
 		
 		panoramaShowMap: function() {
 			var _mapViewportWidth, _mapViewportHeight, _mapViewportWidthRatio, _mapViewportHeightRatio,
@@ -1011,17 +1026,21 @@ $.extend($.ui.rlightbox, {
 	
 		},
 		
-		panoramaShrink: function() {
+		panoramaShrink: function( event ) {
 			var data = this.data,
 				$lb = this.$lightbox;
 	
 			// _panoramaShrink retores the previous size of an image
 			data.panoramaEnabled = false;
 	
-			// show the zoom in icon – let know that we can run panorama mode again
-			$lb.panoramaIcon
-				.removeClass()
-				.addClass( "ui-lightbox-panorama-icon-expand-hover" );
+			// show the zoom out icon; we add hover state because when we click
+			// the icon we lose focus and state end up with normal state
+			// not when key is pressed
+			if ( event.type === "click" ) {
+				this.panoramaShowIcon( "expand", "-hover" );
+			} else {
+				this.panoramaShowIcon( "expand" );
+			}
 	
 			// resize an image to its previous size and center it
 			this.queueResizeLightbox();
@@ -1093,11 +1112,11 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				_panoramaOn = data.panoramaEnabled,
 				_enabled = data.enablePanorama;
-				
+
 			if ( _panoramaOn === false && _enabled ) {
-				this.panoramaExpand();
+				this.panoramaExpand( event );
 			} else if ( _panoramaOn && _enabled ) {
-				this.panoramaShrink();			
+				this.panoramaShrink( event );			
 			}
 		},
 		
@@ -1477,6 +1496,7 @@ $.extend($.ui.rlightbox, {
 		queueShowContent: function( next ) {
 			var data = this.data,
 				$lb = this.$lightbox,
+				self = this,
 				_currentElement = data.currentSetElement,
 				_options = _currentElement.self.options,
 				_originalStatus = _currentElement.originalStatus,
@@ -1490,9 +1510,7 @@ $.extend($.ui.rlightbox, {
 					if ( _currentElement.type === "image" && _isError === false ) {
 						if ( _originalStatus.statusWidth === 2 || _originalStatus.statusHeight === 2 ) {
 							data.enablePanorama = true;
-							$lb.panoramaIcon
-								.show()
-								.addClass( "ui-lightbox-panorama-icon-expand" );
+							self.panoramaShowIcon( "expand" );
 						} else {
 							data.enablePanorama = false;
 						}
