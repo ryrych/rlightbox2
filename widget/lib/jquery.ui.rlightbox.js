@@ -123,10 +123,7 @@ $.extend($.ui.rlightbox, {
 					.height( 20 );
 		
 				// reset panorama
-				$lb.panoramaIcon
-					.hide()
-					.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
-				data.panoramaEnabled = false;
+				this.panoramaHideIcon();
 		
 				// reset the counter
 				data.currentElementNumber = null;
@@ -185,7 +182,7 @@ $.extend($.ui.rlightbox, {
 				.unbind( "." + "rlightbox" )
 				.unbind( "click" )
 				.removeData( "rlightbox" );
-		},		
+		},
 		
 		extractAnchor: function( thisElement ) {
 			
@@ -486,11 +483,6 @@ $.extend($.ui.rlightbox, {
 			}
 			_calculateSizes( _imageWidth, _imageHeight );
 	
-			// final status
-			_statuses = this.getImageStatus( _imageTargetWidth, _imageTargetHeight );
-			_statusWidth = _statuses.statusWidth;
-			_statusHeight = _statuses.statusHeight;
-	
 			return {
 				imageTargetWidth: _imageTargetWidth,
 				imageTargetHeight: _imageTargetHeight,
@@ -574,6 +566,7 @@ $.extend($.ui.rlightbox, {
 				this.queueResizeLightbox();
 				this.updateTitleWidth();
 				this.queueCenterContent();
+				this.panoramaCheckAvailability();
 			} else if ( data.ready && (data.panoramaEnabled === false && _elementType !== "image") || (data.panoramaEnabled && _elementType === "image") ) {
 	
 				// otherwise keep the lightbox centered especially when window is bigger than the lightbox
@@ -600,9 +593,6 @@ $.extend($.ui.rlightbox, {
 						// keep original size of an image – needed when resizing
 						_currentElement.width = this.width;
 						_currentElement.height = this.height;
-					
-						// save original sizes and status for panorama purposes
-						_currentElement.originalStatus = self.getImageStatus( this.width, this.height );
 					
 						// add the loaded image and hide it
 						$lb.content
@@ -848,6 +838,32 @@ $.extend($.ui.rlightbox, {
 				top: _top,
 				left: _left
 			});
+		},
+		
+		panoramaCheckAvailability: function() {
+			
+			// checks if we can turn on Panorama mode™ ;)
+			// having loaded an image we save its original size
+			// if the orignal image size is larger than window size we have to
+			// scale down the image so it ends up with smaller image size;
+			// Panorama™ is enabled only when the image can’t be displayed in its
+			// orignal size.
+			var data = this.data,
+				_currentElement = data.currentSetElement,
+				_originalImageWidth = _currentElement.width,
+				_originalImageHeight = _currentElement.height,
+				_currentImageWidth = _currentElement.currentWidth,
+				_currentImageHeight = _currentElement.currentHeight;
+				
+			if ( _currentImageWidth < _originalImageWidth || _currentImageHeight < _originalImageHeight ) {
+				this.panoramaShowIcon( "expand" );
+				
+				// cuz we don’t want to check it twice in panoramaToggle()
+				data.enablePanorama = true;
+			} else {
+				data.enablePanorama = false;
+				this.panoramaHideIcon();
+			}
 		},		
 		
 		panoramaExpand: function( event ) {
@@ -887,7 +903,17 @@ $.extend($.ui.rlightbox, {
 			if ( _options.showMap ) {
 				this.panoramaShowMap();
 			}
-		},		
+		},
+		
+		panoramaHideIcon: function() {
+			var data = this.data,
+				$lb = this.$lightbox;
+				
+			$lb.panoramaIcon
+				.hide()
+				.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
+			data.panoramaEnabled = false;			
+		},
 		
 		panoramaHideMap: function() {
 			var $lb = this.$lightbox;
@@ -1111,11 +1137,11 @@ $.extend($.ui.rlightbox, {
 			// expand is the first action – using jQuery .toggle() ‘expand’ would be the fist action again (because of its internal queue)
 			var data = this.data,
 				_panoramaOn = data.panoramaEnabled,
-				_enabled = data.enablePanorama;
+				_isPanoramaEnabled = data.enablePanorama;
 
-			if ( _panoramaOn === false && _enabled ) {
+			if ( _isPanoramaEnabled && _panoramaOn === false ) {
 				this.panoramaExpand( event );
-			} else if ( _panoramaOn && _enabled ) {
+			} else if ( _isPanoramaEnabled && _panoramaOn ) {
 				this.panoramaShrink( event );			
 			}
 		},
@@ -1418,7 +1444,7 @@ $.extend($.ui.rlightbox, {
 	
 			// resizes the lightbox to to house content and centers it on the screen
 			var _speed, _animate, _sizes, _imageTargetWidth, _imageTargetHeight,
-				_lightboxTargetWidth, _lightboxTargetHeight, _statusWidth, _statusHeight, _img,
+				_lightboxTargetWidth, _lightboxTargetHeight, _img,
 				data = this.data,
 				$lb = this.$lightbox,
 				_padding = data.lightboxPadding,
@@ -1434,10 +1460,12 @@ $.extend($.ui.rlightbox, {
 				_imageTargetHeight = _sizes.imageTargetHeight,
 				_lightboxTargetWidth = _sizes.lightboxTargetWidth,
 				_lightboxTargetHeight = _sizes.lightboxTargetHeight,
-				_statusWidth = _sizes.statusWidth,
-				_statusHeight = _sizes.statusHeight,
 				_img = $lb.content.find( "img" );
-	
+				
+				// if scaled size is smaller than the original, show Panorama
+				_currentElement.currentWidth = _imageTargetWidth;
+				_currentElement.currentHeight = _imageTargetHeight;
+				
 				// scale the image
 				_img
 					.width( _imageTargetWidth )
@@ -1499,8 +1527,7 @@ $.extend($.ui.rlightbox, {
 				self = this,
 				_currentElement = data.currentSetElement,
 				_options = _currentElement.self.options,
-				_originalStatus = _currentElement.originalStatus,
-				_isError = data.showErrorMessage;
+				_isError = data.showErrorMessage;			
 	
 			// show content
 			$lb.content.children()
@@ -1508,12 +1535,7 @@ $.extend($.ui.rlightbox, {
 	
 					// if one of the image sides is bigger than the screen, show panorama icon
 					if ( _currentElement.type === "image" && _isError === false ) {
-						if ( _originalStatus.statusWidth === 2 || _originalStatus.statusHeight === 2 ) {
-							data.enablePanorama = true;
-							self.panoramaShowIcon( "expand" );
-						} else {
-							data.enablePanorama = false;
-						}
+						self.panoramaCheckAvailability();
 					}
 	
 					next();
