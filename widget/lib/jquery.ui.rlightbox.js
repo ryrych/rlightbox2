@@ -1276,7 +1276,10 @@ $.extend($.ui.rlightbox, {
 								"</div>" +
 							"</div>"),
 				$again = $structure.find( "#ui-lightbox-error-footer-again" ),
-				$reject = $structure.find( "#ui-lightbox-error-footer-reject" );
+				$reject = $structure.find( "#ui-lightbox-error-footer-reject" ),
+				_errorScreenSize = data.errorScreenSize,
+				_errorScreenWidth = _errorScreenSize.width,
+				_errorScreenHeight = _errorScreenSize.height;
 			
 			// ‘again’ button give a user a chance to try loading content again
 			$again
@@ -1304,6 +1307,10 @@ $.extend($.ui.rlightbox, {
 			$lb.content
 				.empty()
 				.append( $structure )
+				.find( "#ui-lightbox-error" )
+					.width( _errorScreenWidth )
+					.height( _errorScreenHeight )
+					.end()
 				.children()
 					.hide();
 			
@@ -1451,7 +1458,10 @@ $.extend($.ui.rlightbox, {
 				_headerHeight = data.headerHeight,
 				_currentElement = data.currentSetElement,
 				_options = _currentElement.self.options,
-				_isError = data.showErrorMessage;
+				_isError = data.showErrorMessage,
+				_errorScreenSize = data.errorScreenSize,
+				_errorScreenWidth = _errorScreenSize.width,
+				_errorScreenHeight = _errorScreenSize.height;
 	
 			// if content is type of image, resize it to fit the screen
 			if ( _currentElement.type === "image" && _isError === false ) {
@@ -1486,9 +1496,8 @@ $.extend($.ui.rlightbox, {
 				_lightboxTargetHeight = _currentElement.height;
 			} else if ( _isError ) {
 				_speed = _options.animationSpeed;
-				// TODO: zapisać w data
-				_lightboxTargetWidth = 500;
-				_lightboxTargetHeight = 300;
+				_lightboxTargetWidth = _errorScreenWidth;
+				_lightboxTargetHeight = _errorScreenHeight;
 			}
 	
 	
@@ -1590,7 +1599,11 @@ $.extend($.ui.rlightbox, {
 			oembedProvider: "http://oohembed.com/oohembed?callback=?",
 			showErrorMessage: false,
 			currentSetElement: {},
-			enablePanorama: false
+			enablePanorama: false,
+			errorScreenSize: {
+				width: 500,
+				height: 300
+			}
 		}
 	}
 });
