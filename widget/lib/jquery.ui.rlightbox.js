@@ -562,12 +562,12 @@ $.extend($.ui.rlightbox, {
 				_elementType = data.currentSetElement.type;
 	
 			// resizes an image when size of the browser window resizes and when Panorama is turned off
-			if ( data.ready && data.panoramaEnabled === false && _elementType === "image" ) {
+			if ( data.ready && data.panoramaOn === false && _elementType === "image" ) {
 				this.queueResizeLightbox();
 				this.updateTitleWidth();
 				this.queueCenterContent();
 				this.panoramaCheckAvailability();
-			} else if ( data.ready && (data.panoramaEnabled === false && _elementType !== "image") || (data.panoramaEnabled && _elementType === "image") ) {
+			} else if ( data.ready && (data.panoramaOn === false && _elementType !== "image") || (data.panoramaOn && _elementType === "image") ) {
 	
 				// otherwise keep the lightbox centered especially when window is bigger than the lightbox
 				this.queueCenterLightbox();
@@ -701,7 +701,7 @@ $.extend($.ui.rlightbox, {
 	
 			// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
 			// clicked image belongs to a gallery and we are not in the Panorama™ mode
-			if ( data.ready && data.currentSet !== "single" && data.currentSetElement.type === "image" && data.panoramaEnabled === false ) {
+			if ( data.ready && data.currentSet !== "single" && data.currentSetElement.type === "image" && data.panoramaOn === false ) {
 				var _pos = event.pageX - $content.offset().left,
 					_center = Math.round( $content.width() / 2 );
 	
@@ -875,7 +875,7 @@ $.extend($.ui.rlightbox, {
 				_options = _currentElement.self.options;
 	
 			// let know that we can scroll now
-			data.panoramaEnabled = true;
+			data.panoramaOn = true;
 	
 			// show the zoom out icon; we add hover state because when we click
 			// the icon we lose focus and state end up with normal state
@@ -912,7 +912,7 @@ $.extend($.ui.rlightbox, {
 			$lb.panoramaIcon
 				.hide()
 				.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
-			data.panoramaEnabled = false;			
+			data.panoramaOn = false;			
 		},
 		
 		panoramaHideMap: function() {
@@ -1057,7 +1057,7 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox;
 	
 			// _panoramaShrink retores the previous size of an image
-			data.panoramaEnabled = false;
+			data.panoramaOn = false;
 	
 			// show the zoom out icon; we add hover state because when we click
 			// the icon we lose focus and state end up with normal state
@@ -1091,7 +1091,7 @@ $.extend($.ui.rlightbox, {
 			data.panoramaDrag = true;
 	
 			// give clue that we can drag now
-			if ( data.panoramaEnabled ) {
+			if ( data.panoramaOn ) {
 				$lb.content.css( "cursor", "move" );
 			}
 	
@@ -1113,7 +1113,7 @@ $.extend($.ui.rlightbox, {
 			data.panoramaDrag = false;
 	
 			// if we are in the panorama mode (the panorama icon was clicked)
-			if ( data.panoramaEnabled ) {
+			if ( data.panoramaOn ) {
 				$content
 					.scrollLeft( $content.scrollLeft() + _distX )
 					.scrollTop( $content.scrollTop() + _distY );
@@ -1136,7 +1136,7 @@ $.extend($.ui.rlightbox, {
 			// and open again and next image once again can be zoomed we need to make sure that
 			// expand is the first action – using jQuery .toggle() ‘expand’ would be the fist action again (because of its internal queue)
 			var data = this.data,
-				_panoramaOn = data.panoramaEnabled,
+				_panoramaOn = data.panoramaOn,
 				_isPanoramaEnabled = data.enablePanorama;
 
 			if ( _isPanoramaEnabled && _panoramaOn === false ) {
@@ -1376,7 +1376,7 @@ $.extend($.ui.rlightbox, {
 				.hide()
 				.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
 	
-			data.panoramaEnabled = false;
+			data.panoramaOn = false;
 	
 			// hide the map
 			this.panoramaHideMap();
@@ -1582,7 +1582,7 @@ $.extend($.ui.rlightbox, {
 			lightboxPadding: 12,
 			headerHeight: 57,
 			ready: false,
-			panoramaEnabled: false,
+			panoramaOn: false,
 			mapSize: {
 				width: 150,
 				height: 100
