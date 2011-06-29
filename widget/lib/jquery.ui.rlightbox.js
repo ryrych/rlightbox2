@@ -208,6 +208,10 @@ $.extend($.ui.rlightbox, {
 					vimeo: {
 						urls: [/(http:\/\/vimeo\.com\/groups\/\w+\/videos\/\w+)&?/, /(http:\/\/vimeo\.com\/\w+)&?/],
 						type: "vimeo"
+					},
+					flash: {
+						urls: [/.swf/],
+						type: "flash"
 					}
 				};
 				
@@ -232,7 +236,9 @@ $.extend($.ui.rlightbox, {
 									self: thisElement
 								}
 								
-								if ( content.type === "image" || thisElement.options.overwriteTitle ) {
+								// image and flash urls are not normalised; in case of flash content
+								// there may be &with and &height parameters
+								if ( content.type === "image" || content.type === "flash" || thisElement.options.overwriteTitle ) {
 									_result.title = $anchor.attr( "title" );
 									_result.url = _url;
 								}
@@ -366,6 +372,22 @@ $.extend($.ui.rlightbox, {
 				
 				// keyboard navigation
 				$( document ).keyup( $.proxy(this.handleKeyboard, this) );			
+			}
+		},
+		
+		getParam: function( param, url ) {
+			
+			// with param ‘with’ and url ‘foo.flv?width=100" it returns ‘100’
+			var _result,
+				_regExpString = "[\\?&]" + param + "=(\\w+)",
+				_regExp = new RegExp( _regExpString );
+
+			_result = _regExp.exec( url );
+			
+			if ( _result !== null ) {
+				return _result[1];
+			} else {
+				return null;
 			}
 		},
 		
@@ -574,6 +596,73 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 		
+		loadContentFlash: function( url ) {
+			var _width, _height,
+				data = this.data,
+				$lb = this.$lightbox,
+				self = this,
+				$content = $lb.content,
+				_dfd = $.Deferred(),
+				_structure = "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='{width}' height='{height}'>" +
+					"<param name='movie' value='{url}' />" +
+						"<!--[if !IE]>-->" +
+						"<object type='application/x-shockwave-flash' data='{url}' width='{width}' height='{height}'>" +
+						"<!--<![endif]-->" +
+							"<p>Alternative content</p>" +
+						"<!--[if !IE]>-->" +
+						"</object>" +
+						"<!--<![endif]-->" +
+					"</object>",
+				_currentElement = data.currentSetElement,
+				_options = _currentElement.self.options,
+				_minimalLightboxSize = data.minimalLightboxSize,
+				_minimalLightboxWidth = _minimalLightboxSize.width,
+				_minimalLightboxHeight = _minimalLightboxSize.height;
+			
+			// show the spinner
+			$content.addClass( "ui-lightbox-loader" );
+			
+			function _load() {
+				
+				// get width and height from parameters: &with & &height
+				// if any exist; ‘inline’ width and height overwrite that of options
+				_width = self.getParam( "width", url );
+				_height = self.getParam( "height", url );
+				
+				// if &width and &height are invalid, use a default one
+				if ( _width === null || isNaN(_width) ) {
+					_width = _options.videoWidth;
+				}
+				
+				if ( _height === null || isNaN(_height) ) {
+					_height = _options.videoHeight;
+				}
+				
+				_currentElement.width = _width;
+				_currentElement.height = _height;
+				
+				_structure = _structure
+					.replace(/{width}/g, _width)
+					.replace(/{height}/g, _height)
+					.replace(/{url}/g, url);
+	
+				// add embedded code
+				$content
+					.removeClass( "ui-lightbox-loader" )
+					.empty()
+					.append( _structure )
+					.children()
+						.wrap( "<div style='display: none'></div>" );
+				
+				_dfd.resolve();
+			}
+			
+			// delay ‘_load’ because we have to return promise
+			setTimeout( _load, 1000 );
+		
+			return _dfd.promise();
+		},
+		
 		loadContentImage: function( url ) {
 			var $lb = this.$lightbox,
 				data = this.data,
@@ -662,17 +751,8 @@ $.extend($.ui.rlightbox, {
 					}
 					
 					// and returned width and height
-					if ( data.width < _minimalLightboxSize.width ) {
-						_width = _minimalLightboxSize.width;
-					} else {
-						_width = data.width;
-					}
-					
-					if ( data.height < _minimalLightboxSize.height ) {
-						_height = _minimalLightboxSize.height;
-					} else {
-						_height = data.height;
-					}
+					_width = data.width;
+					_height = data.height;
 					
 					_currentElement.width = _width;
 					_currentElement.height = _height;
@@ -1440,6 +1520,9 @@ $.extend($.ui.rlightbox, {
 				case "vimeo":
 					_loadContentMethod = "loadContentYoutube";
 					break;
+				
+				case "flash":
+					_loadContentMethod = "loadContentFlash";
 			}
 	
 			$.when( this[_loadContentMethod](_currentSetElement.url) ).then(function() {
@@ -1461,7 +1544,10 @@ $.extend($.ui.rlightbox, {
 				_isError = data.showErrorMessage,
 				_errorScreenSize = data.errorScreenSize,
 				_errorScreenWidth = _errorScreenSize.width,
-				_errorScreenHeight = _errorScreenSize.height;
+				_errorScreenHeight = _errorScreenSize.height,
+				_minimalLightboxSize = data.minimalLightboxSize,
+				_minimalLightboxWidth = _minimalLightboxSize.width,
+				_minimalLightboxHeight = _minimalLightboxSize.height;
 	
 			// if content is type of image, resize it to fit the screen
 			if ( _currentElement.type === "image" && _isError === false ) {
@@ -1488,12 +1574,23 @@ $.extend($.ui.rlightbox, {
 					_speed = 0;
 				}
 
-			} else if ( (_currentElement.type === "youtube" || _currentElement.type === "vimeo") && _isError === false ){
+			} else if ( (_currentElement.type === "youtube" || _currentElement.type === "vimeo" || _currentElement.type === "flash") && _isError === false ){
 	
 				// if content is flash video
 				_speed = _options.animationSpeed;
-				_lightboxTargetWidth = _currentElement.width;
-				_lightboxTargetHeight = _currentElement.height;
+				
+				// do not let lightbox size be smaller than the minimal one
+				if ( _currentElement.width < _minimalLightboxWidth ) {
+					_lightboxTargetWidth = _minimalLightboxHeight;
+				} else {
+					_lightboxTargetWidth = _currentElement.width;
+				}
+				
+				if ( _currentElement.height < _minimalLightboxHeight ) {
+					_lightboxTargetHeight = _minimalLightboxHeight;
+				} else {
+					_lightboxTargetHeight = _currentElement.height;
+				}
 			} else if ( _isError ) {
 				_speed = _options.animationSpeed;
 				_lightboxTargetWidth = _errorScreenWidth;
