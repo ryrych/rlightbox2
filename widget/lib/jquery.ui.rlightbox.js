@@ -18,7 +18,10 @@ $.widget( "ui.rlightbox", {
 		counterDelimiter: " / ",
 		videoWidth: 640,
 		videoHeight: 385,
-		errorMessage: "Oops! Something is wrong! If the problem repeats itself, let the page’s admin know. Would you like to try again or reject this content?",
+		errorMessage: {
+			generic: "Oops! Something is wrong! If the problem repeats itself, let the page’s admin know. Would you like to try again or reject this content?",
+			disabledFlash: "The Flash plugin has been disabled. Please turn it on or install it."
+		},
 		againButtonLabel: "Try again",
 		rejectButtonLabel: "Reject this content",
 		overwriteTitle: false,
@@ -603,18 +606,11 @@ $.extend($.ui.rlightbox, {
 				self = this,
 				$content = $lb.content,
 				_dfd = $.Deferred(),
-				_structure = "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='{width}' height='{height}'>" +
-					"<param name='movie' value='{url}' />" +
-						"<!--[if !IE]>-->" +
-						"<object type='application/x-shockwave-flash' data='{url}' width='{width}' height='{height}'>" +
-						"<!--<![endif]-->" +
-							"<p>Alternative content</p>" +
-						"<!--[if !IE]>-->" +
-						"</object>" +
-						"<!--<![endif]-->" +
-					"</object>",
+				_structure = data.htmlDisabledFlash,
+				_alternativeContent = data.htmlAlternativeContent,
 				_currentElement = data.currentSetElement,
 				_options = _currentElement.self.options,
+				_errorMessage = _options.errorMessage.disabledFlash,
 				_minimalLightboxSize = data.minimalLightboxSize,
 				_minimalLightboxWidth = _minimalLightboxSize.width,
 				_minimalLightboxHeight = _minimalLightboxSize.height;
@@ -642,8 +638,8 @@ $.extend($.ui.rlightbox, {
 				_currentElement.height = _height;
 				
 				_structure = _structure
-					.replace(/{width}/g, _width)
-					.replace(/{height}/g, _height)
+					.replace(/{width}/g, _width + "px" )
+					.replace(/{height}/g, _height + "px" )
 					.replace(/{url}/g, url);
 	
 				// add embedded code
@@ -651,6 +647,12 @@ $.extend($.ui.rlightbox, {
 					.removeClass( "ui-lightbox-loader" )
 					.empty()
 					.append( _structure )
+					.find( "#ui-lightbox-alternativecontent" )
+						.append( _alternativeContent )
+						.find( "#ui-lightbox-error-message" )
+							.append( _errorMessage )
+							.end()
+						.end()
 					.children()
 						.wrap( "<div style='display: none'></div>" );
 				
@@ -1700,7 +1702,20 @@ $.extend($.ui.rlightbox, {
 			errorScreenSize: {
 				width: 500,
 				height: 300
-			}
+			},
+			htmlDisabledFlash: "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='{width}' height='{height}'>" +
+					"<param name='movie' value='{url}' />" +
+						"<!--[if !IE]>-->" +
+						"<object type='application/x-shockwave-flash' data='{url}' width='{width}' height='{height}'>" +
+						"<!--<![endif]-->" +
+							"<div id='ui-lightbox-alternativecontent'></div>" +
+						"<!--[if !IE]>-->" +
+						"</object>" +
+						"<!--<![endif]-->" +
+					"</object>",
+			htmlAlternativeContent: "<div id='ui-lightbox-error' class='ui-lightbox-error-disabledflash'>" +
+				"<p id='ui-lightbox-error-message' class='ui-lightbox-error-message-disabledflash ui-lightbox-error-icon-sign1'></p>" +
+			"</div>"
 		}
 	}
 });

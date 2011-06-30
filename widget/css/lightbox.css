@@ -115,23 +115,43 @@
 #ui-lightbox-error {
 	background: url(error_bg.png) repeat left top;
 	margin: 0;
+	padding: 0;
+}
+
+.ui-lightbox-error-disabledflash {
+	height: 300px;
+	width: 300px;
 }
 
 #ui-lightbox-error-message{
-	background: url(error_sign.png) no-repeat left center;
-	color: #ffee00;
-	font-size: 17px;
-	height: 120px;
+	color: #ffffff;
+	font-size: 14px;
+	line-height: 1.5;
 	margin: 0;
-	margin-top: 80px;
-	padding: 10px;
-	padding-left: 130px;
+	margin-bottom: 21px;
+	padding: 0;
+	padding-top: 274px;
+	text-align: center;
+}
+
+#ui-lightbox-error > .ui-lightbox-error-message-disabledflash {
+	padding-top: 174px;
 }
 
 #ui-lightbox-error-footer {
+	margin: 0;
+	padding: 0;
 	text-align: center;
 }
 
 #ui-lightbox-error-footer > a {
 	margin-right: 15px;
+}
+
+.ui-lightbox-error-icon-sign1 {
+	background: url(error_sign1.png) no-repeat center 126px;	    
+}
+
+.ui-lightbox-error-icon-sign2 {
+	background: url(error_sign2.png) no-repeat center 126px;	    
 }
