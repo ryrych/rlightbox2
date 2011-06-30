@@ -641,6 +641,8 @@ $.extend($.ui.rlightbox, {
 					.replace(/{width}/g, _width + "px" )
 					.replace(/{height}/g, _height + "px" )
 					.replace(/{url}/g, url);
+				
+				_alternativeContent = _alternativeContent.replace( "{message}", _errorMessage );
 	
 				// add embedded code
 				$content
@@ -649,9 +651,6 @@ $.extend($.ui.rlightbox, {
 					.append( _structure )
 					.find( "#ui-lightbox-alternativecontent" )
 						.append( _alternativeContent )
-						.find( "#ui-lightbox-error-message" )
-							.append( _errorMessage )
-							.end()
 						.end()
 					.children()
 						.wrap( "<div style='display: none'></div>" );
@@ -1708,7 +1707,7 @@ $.extend($.ui.rlightbox, {
 						"<!--<![endif]-->" +
 					"</object>",
 			htmlAlternativeContent: "<div id='ui-lightbox-error' class='ui-lightbox-error-disabledflash'>" +
-				"<p id='ui-lightbox-error-message' class='ui-lightbox-error-message-disabledflash ui-lightbox-error-icon-sign1'></p>" +
+				"<p id='ui-lightbox-error-message' class='ui-lightbox-error-message-disabledflash ui-lightbox-error-icon-sign1'>{message}</p>" +
 			"</div>",
 			htmlGenericErrorScreen: "<div id='ui-lightbox-error'>" +
 				"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign2'>{message}</div>" +
