@@ -1333,36 +1333,30 @@ $.extend($.ui.rlightbox, {
 			// and two buttons: one to try to load content again and one to
 			// reject the content; in order to keep the dependencie to minimum
 			// buttons are not jQuery UI widgets but use their CSS classes
-			var data = this.data,
+			var $again, $reject, $structure,
+				data = this.data,
 				$lb = this.$lightbox,
 				self = this,
 				_currentElement = data.currentSetElement,
 				_options = _currentElement.self.options,
 				_currentElementNumber = data.currentElementNumber,
-				_errorMessage = _options.errorMessage,
+				_errorMessage = _options.errorMessage.generic,
 				_againLabel = _options.againButtonLabel,
 				_rejectLabel = _options.rejectButtonLabel,
-				$structure = $("<div id='ui-lightbox-error'>" +
-								"<div id='ui-lightbox-error-message'>" +
-									_errorMessage +
-								"</div>" +
-								"<div id='ui-lightbox-error-footer'>" +
-									"<a href='#' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
-										"<span class='ui-icon ui-icon-refresh'></span>" +
-										"<span class='ui-button-text'>" + _againLabel + "</span>" +
-									"</a>" +
-									"<a href='#' id='ui-lightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
-										"<span class='ui-icon ui-icon-trash'></span>" +
-										"<span class='ui-button-text'>" + _rejectLabel + "</span>" +
-									"</a>" + 
-								"</div>" +
-							"</div>"),
-				$again = $structure.find( "#ui-lightbox-error-footer-again" ),
-				$reject = $structure.find( "#ui-lightbox-error-footer-reject" ),
+				_structure = data.htmlGenericErrorScreen,
 				_errorScreenSize = data.errorScreenSize,
 				_errorScreenWidth = _errorScreenSize.width,
 				_errorScreenHeight = _errorScreenSize.height;
 			
+			_structure = _structure
+				.replace( "{message}", _errorMessage )
+				.replace( "{labelAgain}", _againLabel )
+				.replace( "{labelReject}", _rejectLabel );
+				
+			$structure = $( _structure );
+			
+			$again = $structure.find( "#ui-lightbox-error-footer-again" ),
+			$reject = $structure.find( "#ui-lightbox-error-footer-reject" ),
 			// ‘again’ button give a user a chance to try loading content again
 			$again
 				.click(function() {
@@ -1701,7 +1695,7 @@ $.extend($.ui.rlightbox, {
 			enablePanorama: false,
 			errorScreenSize: {
 				width: 500,
-				height: 300
+				height: 500
 			},
 			htmlDisabledFlash: "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='{width}' height='{height}'>" +
 					"<param name='movie' value='{url}' />" +
@@ -1715,6 +1709,19 @@ $.extend($.ui.rlightbox, {
 					"</object>",
 			htmlAlternativeContent: "<div id='ui-lightbox-error' class='ui-lightbox-error-disabledflash'>" +
 				"<p id='ui-lightbox-error-message' class='ui-lightbox-error-message-disabledflash ui-lightbox-error-icon-sign1'></p>" +
+			"</div>",
+			htmlGenericErrorScreen: "<div id='ui-lightbox-error'>" +
+				"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign2'>{message}</div>" +
+				"<div id='ui-lightbox-error-footer'>" +
+					"<a href='#' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+						"<span class='ui-icon ui-icon-refresh'></span>" +
+						"<span class='ui-button-text'>{labelAgain}</span>" +
+					"</a>" +
+					"<a href='#' id='ui-lightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+						"<span class='ui-icon ui-icon-trash'></span>" +
+						"<span class='ui-button-text'>{labelReject}</span>" +
+					"</a>" + 
+				"</div>" +
 			"</div>"
 		}
 	}
