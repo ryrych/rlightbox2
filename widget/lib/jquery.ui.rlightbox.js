@@ -636,12 +636,16 @@ $.extend($.ui.rlightbox, {
 				_currentElement.width = _width;
 				_currentElement.height = _height;
 				
-				_structure = _structure
-					.replace( /{width}/g, _width )
-					.replace( /{height}/g, _height )
-					.replace( /{url}/g, url)
-					.replace( /{message}/, _errorMessage );
-	
+				// use real data
+				_structure = self.replaceHtmlPatterns(_structure,
+					{
+						width: _width,
+						height: _height,
+						url: url,
+						message: _errorMessage					
+					}
+				);
+				
 				// add embedded code
 				$content
 					.removeClass( "ui-lightbox-loader" )
@@ -1255,7 +1259,19 @@ $.extend($.ui.rlightbox, {
 					this.navigationGoToElement( number );
 				}
 			}
-		},		
+		},
+		
+		replaceHtmlPatterns: function( htmlString, patterns ) {
+			
+			// replaces patterns like {width} used in html e.g in data.htmlFlash
+			// with real data given in patterns object
+			$.each(patterns, function(key, value) {
+				var _regExp = new RegExp( "{" + key + "}", "g" );
+				htmlString = htmlString.replace( _regExp, value );
+			});
+			
+			return htmlString;
+		},
 		
 		setNextQueue: function() {
 	
@@ -1342,10 +1358,14 @@ $.extend($.ui.rlightbox, {
 				_errorScreenWidth = _errorScreenSize.width,
 				_errorScreenHeight = _errorScreenSize.height;
 			
-			_structure = _structure
-				.replace( /{message}/, _errorMessage )
-				.replace( /{labelAgain}/, _againLabel )
-				.replace( /{labelReject}/, _rejectLabel );
+			// use real data
+			_structure = self.replaceHtmlPatterns(_structure,
+				{
+					message: _errorMessage,
+					labelAgain: _againLabel,
+					labelReject: _rejectLabel				
+				}
+			);			
 				
 			$structure = $( _structure );
 			
