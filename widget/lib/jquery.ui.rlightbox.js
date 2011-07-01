@@ -1343,9 +1343,9 @@ $.extend($.ui.rlightbox, {
 				_errorScreenHeight = _errorScreenSize.height;
 			
 			_structure = _structure
-				.replace( "{message}", _errorMessage )
-				.replace( "{labelAgain}", _againLabel )
-				.replace( "{labelReject}", _rejectLabel );
+				.replace( /{message}/, _errorMessage )
+				.replace( /{labelAgain}/, _againLabel )
+				.replace( /{labelReject}/, _rejectLabel );
 				
 			$structure = $( _structure );
 			
