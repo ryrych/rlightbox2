@@ -637,8 +637,8 @@ $.extend($.ui.rlightbox, {
 				_currentElement.height = _height;
 				
 				_structure = _structure
-					.replace( /{width}/g, _width + "px" )
-					.replace( /{height}/g, _height + "px" )
+					.replace( /{width}/g, _width )
+					.replace( /{height}/g, _height )
 					.replace( /{url}/g, url)
 					.replace( /{message}/, _errorMessage );
 	
