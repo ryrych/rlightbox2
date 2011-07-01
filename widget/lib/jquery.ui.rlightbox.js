@@ -1337,7 +1337,7 @@ $.extend($.ui.rlightbox, {
 				_errorMessage = _options.errorMessage.generic,
 				_againLabel = _options.againButtonLabel,
 				_rejectLabel = _options.rejectButtonLabel,
-				_structure = data.htmlGenericErrorScreen,
+				_structure = data.htmlErrorScreen,
 				_errorScreenSize = data.errorScreenSize,
 				_errorScreenWidth = _errorScreenSize.width,
 				_errorScreenHeight = _errorScreenSize.height;
@@ -1703,7 +1703,7 @@ $.extend($.ui.rlightbox, {
 						"</object>" +
 						"<!--<![endif]-->" +
 					"</object>",
-			htmlGenericErrorScreen: "<div id='ui-lightbox-error'>" +
+			htmlErrorScreen: "<div id='ui-lightbox-error'>" +
 				"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign2'>{message}</div>" +
 				"<div id='ui-lightbox-error-footer'>" +
 					"<a href='#' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
