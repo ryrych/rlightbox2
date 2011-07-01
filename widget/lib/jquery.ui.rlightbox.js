@@ -606,7 +606,7 @@ $.extend($.ui.rlightbox, {
 				self = this,
 				$content = $lb.content,
 				_dfd = $.Deferred(),
-				_structure = data.htmlDisabledFlash,
+				_structure = data.htmlFlash,
 				_alternativeContent = data.htmlAlternativeContent,
 				_currentElement = data.currentSetElement,
 				_options = _currentElement.self.options,
@@ -1696,7 +1696,7 @@ $.extend($.ui.rlightbox, {
 				width: 500,
 				height: 500
 			},
-			htmlDisabledFlash: "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='{width}' height='{height}'>" +
+			htmlFlash: "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='{width}' height='{height}'>" +
 					"<param name='movie' value='{url}' />" +
 						"<!--[if !IE]>-->" +
 						"<object type='application/x-shockwave-flash' data='{url}' width='{width}' height='{height}'>" +
