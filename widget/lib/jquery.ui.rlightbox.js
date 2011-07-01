@@ -607,7 +607,6 @@ $.extend($.ui.rlightbox, {
 				$content = $lb.content,
 				_dfd = $.Deferred(),
 				_structure = data.htmlFlash,
-				_alternativeContent = data.htmlAlternativeContent,
 				_currentElement = data.currentSetElement,
 				_options = _currentElement.self.options,
 				_errorMessage = _options.errorMessage.disabledFlash,
@@ -640,18 +639,14 @@ $.extend($.ui.rlightbox, {
 				_structure = _structure
 					.replace(/{width}/g, _width + "px" )
 					.replace(/{height}/g, _height + "px" )
-					.replace(/{url}/g, url);
-				
-				_alternativeContent = _alternativeContent.replace( "{message}", _errorMessage );
+					.replace(/{url}/g, url)
+					.replace( /{message}/, _errorMessage );
 	
 				// add embedded code
 				$content
 					.removeClass( "ui-lightbox-loader" )
 					.empty()
 					.append( _structure )
-					.find( "#ui-lightbox-alternativecontent" )
-						.append( _alternativeContent )
-						.end()
 					.children()
 						.wrap( "<div style='display: none'></div>" );
 				
@@ -1701,14 +1696,13 @@ $.extend($.ui.rlightbox, {
 						"<!--[if !IE]>-->" +
 						"<object type='application/x-shockwave-flash' data='{url}' width='{width}' height='{height}'>" +
 						"<!--<![endif]-->" +
-							"<div id='ui-lightbox-alternativecontent'></div>" +
+							"<div id='ui-lightbox-error' class='ui-lightbox-error-disabledflash'>" +
+								"<p id='ui-lightbox-error-message' class='ui-lightbox-error-message-disabledflash ui-lightbox-error-icon-sign1'>{message}</p>" +
+							"</div>" +
 						"<!--[if !IE]>-->" +
 						"</object>" +
 						"<!--<![endif]-->" +
 					"</object>",
-			htmlAlternativeContent: "<div id='ui-lightbox-error' class='ui-lightbox-error-disabledflash'>" +
-				"<p id='ui-lightbox-error-message' class='ui-lightbox-error-message-disabledflash ui-lightbox-error-icon-sign1'>{message}</p>" +
-			"</div>",
 			htmlGenericErrorScreen: "<div id='ui-lightbox-error'>" +
 				"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign2'>{message}</div>" +
 				"<div id='ui-lightbox-error-footer'>" +
