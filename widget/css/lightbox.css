@@ -118,12 +118,7 @@
 	padding: 0;
 }
 
-.ui-lightbox-error-disabledflash {
-	height: 300px;
-	width: 300px;
-}
-
-#ui-lightbox-error-message{
+#ui-lightbox-error-message {
 	color: #ffffff;
 	font-size: 14px;
 	line-height: 1.5;

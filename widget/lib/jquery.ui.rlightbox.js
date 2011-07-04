@@ -378,6 +378,31 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 		
+		getOptimalSize: function( size, number ) {
+			
+			// returns the minimal size of the lightbox if the number is smaller
+			// or the number otherwise
+			
+			var data = this.data,
+				_minimalLightboxSize = data.minimalLightboxSize,
+				_minimalLightboxWidth = _minimalLightboxSize.width,
+				_minimalLightboxHeight = _minimalLightboxSize.height;
+				
+			if ( size === "width" ) {
+				if ( number < _minimalLightboxWidth ) {
+					return _minimalLightboxWidth;
+				} else {
+					return number;
+				}
+			} else if ( size === "height" ) {
+				if ( number < _minimalLightboxHeight ) {
+					return _minimalLightboxHeight;
+				} else {
+					return number;
+				}
+			}
+		},
+		
 		getParam: function( param, url ) {
 			
 			// with param ‘with’ and url ‘foo.flv?width=100" it returns ‘100’
@@ -600,7 +625,7 @@ $.extend($.ui.rlightbox, {
 		},
 		
 		loadContentFlash: function( url ) {
-			var _width, _height,
+			var _width, _alternativeContentWidth, _height, _alternativeContentHeight,
 				data = this.data,
 				$lb = this.$lightbox,
 				self = this,
@@ -632,9 +657,15 @@ $.extend($.ui.rlightbox, {
 				if ( _height === null || isNaN(_height) ) {
 					_height = _options.videoHeight;
 				}
-				
+
 				_currentElement.width = _width;
-				_currentElement.height = _height;
+				_currentElement.height = _height;				
+				
+				// to fill the content (or error screen) with stripes;
+				// for example if width = 70 & height = 50 and there is no Flash
+				// plugin installed we must resize the error screen to at least 300 × 300px
+				_alternativeContentWidth = self.getOptimalSize( "width", _width );
+				_alternativeContentHeight = self.getOptimalSize( "height", _height );
 				
 				// use real data
 				_structure = self.replaceHtmlPatterns(_structure,
@@ -642,7 +673,9 @@ $.extend($.ui.rlightbox, {
 						width: _width,
 						height: _height,
 						url: url,
-						message: _errorMessage					
+						message: _errorMessage,
+						alternativeContentWidth: _alternativeContentWidth,
+						alternativeContentHeight: _alternativeContentHeight,
 					}
 				);
 				
@@ -1590,17 +1623,8 @@ $.extend($.ui.rlightbox, {
 				_speed = _options.animationSpeed;
 				
 				// do not let lightbox size be smaller than the minimal one
-				if ( _currentElement.width < _minimalLightboxWidth ) {
-					_lightboxTargetWidth = _minimalLightboxHeight;
-				} else {
-					_lightboxTargetWidth = _currentElement.width;
-				}
-				
-				if ( _currentElement.height < _minimalLightboxHeight ) {
-					_lightboxTargetHeight = _minimalLightboxHeight;
-				} else {
-					_lightboxTargetHeight = _currentElement.height;
-				}
+				_lightboxTargetWidth = this.getOptimalSize( "width", _currentElement.width );
+				_lightboxTargetHeight = this.getOptimalSize( "height", _currentElement.height );
 			} else if ( _isError ) {
 				_speed = _options.animationSpeed;
 				_lightboxTargetWidth = _errorScreenWidth;
@@ -1622,13 +1646,13 @@ $.extend($.ui.rlightbox, {
 			var _content,
 				$lb = this.$lightbox,
 				$contentContainer = $lb.content,
-				_content = $contentContainer.children();
+				$content = $contentContainer.children();
 	
 			$contentContainer
 				.children()
 					.css({
-						top: $contentContainer.height() / 2 - _content.outerHeight() / 2,
-						left: $contentContainer.width() / 2 - _content.outerWidth() / 2
+						top: $contentContainer.height() / 2 - $content.outerHeight() / 2,
+						left: $contentContainer.width() / 2 - $content.outerWidth() / 2
 					});
 	
 			// if we don’t run it in the live resize but in the queue
@@ -1716,7 +1740,7 @@ $.extend($.ui.rlightbox, {
 						"<!--[if !IE]>-->" +
 						"<object type='application/x-shockwave-flash' data='{url}' width='{width}' height='{height}'>" +
 						"<!--<![endif]-->" +
-							"<div id='ui-lightbox-error' class='ui-lightbox-error-disabledflash'>" +
+							"<div id='ui-lightbox-error' style='width: {alternativeContentWidth}px; height: {alternativeContentHeight}px'>" +
 								"<p id='ui-lightbox-error-message' class='ui-lightbox-error-message-disabledflash ui-lightbox-error-icon-sign1'>{message}</p>" +
 							"</div>" +
 						"<!--[if !IE]>-->" +
