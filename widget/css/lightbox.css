@@ -129,8 +129,9 @@
 	text-align: center;
 }
 
-#ui-lightbox-error > .ui-lightbox-error-message-disabledflash {
-	padding-top: 174px;
+.ui-lightbox-error-message-disabledflash {
+	background-image: url(error_sign1.png);
+	background-repeat: no-repeat;
 }
 
 #ui-lightbox-error-footer {
@@ -141,10 +142,6 @@
 
 #ui-lightbox-error-footer > a {
 	margin-right: 15px;
-}
-
-.ui-lightbox-error-icon-sign1 {
-	background: url(error_sign1.png) no-repeat center 126px;	    
 }
 
 .ui-lightbox-error-icon-sign2 {

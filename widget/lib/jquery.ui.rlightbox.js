@@ -625,7 +625,7 @@ $.extend($.ui.rlightbox, {
 		},
 		
 		loadContentFlash: function( url ) {
-			var _width, _alternativeContentWidth, _height, _alternativeContentHeight,
+			var _width, _alternativeContentWidth, _height, _alternativeContentHeight, _errorScreenCenter,
 				data = this.data,
 				$lb = this.$lightbox,
 				self = this,
@@ -637,7 +637,8 @@ $.extend($.ui.rlightbox, {
 				_errorMessage = _options.errorMessage.disabledFlash,
 				_minimalLightboxSize = data.minimalLightboxSize,
 				_minimalLightboxWidth = _minimalLightboxSize.width,
-				_minimalLightboxHeight = _minimalLightboxSize.height;
+				_minimalLightboxHeight = _minimalLightboxSize.height,
+				_iconHalfHeight = 24;
 			
 			// show the spinner
 			$content.addClass( "ui-lightbox-loader" );
@@ -667,6 +668,8 @@ $.extend($.ui.rlightbox, {
 				_alternativeContentWidth = self.getOptimalSize( "width", _width );
 				_alternativeContentHeight = self.getOptimalSize( "height", _height );
 				
+				_errorScreenCenter = _alternativeContentHeight / 2;
+				
 				// use real data
 				_structure = self.replaceHtmlPatterns(_structure,
 					{
@@ -684,6 +687,14 @@ $.extend($.ui.rlightbox, {
 					.removeClass( "ui-lightbox-loader" )
 					.empty()
 					.append( _structure )
+					.find( ".ui-lightbox-error-message-disabledflash" )
+						.css(
+							{
+								"padding-top": _errorScreenCenter + _iconHalfHeight,
+								"background-position": "center " + ( _errorScreenCenter - _iconHalfHeight ) + "px"
+							}
+						)
+						.end()
 					.children()
 						.wrap( "<div style='display: none'></div>" );
 				
@@ -1741,7 +1752,7 @@ $.extend($.ui.rlightbox, {
 						"<object type='application/x-shockwave-flash' data='{url}' width='{width}' height='{height}'>" +
 						"<!--<![endif]-->" +
 							"<div id='ui-lightbox-error' style='width: {alternativeContentWidth}px; height: {alternativeContentHeight}px'>" +
-								"<p id='ui-lightbox-error-message' class='ui-lightbox-error-message-disabledflash ui-lightbox-error-icon-sign1'>{message}</p>" +
+								"<p id='ui-lightbox-error-message' class='ui-lightbox-error-message-disabledflash'>{message}</p>" +
 							"</div>" +
 						"<!--[if !IE]>-->" +
 						"</object>" +
