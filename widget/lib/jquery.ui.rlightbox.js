@@ -380,23 +380,30 @@ $.extend($.ui.rlightbox, {
 		
 		getOptimalSize: function( size, number ) {
 			
-			// returns the minimal size of the lightbox if the number is smaller
-			// or the number otherwise
+			// returns size not smaller than the minimal size and not bigger than
+			// the window size
 			
 			var data = this.data,
 				_minimalLightboxSize = data.minimalLightboxSize,
 				_minimalLightboxWidth = _minimalLightboxSize.width,
-				_minimalLightboxHeight = _minimalLightboxSize.height;
+				_minimalLightboxHeight = _minimalLightboxSize.height,
+				_screenSize = this.getAvailableScreenSize(),
+				_screenWidth = _screenSize.width,
+				_screenHeight = _screenSize.height;
 				
 			if ( size === "width" ) {
 				if ( number < _minimalLightboxWidth ) {
 					return _minimalLightboxWidth;
+				} else if ( number > _screenWidth ) {
+					return _screenWidth;
 				} else {
 					return number;
 				}
 			} else if ( size === "height" ) {
 				if ( number < _minimalLightboxHeight ) {
 					return _minimalLightboxHeight;
+				} else if ( number > _screenHeight ) {
+					return _screenHeight;
 				} else {
 					return number;
 				}
