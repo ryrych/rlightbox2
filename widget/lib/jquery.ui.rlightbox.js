@@ -632,7 +632,7 @@ $.extend($.ui.rlightbox, {
 		},
 		
 		loadContentFlash: function( url ) {
-			var _width, _alternativeContentWidth, _height, _alternativeContentHeight, _errorScreenCenter,
+			var _width, _alternativeContentWidth, _height, _alternativeContentHeight, _errorScreenCenter, $contentWrapper,
 				data = this.data,
 				$lb = this.$lightbox,
 				self = this,
@@ -689,9 +689,18 @@ $.extend($.ui.rlightbox, {
 					}
 				);
 				
-				// add embedded code
-				// we add ‘width: 100%’ and ‘height: 100%’ because browsers can’t
-				// inherit them from ‘#ui-lightbox-content’
+				// we have to add ‘width’ and ‘height’ to the $contentWrapper
+				// explicitly since browsers can’t inherit them
+				$contentWrapper = $( "<div></div>" );
+				$contentWrapper.css(
+					{
+						display: "none",
+						width: _width,
+						height: _height
+					}
+				);
+				
+				// add structure
 				$content
 					.removeClass( "ui-lightbox-loader" )
 					.empty()
@@ -705,7 +714,7 @@ $.extend($.ui.rlightbox, {
 						)
 						.end()
 					.children()
-						.wrap( "<div style='display: none; width: 100%; height: 100%'></div>" );
+						.wrap( $contentWrapper );
 				
 				_dfd.resolve();
 			}
