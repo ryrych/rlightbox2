@@ -690,6 +690,8 @@ $.extend($.ui.rlightbox, {
 				);
 				
 				// add embedded code
+				// we add ‘width: 100%’ and ‘height: 100%’ because browsers can’t
+				// inherit them from ‘#ui-lightbox-content’
 				$content
 					.removeClass( "ui-lightbox-loader" )
 					.empty()
@@ -703,7 +705,7 @@ $.extend($.ui.rlightbox, {
 						)
 						.end()
 					.children()
-						.wrap( "<div style='display: none'></div>" );
+						.wrap( "<div style='display: none; width: 100%; height: 100%'></div>" );
 				
 				_dfd.resolve();
 			}
