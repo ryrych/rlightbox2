@@ -19,7 +19,7 @@ $.widget( "ui.rlightbox", {
 		videoWidth: 640,
 		videoHeight: 385,
 		errorMessage: {
-			generic: "Oops! Something is wrong! If the problem repeats itself, let the page’s admin know. Would you like to try again or reject this content?",
+			generic: "Oh dear! Something went wrong! If the problem still appears let the page’s admin know. Would you like to try again or reject the content?",
 			disabledFlash: "The Flash plugin has been disabled. Please turn it on or install it."
 		},
 		againButtonLabel: "Try again",
