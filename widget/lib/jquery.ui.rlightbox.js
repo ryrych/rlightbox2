@@ -817,11 +817,8 @@ $.extend($.ui.rlightbox, {
 					}
 					
 					// and returned width and height
-					_width = data.width;
-					_height = data.height;
-					
-					_currentElement.width = _width;
-					_currentElement.height = _height;
+					_currentElement.width = data.width;
+					_currentElement.height = data.height;
 					
 					// continue the animation queue
 					_dfd.resolve();
