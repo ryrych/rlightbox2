@@ -93,7 +93,11 @@ $.extend($.ui.rlightbox, {
 			//		setName2: […]
 			//
 			var _setName = this.getSetName( setElement.self ),
-				_sets = $.ui.rlightbox.global.sets;
+				_sets = $.ui.rlightbox.global.sets,
+				_options = setElement.self.options,
+				_setPrefix = _options.setPrefix,
+				_class = "." + _setPrefix + "_" + _setName,
+				_setElementIndex = $( _class ).index( setElement.element );
 	
 			if ( !_sets[_setName] ) {
 	
@@ -103,7 +107,7 @@ $.extend($.ui.rlightbox, {
 			} else {
 	
 				// set exists yet - just add element to it
-				_sets[_setName].push( setElement );
+				_sets[_setName].splice( _setElementIndex, 0 , setElement );
 			}
 		},
 		
