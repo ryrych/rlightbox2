@@ -1621,7 +1621,10 @@ $.extend($.ui.rlightbox, {
 				_minimalLightboxSize = data.minimalLightboxSize,
 				_minimalLightboxWidth = _minimalLightboxSize.width,
 				_minimalLightboxHeight = _minimalLightboxSize.height;
-	
+			
+			// when it is used in context of a queue
+			_speed = _options.animationSpeed;
+			
 			// if content is type of image, resize it to fit the screen
 			if ( _currentElement.type === "image" && _isError === false ) {
 				_sizes = this.getSizes(),
@@ -1649,9 +1652,6 @@ $.extend($.ui.rlightbox, {
 
 			} else if ( (_currentElement.type === "youtube" || _currentElement.type === "vimeo") && _isError === false ){
 	
-				// if content is flash video
-				_speed = _options.animationSpeed;
-				
 				// do not let lightbox size be smaller than the minimal one
 				if ( _currentElement.width < _minimalLightboxWidth ) {
 					_lightboxTargetWidth = _minimalLightboxWidth;
@@ -1665,13 +1665,11 @@ $.extend($.ui.rlightbox, {
 					_lightboxTargetHeight = _currentElement.height
 				}
 			} else if ( _currentElement.type === "flash" && _isError === false ) {
-				_speed = _options.animationSpeed;
 
 				// do not let lightbox size be smaller than the minimal one or larger than the window
 				_lightboxTargetWidth = this.getOptimalSize( "width", _currentElement.width );
 				_lightboxTargetHeight = this.getOptimalSize( "height", _currentElement.height );				
 			} else if ( _isError ) {
-				_speed = _options.animationSpeed;
 				_lightboxTargetWidth = _errorScreenWidth;
 				_lightboxTargetHeight = _errorScreenHeight;
 			}
