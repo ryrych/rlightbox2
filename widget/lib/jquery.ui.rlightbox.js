@@ -111,6 +111,31 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 		
+		checkMinimalSize: function( size, number ) {
+			
+			// checks if the ‘number’ of a given ‘size’ (width, height) is smaller
+			// then the minimal lightbox size. If so, it returns the minimal size
+			// otherwise it returns the ‘number’
+			var data = this.data,
+				_minimalLightboxSize = data.minimalLightboxSize,
+				_minimalLightboxWidth = _minimalLightboxSize.width,
+				_minimalLightboxHeight = _minimalLightboxSize.height;
+				
+			if ( size === "width" ) {
+				if ( number < _minimalLightboxWidth ) {
+					return _minimalLightboxWidth;
+				} else {
+					return number;
+				}
+			} else if ( size === "height" ) {
+				if ( number < _minimalLightboxHeight ) {
+					return _minimalLightboxHeight;
+				} else {
+					return number;
+				}
+			}			
+		},
+		
 		closeLightbox: function() {
 			var data = this.data,
 				$lb = this.$lightbox;
@@ -1653,17 +1678,8 @@ $.extend($.ui.rlightbox, {
 			} else if ( (_currentElement.type === "youtube" || _currentElement.type === "vimeo") && _isError === false ){
 	
 				// do not let lightbox size be smaller than the minimal one
-				if ( _currentElement.width < _minimalLightboxWidth ) {
-					_lightboxTargetWidth = _minimalLightboxWidth;
-				} else {
-					_lightboxTargetWidth = _currentElement.width;
-				}
-				
-				if ( _currentElement.height < _minimalLightboxHeight ) {
-					_lightboxTargetHeight = _minimalLightboxHeight;
-				} else {
-					_lightboxTargetHeight = _currentElement.height
-				}
+				_lightboxTargetWidth = this.checkMinimalSize( "width", _currentElement.width );
+				_lightboxTargetHeight = this.checkMinimalSize( "height", _currentElement.height );
 			} else if ( _currentElement.type === "flash" && _isError === false ) {
 
 				// do not let lightbox size be smaller than the minimal one or larger than the window
