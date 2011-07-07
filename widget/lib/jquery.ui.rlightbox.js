@@ -173,23 +173,23 @@ $.extend($.ui.rlightbox, {
 		},
 
 		createStructure: function() {
-			var _lightbox = "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>\
-						<div id='ui-lightbox-panorama-icon' style='display: none'></div>\
-						<div id='ui-lightbox-content' class='ui-widget-content'></div>\
-						<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'>\
-							<p id='ui-lightbox-header-wrapper'>\
-								<span id='ui-lightbox-header-title'></span>\
-							</p>\
-							<p id='ui-lightbox-header-counter'></p>\
-							<a id='ui-lightbox-header-close' href='#'>\
-								<span class='ui-icon ui-icon-closethick'>close</span>\
-							</a>\
-						</div>\
-					</div>",
+			var _lightbox = "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>" +
+						"<div id='ui-lightbox-panorama-icon' style='display: none'></div>" +
+						"<div id='ui-lightbox-content' class='ui-widget-content'></div>" +
+						"<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'>" +
+							"<p id='ui-lightbox-header-wrapper'>" +
+								"<span id='ui-lightbox-header-title'></span>" +
+							"</p>" +
+							"<p id='ui-lightbox-header-counter'></p>" +
+							"<a id='ui-lightbox-header-close' href='#'>" +
+								"<span class='ui-icon ui-icon-closethick'>close</span>" +
+							"</a>" +
+						"</div>" +
+					"</div>",
 
-				_map = "<div id='ui-lightbox-map' style='display: none'>\
-						<div id='ui-lightbox-map-viewport'></div>\
-					</div>",
+				_map = "<div id='ui-lightbox-map' style='display: none'>" +
+						"<div id='ui-lightbox-map-viewport'></div>" +
+					"</div>",
 
 				_overlay = "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>";
 
@@ -266,7 +266,7 @@ $.extend($.ui.rlightbox, {
 									type: content.type,
 									element: $anchor,
 									self: thisElement
-								}
+								};
 
 								// image and flash urls are not normalised; in case of flash content
 								// there may be &with and &height parameters
@@ -299,7 +299,7 @@ $.extend($.ui.rlightbox, {
 			return {
 				width: this.getWindowSize( "width" ) - _padding,
 				height: this.getWindowSize( "height" ) - data.headerHeight - _padding
-			}
+			};
 		},		
 
 		getCurrentElementNumber: function( element ) {
@@ -360,7 +360,7 @@ $.extend($.ui.rlightbox, {
 			return {
 				statusWidth: _statusWidth,
 				statusHeight: _statusHeight
-			}
+			};
 		},		
 
 		getLightbox: function() {
@@ -469,6 +469,7 @@ $.extend($.ui.rlightbox, {
 
 		getSizes: function() {
 			var _statuses, _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
+				_heightRatio, _widthRatio,
 				$lb = this.$lightbox,
 				data = this.data,
 				self = this,
@@ -620,7 +621,7 @@ $.extend($.ui.rlightbox, {
 
 				// next keys: [N] & [→]
 				// simulate checking side
-				data.side = "right"
+				data.side = "right";
 
 				// load next content if possible
 				this.navigationNext();
@@ -714,7 +715,7 @@ $.extend($.ui.rlightbox, {
 						url: url,
 						message: _errorMessage,
 						alternativeContentWidth: _alternativeContentWidth,
-						alternativeContentHeight: _alternativeContentHeight,
+						alternativeContentHeight: _alternativeContentHeight
 					}
 				);
 
@@ -877,7 +878,7 @@ $.extend($.ui.rlightbox, {
 					data.side = "left";
 					$content.css( "cursor", "w-resize" );
 				} else if ( _pos > _center && _currentElementNumber < _totalElementsNumber ) {
-					data.side = "right"
+					data.side = "right";
 					$content.css( "cursor","e-resize" );
 				} else {
 					data.side = "";
@@ -1180,7 +1181,7 @@ $.extend($.ui.rlightbox, {
 				$content = $lb.content,
 				$image = $content.find( "img" ),
 				_imageWidth = $image.width(),
-				_imageHeight = $image.height();
+				_imageHeight = $image.height(),
 				_currentElement = data.currentSetElement,
 				_mapSize = data.mapSize;
 
@@ -1216,7 +1217,7 @@ $.extend($.ui.rlightbox, {
 			data.viewportRatio = {
 				width: _mapViewportWidthRatio,
 				height: _mapViewportHeightRatio
-			}
+			};
 
 		},
 
@@ -1422,7 +1423,7 @@ $.extend($.ui.rlightbox, {
 			$lb.queueContainer = {
 				open: $({}),
 				next: $({})
-			}
+			};
 		},
 
 		showErrorMessage: function() {
@@ -1457,8 +1458,8 @@ $.extend($.ui.rlightbox, {
 				
 			$structure = $( _structure );
 
-			$again = $structure.find( "#ui-lightbox-error-footer-again" ),
-			$reject = $structure.find( "#ui-lightbox-error-footer-reject" ),
+			$again = $structure.find( "#ui-lightbox-error-footer-again" );
+			$reject = $structure.find( "#ui-lightbox-error-footer-reject" );
 			// ‘again’ button give a user a chance to try loading content again
 			$again
 				.click(function() {
@@ -1652,11 +1653,11 @@ $.extend($.ui.rlightbox, {
 
 			// if content is type of image, resize it to fit the screen
 			if ( _currentElement.type === "image" && _isError === false ) {
-				_sizes = this.getSizes(),
-				_imageTargetWidth = _sizes.imageTargetWidth,
-				_imageTargetHeight = _sizes.imageTargetHeight,
-				_lightboxTargetWidth = _sizes.lightboxTargetWidth,
-				_lightboxTargetHeight = _sizes.lightboxTargetHeight,
+				_sizes = this.getSizes();
+				_imageTargetWidth = _sizes.imageTargetWidth;
+				_imageTargetHeight = _sizes.imageTargetHeight;
+				_lightboxTargetWidth = _sizes.lightboxTargetWidth;
+				_lightboxTargetHeight = _sizes.lightboxTargetHeight;
 				_img = $lb.content.find( "img" );
 
 				// if scaled size is smaller than the original, show Panorama
