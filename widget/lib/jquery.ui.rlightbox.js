@@ -19,8 +19,7 @@ $.widget( "ui.rlightbox", {
 		videoWidth: 640,
 		videoHeight: 385,
 		errorMessage: {
-			generic: "Oh dear! Something went wrong! If the problem still appears let the page’s admin know. Would you like to try again or reject the content?",
-			disabledFlash: "The Flash plugin has been disabled. Please turn it on or install it."
+			generic: "Oh dear! Something went wrong! If the problem still appears let the page’s admin know. Would you like to try again or reject the content?"
 		},
 		againButtonLabel: "Try again",
 		rejectButtonLabel: "Reject this content",
@@ -662,20 +661,14 @@ $.extend($.ui.rlightbox, {
 		},
 
 		loadContentFlash: function( url ) {
-			var _width, _alternativeContentWidth, _height, _alternativeContentHeight, _errorScreenCenter, $contentWrapper,
+			var _width, _height, $contentWrapper,
 				data = this.data,
 				$lb = this.$lightbox,
 				self = this,
 				$content = $lb.content,
 				_dfd = $.Deferred(),
 				_structure = data.htmlFlash,
-				_currentElement = data.currentSetElement,
-				_options = _currentElement.self.options,
-				_errorMessage = _options.errorMessage.disabledFlash,
-				_minimalLightboxSize = data.minimalLightboxSize,
-				_minimalLightboxWidth = _minimalLightboxSize.width,
-				_minimalLightboxHeight = _minimalLightboxSize.height,
-				_iconHalfHeight = 24;
+				_currentElement = data.currentSetElement;
 
 			// show the spinner
 			$content.addClass( "ui-lightbox-loader" );
@@ -699,23 +692,12 @@ $.extend($.ui.rlightbox, {
 				_currentElement.width = _width;
 				_currentElement.height = _height;				
 
-				// to fill the content (or error screen) with stripes;
-				// for example if width = 70 & height = 50 and there is no Flash
-				// plugin installed we must resize the error screen to at least 300 × 300px
-				_alternativeContentWidth = self.getOptimalSize( "width", _width );
-				_alternativeContentHeight = self.getOptimalSize( "height", _height );
-
-				_errorScreenCenter = _alternativeContentHeight / 2;
-
 				// use real data
 				_structure = self.replaceHtmlPatterns(_structure,
 					{
 						width: _width,
 						height: _height,
-						url: url,
-						message: _errorMessage,
-						alternativeContentWidth: _alternativeContentWidth,
-						alternativeContentHeight: _alternativeContentHeight
+						url: url
 					}
 				);
 
@@ -725,8 +707,8 @@ $.extend($.ui.rlightbox, {
 				$contentWrapper.css(
 					{
 						display: "none",
-						width: _alternativeContentWidth,
-						height: _alternativeContentHeight
+						width: _width,
+						height: _height
 					}
 				);
 
@@ -735,14 +717,6 @@ $.extend($.ui.rlightbox, {
 					.removeClass( "ui-lightbox-loader" )
 					.empty()
 					.append( _structure )
-					.find( ".ui-lightbox-error-message-disabledflash" )
-						.css(
-							{
-								"padding-top": _errorScreenCenter + _iconHalfHeight,
-								"background-position": "center " + ( _errorScreenCenter - _iconHalfHeight ) + "px"
-							}
-						)
-						.end()
 					.children()
 						.wrap( $contentWrapper );
 				
@@ -1800,10 +1774,7 @@ $.extend($.ui.rlightbox, {
 					"<param name='movie' value='{url}' />" +
 						"<!--[if !IE]>-->" +
 						"<object type='application/x-shockwave-flash' data='{url}' width='{width}' height='{height}'>" +
-						"<!--<![endif]-->" +
-							"<div id='ui-lightbox-error' style='width: {alternativeContentWidth}px; height: {alternativeContentHeight}px'>" +
-								"<p id='ui-lightbox-error-message' class='ui-lightbox-error-message-disabledflash'>{message}</p>" +
-							"</div>" +
+						"<!--<![endif]-->" +
 						"<!--[if !IE]>-->" +
 						"</object>" +
 						"<!--<![endif]-->" +
