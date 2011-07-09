@@ -637,7 +637,7 @@ $.extend($.ui.rlightbox, {
 
 				// close keys: [C] & [ESC]
 				this.closeLightbox();
-			} else if ( _key === _keys.panorama[0] || _key === _keys.panorama[1] ) {
+			} else if ( (_key === _keys.panorama[0] || _key === _keys.panorama[1]) && _currentElement.type === "image" ) {
 
 				// panorama keys: [Z]
 				this.panoramaToggle( event );
