@@ -725,8 +725,8 @@ $.extend($.ui.rlightbox, {
 				$contentWrapper.css(
 					{
 						display: "none",
-						width: _width,
-						height: _height
+						width: _alternativeContentWidth,
+						height: _alternativeContentHeight
 					}
 				);
 
