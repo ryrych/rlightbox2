@@ -18,9 +18,7 @@ $.widget( "ui.rlightbox", {
 		counterDelimiter: " / ",
 		videoWidth: 640,
 		videoHeight: 385,
-		errorMessage: {
-			generic: "Oh dear! Something went wrong! If the problem still appears let the page’s admin know. Would you like to try again or reject the content?"
-		},
+		errorMessage: "Oh dear! Something went wrong! If the problem still appears let the page’s admin know. Would you like to try again or reject the content?",
 		againButtonLabel: "Try again",
 		rejectButtonLabel: "Reject this content",
 		overwriteTitle: false,
@@ -1413,7 +1411,7 @@ $.extend($.ui.rlightbox, {
 				_currentElement = data.currentSetElement,
 				_options = _currentElement.self.options,
 				_currentElementNumber = data.currentElementNumber,
-				_errorMessage = _options.errorMessage.generic,
+				_errorMessage = _options.errorMessage,
 				_againLabel = _options.againButtonLabel,
 				_rejectLabel = _options.rejectButtonLabel,
 				_structure = data.htmlErrorScreen,
