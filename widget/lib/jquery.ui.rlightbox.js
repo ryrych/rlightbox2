@@ -1687,6 +1687,7 @@ $.extend($.ui.rlightbox, {
 				_lightboxTargetWidth = this.getOptimalSize( "width", _currentElement.width );
 				_lightboxTargetHeight = this.getOptimalSize( "height", _currentElement.height );				
 			} else if ( _isError ) {
+				_speed = 0;
 				_lightboxTargetWidth = _errorScreenWidth;
 				_lightboxTargetHeight = _errorScreenHeight;
 			}
