@@ -548,7 +548,7 @@ $.extend($.ui.rlightbox, {
 							_imageTargetHeight = _lightboxTargetHeight;
 
 							// if after scaling an image is smaller or bigger
-							if ( _imageTargetHeight <= _minimalLightboxHeight || _lightboxTargetHeight > _windowHeight ) {
+							if ( _imageTargetHeight <= _minimalLightboxHeight || _lightboxTargetHeight + _lightboxPadding + _headerHeight > _windowHeight ) {
 								_calculateSizes( _imageTargetWidth, _imageTargetHeight );
 							}
 						} else {
