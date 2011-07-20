@@ -865,6 +865,8 @@ $.extend($.ui.rlightbox, {
 				data.side = "";
 				$content.css( "cursor", "move" );
 			}
+			
+			event.preventDefault();
 		},
 
 		navigationGoToElement: function( number ) {
