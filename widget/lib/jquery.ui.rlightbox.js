@@ -1515,8 +1515,7 @@ $.extend($.ui.rlightbox, {
 			var $lb = this.$lightbox;
 
 			// 12px – 2 × border + 2 × padding
-			// 20px – safe distance from the close button
-			$lb.headerWrapper.width( $lb.content.width() - 20 - 12 );
+			$lb.header.width( $lb.content.width() - 12 );
 		},
 
 		queueHideContent: function( next ) {
