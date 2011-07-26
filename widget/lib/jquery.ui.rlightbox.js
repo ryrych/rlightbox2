@@ -1041,6 +1041,9 @@ $.extend($.ui.rlightbox, {
 			// center the content and the whole lightbox
 			this.panoramaCenterContent();
 			this.queueCenterLightbox();
+			
+			// update header width
+			this.updateTitleWidth();
 
 			// show the map
 			if ( _options.showMap ) {
@@ -1213,7 +1216,10 @@ $.extend($.ui.rlightbox, {
 
 			// resize an image to its previous size and center it
 			this.queueResizeLightbox();
-			this.queueCenterContent();		
+			this.queueCenterContent();
+			
+			// update header width
+			this.updateTitleWidth();
 
 			// hide the map
 			this.panoramaHideMap();
