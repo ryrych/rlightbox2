@@ -643,6 +643,8 @@ $.extend($.ui.rlightbox, {
 
 		liveResize: function() {
 			var data = this.data,
+				self = this,
+				$lb = this.$lightbox,
 				_elementType = data.currentSetElement.type;
 
 			// resizes an image when size of the browser window resizes and when Panorama is turned off
@@ -651,9 +653,13 @@ $.extend($.ui.rlightbox, {
 				this.updateTitleWidth();
 				this.queueCenterContent();
 				this.panoramaCheckAvailability();
-			} else if ( data.ready && (data.panoramaOn === false && _elementType !== "image") || (data.panoramaOn && _elementType === "image") ) {
+			} else if ( data.ready && data.panoramaOn && _elementType === "image" ) {
 
 				// otherwise keep the lightbox centered especially when window is bigger than the lightbox
+				this.queueCenterLightbox();
+				this.panoramaShrink();
+				this.panoramaCheckAvailability();
+			} else if ( data.ready && _elementType !== "image" ) {
 				this.queueCenterLightbox();
 			}
 		},
@@ -1208,7 +1214,7 @@ $.extend($.ui.rlightbox, {
 			// show the zoom out icon; we add hover state because when we click
 			// the icon we lose focus and state end up with normal state
 			// not when key is pressed
-			if ( event.type === "click" ) {
+			if ( event && event.type === "click" ) {
 				this.panoramaShowIcon( "expand", "-hover" );
 			} else {
 				this.panoramaShowIcon( "expand" );
