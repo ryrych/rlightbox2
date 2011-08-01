@@ -813,7 +813,11 @@ $.extend($.ui.rlightbox, {
 						.empty()
 						.append( data.html )
 						.children()
-							.wrap( "<div style='display: none'></div>" );
+							.wrap( "<div style='display: none'></div>" )
+							.end()
+						.find( "div:first" )
+							.width( data.width )
+							.height( data.height );							
 
 					// remember video title
 					if ( _options.overwriteTitle === false ) {
