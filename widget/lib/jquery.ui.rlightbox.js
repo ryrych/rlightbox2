@@ -672,7 +672,8 @@ $.extend($.ui.rlightbox, {
 				$content = $lb.content,
 				_dfd = $.Deferred(),
 				_structure = data.htmlFlash,
-				_currentElement = data.currentSetElement;
+				_currentElement = data.currentSetElement,
+				_options = _currentElement.self.options;
 
 			// show the spinner
 			$content.addClass( "ui-lightbox-loader" );
