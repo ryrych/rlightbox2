@@ -2,4 +2,5 @@
 README
 rlightbox2.komodoproject
 tmp/
-examples/ 
+documentation/
+tests/
