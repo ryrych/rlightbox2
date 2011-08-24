@@ -1796,20 +1796,19 @@ $.extend($.ui.rlightbox, {
 						"<!--<![endif]-->" +
 					"</object>",
 			htmlErrorScreen: "<div id='ui-lightbox-error'>" +
-				"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign2'>{message}</div>" +
+				"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign'>{message}</div>" +
 				"<div id='ui-lightbox-error-footer'>" +
-					"<a href='#' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
-						"<span class='ui-icon ui-icon-refresh'></span>" +
+					"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+						"<span class='ui-button-icon-primary ui-icon ui-icon-refresh'></span>" +
 						"<span class='ui-button-text'>{labelAgain}</span>" +
-					"</a>" +
-					"<a href='#' id='ui-lightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
-						"<span class='ui-icon ui-icon-trash'></span>" +
+					"</button>" +
+					"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+						"<span class='ui-button-icon-primary ui-icon ui-icon-trash'></span>" +
 						"<span class='ui-button-text'>{labelReject}</span>" +
-					"</a>" + 
+					"</button>" + 
 				"</div>" +
 			"</div>"
 		}
 	}
 });
-
 })( jQuery );
