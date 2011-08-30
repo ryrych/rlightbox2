@@ -227,7 +227,7 @@ $.extend($.ui.rlightbox, {
 				_url = $anchor.attr( "href" ),
 				_service = {
 					youtube: {
-						urls: [/(youtube\.com\/watch\?v=([\w-_]+))&?/],
+						urls: [/(http:\/\/www\.youtube\.com\/watch\?v=([\w-_]+))&?/],
 						type: "youtube"
 					},
 					image: {
@@ -235,7 +235,7 @@ $.extend($.ui.rlightbox, {
 						type: "image"
 					},
 					vimeo: {
-						urls: [/(http:\/\/vimeo\.com\/groups\/\w+\/videos\/\w+)&?/, /(http:\/\/vimeo\.com\/\w+)&?/],
+						urls: [/(http:\/\/vimeo\.com\/groups\/\w+\/videos\/(\w+))&?/, /(http:\/\/vimeo\.com\/(\w+))&?/],
 						type: "vimeo"
 					},
 					flash: {
@@ -260,6 +260,7 @@ $.extend($.ui.rlightbox, {
 								// without additional parameters
 								_result = {
 									url: _res[1],
+									id: _res[2],
 									type: content.type,
 									element: $anchor,
 									self: thisElement
@@ -270,6 +271,7 @@ $.extend($.ui.rlightbox, {
 								if ( content.type === "image" || content.type === "flash" || thisElement.options.overwriteTitle ) {
 									_result.title = $anchor.attr( "title" );
 									_result.url = _url;
+									_result.id = null;
 								}
 
 								_found = true;
@@ -779,13 +781,13 @@ $.extend($.ui.rlightbox, {
 			return _dfd.promise();
 		},
 
-		loadContentYoutube: function( url ) {
+		loadContentVimeo: function( url ) {
 			var _width, _height,
 				data = this.data,
 				$lb = this.$lightbox,			
 				self = this,
 				_dfd = $.Deferred(),
-				_apiEnd = data.oembedProvider,
+				_apiEnd = data.providers.vimeo,
 				_currentElement = data.currentSetElement,
 				_options = _currentElement.self.options,
 				_minimalLightboxSize = data.minimalLightboxSize;
@@ -840,6 +842,100 @@ $.extend($.ui.rlightbox, {
 				// continue the animation queue
 				_dfd.resolve();
 			});
+
+			return _dfd.promise();
+		},
+		
+		loadContentYoutube: function( url ) {
+			var $contentWrapper,
+				data = this.data,
+				$lb = this.$lightbox,
+				$content = $lb.content,
+				self = this,
+				_dfd = $.Deferred(),
+				_apiEnd = data.providers.youtube,
+				_currentElement = data.currentSetElement,
+				_options = _currentElement.self.options,
+				_minimalLightboxSize = data.minimalLightboxSize,
+				_width = _options.videoWidth,
+				_height = _options.videoHeight,
+				_structure = data.htmlYoutube;
+
+			// show loader
+			$lb.content.addClass( "ui-lightbox-loader" );
+
+			$.ajax(
+				{
+					url: _apiEnd + _currentElement.id + "?callback=?",
+					data: {
+						v: 2,
+						alt: "jsonc",
+						prettyprint: true,
+					},
+					dataType: "jsonp",
+					timeout: 5000
+				}
+			)
+			.success(
+				function( json ) {
+					
+					// if response is successful but there is an error
+					if ( json.error ) {
+						_showError();
+						return;
+					}
+
+					// use real data
+					_structure = self.replaceHtmlPatterns(_structure,
+						{
+							width: _width,
+							height: _height,
+							url: _currentElement.id
+						}
+					);
+					
+					// we have to add ‘width’ and ‘height’ to the $contentWrapper
+					// explicitly since browsers can’t inherit them
+					$contentWrapper = $( "<div></div>" );
+					$contentWrapper.css(
+						{
+							display: "none",
+							width: _width,
+							height: _height
+						}
+					);
+	
+					// add structure
+					$content
+						.removeClass( "ui-lightbox-loader" )
+						.empty()
+						.append( _structure )
+						.children()
+							.wrap( $contentWrapper );
+							
+						// remember video title
+						if ( _options.overwriteTitle === false ) {
+							_currentElement.title = json.data.title;
+						}
+	
+						// and returned width and height
+						_currentElement.width = _width;
+						_currentElement.height = _height;							
+					
+					_dfd.resolve();					
+				}
+			)
+			.error(function() {
+				_showError();
+			});
+			
+			function _showError() {
+				$lb.content.removeClass( "ui-lightbox-loader" );
+				self.showErrorMessage();
+
+				// continue the animation queue
+				_dfd.resolve();				
+			}
 
 			return _dfd.promise();
 		},		
@@ -1607,7 +1703,7 @@ $.extend($.ui.rlightbox, {
 					break;
 
 				case "vimeo":
-					_loadContentMethod = "loadContentYoutube";
+					_loadContentMethod = "loadContentVimeo";
 					break;
 
 				case "flash":
@@ -1778,7 +1874,10 @@ $.extend($.ui.rlightbox, {
 				width: 150,
 				height: 100
 			},
-			oembedProvider: "http://oohembed.com/oohembed?callback=?",
+			providers: {
+				vimeo: "http://www.vimeo.com/api/oembed.json?callback=?",
+				youtube: "http://gdata.youtube.com/feeds/api/videos/"
+			},
 			showErrorMessage: false,
 			currentSetElement: {},
 			enablePanorama: false,
@@ -1807,7 +1906,8 @@ $.extend($.ui.rlightbox, {
 						"<span class='ui-button-text'>{labelReject}</span>" +
 					"</button>" + 
 				"</div>" +
-			"</div>"
+			"</div>",
+			htmlYoutube: "<iframe class='youtube-player' type='text/html' width='{width}' height='{height}' src='http://www.youtube.com/embed/{url}' frameborder='0'></iframe>"
 		}
 	}
 });
