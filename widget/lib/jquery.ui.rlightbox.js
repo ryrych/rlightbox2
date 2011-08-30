@@ -271,7 +271,6 @@ $.extend($.ui.rlightbox, {
 								if ( content.type === "image" || content.type === "flash" || thisElement.options.overwriteTitle ) {
 									_result.title = $anchor.attr( "title" );
 									_result.url = _url;
-									_result.id = null;
 								}
 
 								_found = true;
@@ -863,7 +862,6 @@ $.extend($.ui.rlightbox, {
 
 			// show loader
 			$lb.content.addClass( "ui-lightbox-loader" );
-
 			$.ajax(
 				{
 					url: _apiEnd + _currentElement.id + "?callback=?",
@@ -878,7 +876,6 @@ $.extend($.ui.rlightbox, {
 			)
 			.success(
 				function( json ) {
-					
 					// if response is successful but there is an error
 					if ( json.error ) {
 						_showError();
