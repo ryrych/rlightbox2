@@ -1,0 +1,133 @@
+body {
+	/*background: url(line.png) repeat;*/
+	font: 16px/1.5 'Droid Sans', sans-serif;
+	width: 900px;
+	margin: 0 auto;
+}
+
+h1 {
+	font-size: 64px;
+	margin-bottom: 48px;
+}
+
+h2 {
+	font-size: 40px;
+	margin-bottom: 36px;
+	margin-left: inherit;
+
+}
+
+h3 {
+	font-size: 24px;
+	margin-bottom: 36px;
+	margin-left: inherit;
+}
+
+h2 + .section {
+	margin-left: 2em;
+}
+
+h3 + .section {
+	margin-left: 4em;
+}
+
+p {
+	margin-bottom: 24px;
+}
+
+ul {
+	margin-bottom: 24px;
+}
+
+ol {
+	margin-bottom: 24px;
+	list-style: decimal;
+}
+
+a:link {
+	color: #FF5C43;
+}
+
+a:visited {
+	color: #FF2019;
+}
+
+a[href]:hover {
+	color: #FF2019
+}
+
+a:active {
+	color: #FF2019
+}
+
+pre {
+	font-family: 'Droid Sans Mono', monospace;
+	background-color: #E5E5E5;
+	margin-bottom: 24px;
+	white-space: pre;           /* CSS 2.0 */
+	white-space: pre-wrap;      /* CSS 2.1 */
+	white-space: pre-line;      /* CSS 3.0 */
+	white-space: -pre-wrap;     /* Opera 4-6 */
+	white-space: -o-pre-wrap;   /* Opera 7 */
+	white-space: -moz-pre-wrap; /* Mozilla */
+	white-space: -hp-pre-wrap;  /* HP Printers */
+	word-wrap: break-word;      /* IE 5+ */	
+}
+
+code {
+	font-family: 'Droid Sans Mono', monospace;
+	background-color: #E5E5E5;
+}
+
+strong {
+	font-weight: bold;
+}
+
+table {
+	border: 1px solid;
+	border-collapse: collapse;
+	margin-bottom: 22px;
+}
+
+thead {
+	background-color: #E5E5E5;
+}
+
+tr:nth-child(2n) {
+	background-color: #E5E5E5;
+}
+
+th, td {
+	text-align: center;
+	vertical-align: middle;
+}
+
+td {
+	border-right: 1px solid;
+	padding: 24px 5px;
+}
+
+img {
+    display: inline-block;
+    margin: -8px 8px 8px;
+}
+
+.clear {
+	clear: both;
+}
+
+#customization > a {
+	text-decoration: none;
+	display: block;
+	float: left;
+	margin: 24px 24px 0 0;
+	text-align: center;
+}
+
+#customization > a > img {
+	margin: 0;
+}
+
+#customization span {
+	display: block;
+}
