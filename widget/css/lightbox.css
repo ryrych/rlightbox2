@@ -1,0 +1,147 @@
+#ui-lightbox {
+	font-size: 62.5%;
+	padding: 5px;
+	margin: 0;
+	position: fixed;
+	z-index: 9999;
+	width: auto;
+	height: auto;
+}
+
+#ui-lightbox-content {
+	border: 0 none;
+	margin: 0;
+	overflow: hidden;
+	padding: 0;
+	position: relative;
+	width: 20px;
+	height: 20px;
+}
+
+#ui-lightbox-content > * {
+	display: block;
+	position: absolute;
+	z-index: 100;
+	padding: 0;
+	margin: 0;
+}
+
+#ui-lightbox-panorama-icon {
+	cursor: pointer;
+	height: 32px;
+	left: 20px;
+	width: 32px;
+	position: absolute;
+	top: 20px;
+	z-index: 110;
+}
+
+.ui-lightbox-panorama-icon-expand {
+	background: url(panorama.png) top left no-repeat;
+}
+
+.ui-lightbox-panorama-icon-expand-hover {
+	background: url(panorama.png) bottom left no-repeat;
+}
+
+.ui-lightbox-panorama-icon-shrink {
+	background: url(panorama.png) top right no-repeat;
+}
+
+.ui-lightbox-panorama-icon-shrink-hover {
+	background: url(panorama.png) bottom right no-repeat;
+}
+
+.ui-lightbox-loader {
+	background: url(loader.gif) center center no-repeat;
+}
+
+#ui-lightbox-header {
+	margin: 0;
+	margin-top: 5px;
+	padding: 5px;
+	height: 40px;
+	position: relative;
+}
+
+#ui-lightbox-header > p {
+	margin: 0;
+	margin-right: 20px;
+	padding: 0;
+}
+
+#ui-lightbox-header-wrapper {
+	font-size: 14px;
+	height: 20px;
+	line-height: 20px;
+	overflow: hidden;
+}
+
+#ui-lightbox-header-counter {
+	font-size: 9px;
+	line-height: 20px;
+}
+
+#ui-lightbox-header-close {
+	position: absolute;
+	top: 17px;
+	right: 5px;
+}
+
+#ui-lightbox-map {
+	background-color: black;
+	border: 1px solid white;
+	filter:Alpha(Opacity=20);
+	height: 100px;
+	opacity: .30;
+	position: fixed;
+	right: 20px;
+	top: 20px;
+	width: 150px;
+	z-index: 10000;
+}
+
+#ui-lightbox-map-viewport {
+	border: 1px solid white;
+	left: -1px; /*prevent from overlapping the map border*/
+	position: absolute;
+	top: -1px; /*prevent from overlapping the map border*/
+}
+
+#ui-lightbox-overlay {
+	margin: 0;
+	padding: 0;
+	position: fixed;
+	border: 0;
+}
+
+#ui-lightbox-error {
+	background: url(error_bg.png) repeat left top;
+	margin: 0;
+	padding: 0;
+}
+
+#ui-lightbox-error-message {
+	color: #ffffff;
+	font-size: 14px;
+	line-height: 1.5;
+	margin: 0;
+	margin-bottom: 21px;
+	padding: 0;
+	padding-top: 274px;
+	text-align: center;
+}
+
+#ui-lightbox-error-footer {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+
+#ui-lightbox-error-footer > button {
+	margin-right: 15px;
+}
+
+.ui-lightbox-error-icon-sign {
+	background: url(error_sign.png) no-repeat center 226px;	    
+}
