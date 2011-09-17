@@ -1,47 +1,52 @@
 body {
-	/*background: url(line.png) repeat;*/
+	/*background: url(grid.png) repeat-y center top;*/
 	font: 16px/1.5 'Droid Sans', sans-serif;
-	width: 900px;
+	width: 940px;
 	margin: 0 auto;
 }
 
+/*---headings---*/
+
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 24px;
+    font-weight: bold;
+}
+
 h1 {
-	font-size: 64px;
-	margin-bottom: 48px;
+	font-size: 4.5em; /*72px → 72px ÷ 16px = 4.5em*/
+	line-height: 1em;
 }
 
 h2 {
-	font-size: 40px;
-	margin-bottom: 36px;
-	margin-left: inherit;
+	font-size: 3em; /*48px → 48px ÷ 16px = 3em*/
+	line-height: 1em;
 
 }
 
 h3 {
-	font-size: 24px;
-	margin-bottom: 36px;
-	margin-left: inherit;
+	font-size: 1.5em; /*24px → 24px ÷ 16px = 1.5em*/
+	line-height: 1em;
+}
+
+p, ul, ol, pre, table, .section {
+    margin-bottom: 24px;
+}
+
+p + p {
+    text-indent: 1em;
+    margin-top: -24px;
 }
 
 h2 + .section {
-	margin-left: 2em;
+	margin-left: 60px
 }
 
 h3 + .section {
-	margin-left: 4em;
-}
-
-p {
-	margin-bottom: 24px;
-}
-
-ul {
-	margin-bottom: 24px;
+	margin-left: 60px
 }
 
 ol {
-	margin-bottom: 24px;
-	list-style: decimal;
+	list-style: decimal outside;
 }
 
 a:link {
@@ -62,8 +67,9 @@ a:active {
 
 pre {
 	font-family: 'Droid Sans Mono', monospace;
+	font-size: 14px;
+	line-height: 24px;
 	background-color: #E5E5E5;
-	margin-bottom: 24px;
 	white-space: pre-wrap; /* css-3 */
 	white-space: -moz-pre-wrap !important; /* Mozilla */
 	white-space: -pre-wrap; /* Opera 4-6 */
@@ -73,6 +79,8 @@ pre {
 
 code {
 	font-family: 'Droid Sans Mono', monospace;
+	font-size: 14px;
+	line-height: 24px;
 	background-color: #E5E5E5;
 }
 
@@ -81,13 +89,13 @@ strong {
 }
 
 table {
-	border: 1px solid;
+	border: 0 1px solid;
 	border-collapse: collapse;
-	margin-bottom: 22px;
 }
 
 thead {
 	background-color: #E5E5E5;
+	height: 48px;
 }
 
 tr:nth-child(2n) {
@@ -104,27 +112,26 @@ td {
 	padding: 24px 5px;
 }
 
-img {
-    display: inline-block;
-    margin: -8px 8px 8px;
-}
-
-.clear {
-	clear: both;
-}
-
-#customization > a {
+#customization a[id^=theme], #examples a {
+	cursor: pointer;
 	text-decoration: none;
 	display: block;
 	float: left;
-	margin: 24px 24px 0 0;
+	margin: 0 3px 24px 0;
 	text-align: center;
+	line-height: 0;
 }
 
-#customization > a > img {
-	margin: 0;
+#customization a > img, #examples a > img {
+    margin: 0;
+    padding: 0;
 }
 
 #customization span {
 	display: block;
+	line-height: 24px;
+}
+
+.clear {
+	clear: both;
 }
