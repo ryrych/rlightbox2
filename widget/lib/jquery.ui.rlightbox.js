@@ -178,7 +178,7 @@ $.extend($.ui.rlightbox, {
 								"<span id='ui-lightbox-header-title'></span>" +
 							"</p>" +
 							"<p id='ui-lightbox-header-counter'></p>" +
-							"<a id='ui-lightbox-header-close' href='#'>" +
+							"<a id='ui-lightbox-header-close'>" +
 								"<span class='ui-icon ui-icon-closethick'>close</span>" +
 							"</a>" +
 						"</div>" +
@@ -188,7 +188,7 @@ $.extend($.ui.rlightbox, {
 						"<div id='ui-lightbox-map-viewport'></div>" +
 					"</div>",
 
-				_overlay = "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>";
+				_overlay = "<div id='ui-lightbox-overlay' class='ui-widget-overlay' title='click to close' style='display: none'></div>";
 
 			// append the structure
 			$( _lightbox )
