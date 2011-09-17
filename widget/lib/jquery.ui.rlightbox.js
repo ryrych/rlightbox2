@@ -188,7 +188,7 @@ $.extend($.ui.rlightbox, {
 						"<div id='ui-lightbox-map-viewport'></div>" +
 					"</div>",
 
-				_overlay = "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>";
+				_overlay = "<div id='ui-lightbox-overlay' class='ui-widget-overlay' title='click to close' style='display: none'></div>";
 
 			// append the structure
 			$( _lightbox )
