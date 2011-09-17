@@ -83,6 +83,7 @@
 }
 
 #ui-lightbox-header-close {
+	cursor: pointer;
 	position: absolute;
 	top: 17px;
 	right: 5px;
