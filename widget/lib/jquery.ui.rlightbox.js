@@ -868,7 +868,7 @@ $.extend($.ui.rlightbox, {
 					data: {
 						v: 2,
 						alt: "jsonc",
-						prettyprint: true,
+						prettyprint: true
 					},
 					dataType: "jsonp",
 					timeout: 5000
