@@ -178,7 +178,7 @@ $.extend($.ui.rlightbox, {
 								"<span id='ui-lightbox-header-title'></span>" +
 							"</p>" +
 							"<p id='ui-lightbox-header-counter'></p>" +
-							"<a id='ui-lightbox-header-close' href='#'>" +
+							"<a id='ui-lightbox-header-close'>" +
 								"<span class='ui-icon ui-icon-closethick'>close</span>" +
 							"</a>" +
 						"</div>" +
