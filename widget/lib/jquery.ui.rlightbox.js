@@ -1481,7 +1481,7 @@ $.extend($.ui.rlightbox, {
 			$lb.header = $lb.root.find( "#ui-lightbox-bottombar" );
 			$lb.headerWrapper = $lb.header.find( "#ui-lightbox-title-wrapper" );		
 			$lb.overlay = $( "#ui-lightbox-overlay" );
-			$lb.close = $( "#ui-lightbox-header-close" );
+			$lb.close = $( "#ui-lightbox-button-close" );
 			$lb.counter = $lb.root.find( "#ui-lightbox-counter" );
 			$lb.title = $lb.root.find( "#ui-lightbox-title" );
 			$lb.map = $( "#ui-lightbox-map" );
@@ -1898,7 +1898,7 @@ $.extend($.ui.rlightbox, {
 							"<span id='ui-lightbox-title'></span>" +
 						"</p>" +
 						"<p id='ui-lightbox-counter'></p>" +
-						"<a id='ui-lightbox-header-close'>" +
+						"<a id='ui-lightbox-button-close'>" +
 							"<span class='ui-icon ui-icon-closethick'>close</span>" +
 						"</a>" +
 					"</div>" +

@@ -77,12 +77,12 @@
 	overflow: hidden;
 }
 
-#ui-lightbox-header-counter {
+#ui-lightbox-counter {
 	font-size: 9px;
 	line-height: 20px;
 }
 
-#ui-lightbox-header-close {
+#ui-lightbox-button-close {
 	cursor: pointer;
 	position: absolute;
 	top: 17px;
