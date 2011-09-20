@@ -7,11 +7,11 @@
     <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css' />
     <link type="text/css" rel="stylesheet" href="css/reset.css" />
     <link type="text/css" rel="stylesheet" href="css/style.css" />
-    <link type="text/css" rel="stylesheet" title="theme-lightness" href="css/themes/lightness/jquery-ui-1.8.16.custom.css" />
-    <link type="text/css" rel="alternate stylesheet" title="theme-blitzer" href="css/themes/blitzer/jquery-ui-1.8.16.custom.css" />
+    <link type="text/css" rel="stylesheet" id="theme" href="css/themes/lightness/jquery-ui-1.8.16.custom.css" />
+<!--    <link type="text/css" rel="alternate stylesheet" title="theme-blitzer" href="css/themes/blitzer/jquery-ui-1.8.16.custom.css" />
     <link type="text/css" rel="alternate stylesheet" title="theme-smoothness" href="css/themes/smoothness/jquery-ui-1.8.16.custom.css" />
     <link type="text/css" rel="alternate stylesheet" title="theme-start" href="css/themes/start/jquery-ui-1.8.16.custom.css" />
-    <link type="text/css" rel="alternate stylesheet" title="theme-sunny" href="css/themes/sunny/jquery-ui-1.8.16.custom.css" />    
+    <link type="text/css" rel="alternate stylesheet" title="theme-sunny" href="css/themes/sunny/jquery-ui-1.8.16.custom.css" />    -->
     <link type="text/css" rel="stylesheet" href="../widget/css/lightbox.css" />   
 </head>
 <body>
@@ -413,11 +413,11 @@
 
     <h2>Customization</h2>
     <div id="customization" class="section">
-	<a id="theme-lightness"><img src="img/doc/theme_lightness_thumb.png" alt="theme thumb" /><span>Lightness</span></a>
-	<a id="theme-blitzer"><img src="img/doc/theme_blitzer_thumb.png" alt="theme thumb" /><span>Blitzer</span></a>
-	<a id="theme-smoothness"><img src="img/doc/theme_smoothness_thumb.png" alt="theme thumb" /><span>Smoothness</span></a>
-	<a id="theme-start"><img src="img/doc/theme_start_thumb.png" alt="theme thumb" /><span>Start</span></a>
-	<a id="theme-sunny"><img src="img/doc/theme_sunny_thumb.png" alt="theme thumb" /><span>Sunny</span></a>
+	<a id="theme-lightness" href="css/themes/lightness/jquery-ui-1.8.16.custom.css"><img src="img/doc/theme_lightness_thumb.png" alt="theme thumb" /><span>Lightness</span></a>
+	<a id="theme-blitzer" href="css/themes/blitzer/jquery-ui-1.8.16.custom.css"><img src="img/doc/theme_blitzer_thumb.png" alt="theme thumb" /><span>Blitzer</span></a>
+	<a id="theme-smoothness" href="css/themes/smoothness/jquery-ui-1.8.16.custom.css"><img src="img/doc/theme_smoothness_thumb.png" alt="theme thumb" /><span>Smoothness</span></a>
+	<a id="theme-start" href="css/themes/start/jquery-ui-1.8.16.custom.css"><img src="img/doc/theme_start_thumb.png" alt="theme thumb" /><span>Start</span></a>
+	<a id="theme-sunny" href="css/themes/sunny/jquery-ui-1.8.16.custom.css"><img src="img/doc/theme_sunny_thumb.png" alt="theme thumb" /><span>Sunny</span></a>
 	
 	<p class="clear">
 	    <em>rlightbox</em> is very <strong>customizable</strong>. You can suit themes to your needs. As an exercise, choose any above theme and open any <a href="#examples">example</a>
@@ -509,17 +509,15 @@
     <script type="text/javascript" src="../widget/lib/jquery.ui.rlightbox.min.js"></script>     
     <script type="text/javascript">
 	jQuery(function($) {
+	    var $chosenSheet,
+		$stylesheets = $( "a[id^=theme-]" );
 	    
 	    // theme switcher
-	    var $themesOptions = $( "a[id^=theme-]" ),
-		$themesStylesheets = $( "link[title^=theme-]" ),
-		activeTheme = "theme-lightness";
-		
-	    $themesOptions.click(
+	    $stylesheets.click(
 		function() {
-		    activeTheme = $( this ).attr( "id" );
-		    $themesStylesheets.attr( "disabled", "disabled" );
-		    $( "link[title=" + activeTheme + "]" ).removeAttr( "disabled" );
+		    $chosenSheet = $( this ).attr( "href" );
+		    $( "#theme").attr( "href", $chosenSheet );
+		    return false;
 		}
 	    );
 	    
