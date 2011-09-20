@@ -1483,7 +1483,7 @@ $.extend($.ui.rlightbox, {
 			$lb.overlay = $( "#ui-lightbox-overlay" );
 			$lb.close = $( "#ui-lightbox-header-close" );
 			$lb.counter = $lb.root.find( "#ui-lightbox-header-counter" );
-			$lb.title = $lb.root.find( "#ui-lightbox-header-title" );
+			$lb.title = $lb.root.find( "#ui-lightbox-title" );
 			$lb.map = $( "#ui-lightbox-map" );
 			$lb.viewport = $lb.map.children().eq( 0 );
 			$lb.queueContainer = {
@@ -1895,7 +1895,7 @@ $.extend($.ui.rlightbox, {
 					"<div id='ui-lightbox-content' class='ui-widget-content'></div>" +
 					"<div id='ui-lightbox-bottombar' class='ui-widget-header ui-corner-all' style='display: none'>" +
 						"<p id='ui-lightbox-title-wrapper'>" +
-							"<span id='ui-lightbox-header-title'></span>" +
+							"<span id='ui-lightbox-title'></span>" +
 						"</p>" +
 						"<p id='ui-lightbox-header-counter'></p>" +
 						"<a id='ui-lightbox-header-close'>" +
