@@ -1479,7 +1479,7 @@ $.extend($.ui.rlightbox, {
 			$lb.panoramaIcon = $lb.root.find( "#ui-lightbox-panorama-icon" );
 			$lb.content = $lb.root.find( "#ui-lightbox-content" );
 			$lb.header = $lb.root.find( "#ui-lightbox-bottombar" );
-			$lb.headerWrapper = $lb.header.find( "#ui-lightbox-header-wrapper" );		
+			$lb.headerWrapper = $lb.header.find( "#ui-lightbox-title-wrapper" );		
 			$lb.overlay = $( "#ui-lightbox-overlay" );
 			$lb.close = $( "#ui-lightbox-header-close" );
 			$lb.counter = $lb.root.find( "#ui-lightbox-header-counter" );
@@ -1894,7 +1894,7 @@ $.extend($.ui.rlightbox, {
 					"<div id='ui-lightbox-panorama-icon' style='display: none'></div>" +
 					"<div id='ui-lightbox-content' class='ui-widget-content'></div>" +
 					"<div id='ui-lightbox-bottombar' class='ui-widget-header ui-corner-all' style='display: none'>" +
-						"<p id='ui-lightbox-header-wrapper'>" +
+						"<p id='ui-lightbox-title-wrapper'>" +
 							"<span id='ui-lightbox-header-title'></span>" +
 						"</p>" +
 						"<p id='ui-lightbox-header-counter'></p>" +
