@@ -1482,7 +1482,7 @@ $.extend($.ui.rlightbox, {
 			$lb.headerWrapper = $lb.header.find( "#ui-lightbox-title-wrapper" );		
 			$lb.overlay = $( "#ui-lightbox-overlay" );
 			$lb.close = $( "#ui-lightbox-header-close" );
-			$lb.counter = $lb.root.find( "#ui-lightbox-header-counter" );
+			$lb.counter = $lb.root.find( "#ui-lightbox-counter" );
 			$lb.title = $lb.root.find( "#ui-lightbox-title" );
 			$lb.map = $( "#ui-lightbox-map" );
 			$lb.viewport = $lb.map.children().eq( 0 );
@@ -1897,7 +1897,7 @@ $.extend($.ui.rlightbox, {
 						"<p id='ui-lightbox-title-wrapper'>" +
 							"<span id='ui-lightbox-title'></span>" +
 						"</p>" +
-						"<p id='ui-lightbox-header-counter'></p>" +
+						"<p id='ui-lightbox-counter'></p>" +
 						"<a id='ui-lightbox-header-close'>" +
 							"<span class='ui-icon ui-icon-closethick'>close</span>" +
 						"</a>" +
