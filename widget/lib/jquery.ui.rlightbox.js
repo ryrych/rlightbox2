@@ -170,31 +170,13 @@ $.extend($.ui.rlightbox, {
 		},
 
 		createStructure: function() {
-			var _lightbox = "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>" +
-						"<div id='ui-lightbox-panorama-icon' style='display: none'></div>" +
-						"<div id='ui-lightbox-content' class='ui-widget-content'></div>" +
-						"<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'>" +
-							"<p id='ui-lightbox-header-wrapper'>" +
-								"<span id='ui-lightbox-header-title'></span>" +
-							"</p>" +
-							"<p id='ui-lightbox-header-counter'></p>" +
-							"<a id='ui-lightbox-header-close'>" +
-								"<span class='ui-icon ui-icon-closethick'>close</span>" +
-							"</a>" +
-						"</div>" +
-					"</div>",
-
-				_map = "<div id='ui-lightbox-map' style='display: none'>" +
-						"<div id='ui-lightbox-map-viewport'></div>" +
-					"</div>",
-
-				_overlay = "<div id='ui-lightbox-overlay' class='ui-widget-overlay' title='click to close' style='display: none'></div>";
+			var data= this.data;
 
 			// append the structure
-			$( _lightbox )
+			$( data.htmlLightbox )
 				.appendTo( "body" )
-				.after( _map )
-				.after( _overlay );
+				.after( data.htmlMap )
+				.after( data.htmlOverlay );
 		},
 
 		destroy: function() {
@@ -1904,7 +1886,26 @@ $.extend($.ui.rlightbox, {
 					"</button>" + 
 				"</div>" +
 			"</div>",
-			htmlYoutube: "<iframe class='youtube-player' type='text/html' width='{width}' height='{height}' src='http://www.youtube.com/embed/{url}' frameborder='0'></iframe>"
+			htmlYoutube: "<iframe class='youtube-player' type='text/html' width='{width}' height='{height}' src='http://www.youtube.com/embed/{url}' frameborder='0'></iframe>",
+			htmlLightbox: "" +
+				"<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>" +
+					"<div id='ui-lightbox-panorama-icon' style='display: none'></div>" +
+					"<div id='ui-lightbox-content' class='ui-widget-content'></div>" +
+					"<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'>" +
+						"<p id='ui-lightbox-header-wrapper'>" +
+							"<span id='ui-lightbox-header-title'></span>" +
+						"</p>" +
+						"<p id='ui-lightbox-header-counter'></p>" +
+						"<a id='ui-lightbox-header-close'>" +
+							"<span class='ui-icon ui-icon-closethick'>close</span>" +
+						"</a>" +
+					"</div>" +
+				"</div>",
+			htmlMap: "" +
+				"<div id='ui-lightbox-map' style='display: none'>" +
+					"<div id='ui-lightbox-map-viewport'></div>" +
+				"</div>",
+			htmlOverlay: "<div id='ui-lightbox-overlay' class='ui-widget-overlay' title='click to close' style='display: none'></div>";				
 		}
 	}
 });
