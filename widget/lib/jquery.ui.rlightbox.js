@@ -1864,7 +1864,8 @@ $.extend($.ui.rlightbox, {
 				width: 500,
 				height: 500
 			},
-			htmlFlash: "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='{width}' height='{height}'>" +
+			htmlFlash: "" +
+				"<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='{width}' height='{height}'>" +
 					"<param name='movie' value='{url}' />" +
 						"<!--[if !IE]>-->" +
 						"<object type='application/x-shockwave-flash' data='{url}' width='{width}' height='{height}'>" +
@@ -1872,20 +1873,21 @@ $.extend($.ui.rlightbox, {
 						"<!--[if !IE]>-->" +
 						"</object>" +
 						"<!--<![endif]-->" +
-					"</object>",
-			htmlErrorScreen: "<div id='ui-lightbox-error'>" +
-				"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign'>{message}</div>" +
-				"<div id='ui-lightbox-error-footer'>" +
-					"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
-						"<span class='ui-button-icon-primary ui-icon ui-icon-refresh'></span>" +
-						"<span class='ui-button-text'>{labelAgain}</span>" +
-					"</button>" +
-					"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
-						"<span class='ui-button-icon-primary ui-icon ui-icon-trash'></span>" +
-						"<span class='ui-button-text'>{labelReject}</span>" +
-					"</button>" + 
-				"</div>" +
-			"</div>",
+				"</object>",
+			htmlErrorScreen: "" +
+				"<div id='ui-lightbox-error'>" +
+					"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign'>{message}</div>" +
+					"<div id='ui-lightbox-error-footer'>" +
+						"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+							"<span class='ui-button-icon-primary ui-icon ui-icon-refresh'></span>" +
+							"<span class='ui-button-text'>{labelAgain}</span>" +
+						"</button>" +
+						"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+							"<span class='ui-button-icon-primary ui-icon ui-icon-trash'></span>" +
+							"<span class='ui-button-text'>{labelReject}</span>" +
+						"</button>" + 
+					"</div>" +
+				"</div>",
 			htmlYoutube: "<iframe class='youtube-player' type='text/html' width='{width}' height='{height}' src='http://www.youtube.com/embed/{url}' frameborder='0'></iframe>",
 			htmlLightbox: "" +
 				"<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>" +
