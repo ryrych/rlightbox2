@@ -363,12 +363,17 @@ $.extend($.ui.rlightbox, {
 				// close the lightbox upon clicking on the close button and the overlay
 				$lb.close.add( $lb.overlay ).click( $.proxy(this.closeLightbox, this) );
 
-				// highlight the close button when mouse hovers over it
-				$lb.close.hover(
-					function() {
-						$( this ).toggleClass( "ui-state-hover" );
-					}
-				);
+				// highlight buttons when mouse hovers over them
+				$lb.next
+					.add( $lb.prev )
+					.add( $lb.next )
+					.add( $lb.play )
+					.add( $lb.close )
+					.hover(
+						function() {
+							$( this ).toggleClass( "ui-state-highlight" );
+						}
+					);		
 
 				// add handlers to the content container
 				$lb.contentContainer
@@ -1512,7 +1517,10 @@ $.extend($.ui.rlightbox, {
 			$lb.header = $lb.root.find( "#ui-lightbox-bottombar" );
 			$lb.headerWrapper = $lb.header.find( "#ui-lightbox-title-wrapper" );		
 			$lb.overlay = $( "#ui-lightbox-overlay" );
-			$lb.close = $( "#ui-lightbox-button-close" );
+			$lb.next = $lb.root.find( "#ui-lightbox-button-next" );
+			$lb.prev = $lb.root.find( "#ui-lightbox-button-prev" );
+			$lb.play = $lb.root.find( "#ui-lightbox-button-play" );
+			$lb.close = $lb.root.find( "#ui-lightbox-button-close" );
 			$lb.counter = $lb.root.find( "#ui-lightbox-counter" );
 			$lb.title = $lb.root.find( "#ui-lightbox-title" );
 			$lb.map = $( "#ui-lightbox-map" );
