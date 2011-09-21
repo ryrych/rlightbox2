@@ -1,3 +1,6 @@
-rlightbox2-page.komodoproject
 *~
-*.
+README
+rlightbox2.komodoproject
+tmp/
+tests/
+resource/
