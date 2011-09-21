@@ -107,6 +107,7 @@
 #ui-lightbox-counter {
 	font-size: 9px;
 	line-height: 20px;
+	text-indent: 0;
 }
 
 #ui-lightbox-button-close {
