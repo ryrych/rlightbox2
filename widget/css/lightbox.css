@@ -95,6 +95,8 @@
 	margin: 0;
 	margin-right: 20px;
 	padding: 0;
+	height: 20px;
+	line-height: 20px;
 }
 
 #ui-lightbox-bottombar-bottom {
@@ -106,17 +108,19 @@
 #ui-lightbox-title-wrapper {
 	font-size: 14px;
 	height: 20px;
-	line-height: 20px;
 	overflow: hidden;
 }
 
 #ui-lightbox-counter {
 	font-size: 9px;
 	line-height: 20px;
+	vertical-align: middle;
 }
 
 #ui-lightbox-separator {
+    line-height: 20px;
     padding: 0 2px;
+    vertical-align: middle;
 }
 
 #ui-lightbox-button-prev, #ui-lightbox-button-next, #ui-lightbox-button-play {
@@ -126,6 +130,7 @@
 }
 
 #ui-lightbox-button-close {
+	line-height: 20px;
 	position: absolute;
 	top: 17px;
 	right: 5px;
