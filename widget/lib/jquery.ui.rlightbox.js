@@ -150,6 +150,9 @@ $.extend($.ui.rlightbox, {
 					.empty()
 					.width( 20 )
 					.height( 20 );
+					
+				// hide arrow cue
+				this.navigationHideArrow();
 
 				// reset panorama
 				this.panoramaHideIcon();
@@ -368,11 +371,12 @@ $.extend($.ui.rlightbox, {
 				);
 
 				// add handlers to the content container
-				$lb.content
+				$lb.contentContainer
 					.mousemove( $.proxy(this.navigationCheckSide, this) )
 					.click( $.proxy(this.navigationNext, this) )
 					.mousedown( $.proxy(this.panoramaStart, this) )
-					.mouseup( $.proxy(this.panoramaStop, this ) );
+					.mouseup( $.proxy(this.panoramaStop, this ) )
+					.mouseleave( $.proxy(this.navigationHideArrow, this) );
 
 				// zoom in or zoom out an image
 				$lb.panoramaIcon
@@ -923,6 +927,7 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				$lb = this.$lightbox,
 				$content = $lb.content,
+				$arrow = $lb.arrow,
 				_currentElementNumber = data.currentElementNumber,
 				_totalElementsNumber = data.totalElementsNumber;
 
@@ -934,13 +939,27 @@ $.extend($.ui.rlightbox, {
 
 				if ( _pos <= _center && _currentElementNumber > 1 ) {
 					data.side = "left";
-					$content.css( "cursor", "w-resize" );
+					$content.css( "cursor", "pointer" );
+					$arrow
+						.show()
+						.removeClass("ui-lightbox-arrow-next ui-corner-left")
+						.addClass("ui-lightbox-arrow-prev ui-corner-right")
+						.find("span")
+							.removeClass("ui-icon-carat-1-e")
+							.addClass("ui-icon-carat-1-w");
 				} else if ( _pos > _center && _currentElementNumber < _totalElementsNumber ) {
 					data.side = "right";
-					$content.css( "cursor","e-resize" );
+					$content.css( "cursor", "pointer" );
+					$arrow
+						.show()
+						.removeClass("ui-lightbox-arrow-prev ui-corner-right")
+						.addClass("ui-lightbox-arrow-next ui-corner-left")
+						.find("span")
+							.removeClass("ui-icon-carat-1-w")
+							.addClass("ui-icon-carat-1-e");
 				} else {
 					data.side = "";
-					$content.css( "cursor", "default" );
+					$arrow.hide();
 				}
 			} else if ( data.panoramaDrag === false ) {
 
@@ -953,6 +972,13 @@ $.extend($.ui.rlightbox, {
 			}
 			
 			event.preventDefault();
+		},
+		
+		navigationHideArrow: function() {
+			var $lb = this.$lightbox,
+				$arrow = $lb.arrow;
+				
+			$arrow.hide();
 		},
 
 		navigationGoToElement: function( number ) {
@@ -1135,6 +1161,9 @@ $.extend($.ui.rlightbox, {
 			if ( _options.showMap ) {
 				this.panoramaShowMap();
 			}
+			
+			// hide arrow cue
+			this.navigationHideArrow();
 		},
 
 		panoramaHideIcon: function() {
@@ -1477,7 +1506,9 @@ $.extend($.ui.rlightbox, {
 			// save references to wrapped set for later use
 			$lb.root = $( "#ui-lightbox" );
 			$lb.panoramaIcon = $lb.root.find( "#ui-lightbox-panorama-icon" );
-			$lb.content = $lb.root.find( "#ui-lightbox-content" );
+			$lb.contentContainer = $lb.root.find( "#ui-lightbox-content-container" );
+			$lb.content = $lb.contentContainer.find( "#ui-lightbox-content" );
+			$lb.arrow = $lb.contentContainer.find( "#ui-lightbox-arrow" );
 			$lb.header = $lb.root.find( "#ui-lightbox-bottombar" );
 			$lb.headerWrapper = $lb.header.find( "#ui-lightbox-title-wrapper" );		
 			$lb.overlay = $( "#ui-lightbox-overlay" );
@@ -1835,6 +1866,10 @@ $.extend($.ui.rlightbox, {
 
 			// structure is not ready - start an animation
 			data.ready = false;
+			
+			// hide arrow cue
+			this.navigationHideArrow();
+			
 			$lb.header.slideUp ( _options.animationSpeed, next );
 		},
 
@@ -1892,7 +1927,12 @@ $.extend($.ui.rlightbox, {
 			htmlLightbox: "" +
 				"<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>" +
 					"<div id='ui-lightbox-panorama-icon' style='display: none'></div>" +
-					"<div id='ui-lightbox-content' class='ui-widget-content'></div>" +
+					"<div id='ui-lightbox-content-container'>" +
+						"<div id='ui-lightbox-content' class='ui-widget-content'></div>" +
+						"<a id='ui-lightbox-arrow' class='ui-widget-header' style='display: none'>" +
+							"<span class='ui-icon'>go</span>" +
+						"</a>" +
+					"</div>" +
 					"<div id='ui-lightbox-bottombar' class='ui-widget-header ui-corner-all' style='display: none'>" +
 						"<p id='ui-lightbox-title-wrapper'>" +
 							"<span id='ui-lightbox-title'></span>" +

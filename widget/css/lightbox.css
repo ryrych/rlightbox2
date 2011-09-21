@@ -8,6 +8,12 @@
 	height: auto;
 }
 
+#ui-lightbox-content-container {
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+
 #ui-lightbox-content {
 	border: 0 none;
 	margin: 0;
@@ -24,6 +30,27 @@
 	z-index: 100;
 	padding: 0;
 	margin: 0;
+}
+
+#ui-lightbox-arrow {
+	cursor: pointer;
+	display: block;
+	position: absolute;
+	top: 50%;
+	padding: 0;
+	margin: 0;
+	margin-top: -8px;
+	z-index: 101;   
+}
+
+.ui-lightbox-arrow-next {
+	border-right: 0;
+	right: 0;
+}
+
+.ui-lightbox-arrow-prev {
+	border-left: 0;
+	left: 0;
 }
 
 #ui-lightbox-panorama-icon {
