@@ -1937,8 +1937,20 @@ $.extend($.ui.rlightbox, {
 						"<p id='ui-lightbox-title-wrapper'>" +
 							"<span id='ui-lightbox-title'></span>" +
 						"</p>" +
-						"<p id='ui-lightbox-counter'></p>" +
-						"<a id='ui-lightbox-button-close'>" +
+						"<p id='ui-lightbox-bottombar-bottom'>" +
+							"<a id='ui-lightbox-button-prev' class='ui-lightbox-button'>" +
+								"<span class='ui-icon ui-icon-circle-arrow-w'>prev</span>" +
+							"</a>" +
+							"<span id='ui-lightbox-counter'></span>" +
+							"<a id='ui-lightbox-button-next' class='ui-lightbox-button'>" +
+								"<span class='ui-icon ui-icon-circle-arrow-e'>next</span>" +
+							"</a>" +
+							"<span id='ui-lightbox-separator'>|</span>" +
+							"<a id='ui-lightbox-button-play' class='ui-lightbox-button'>" +
+								"<span class='ui-icon ui-icon-circle-triangle-e'>play</span>" +
+							"</a>" +
+						"</p>" +
+						"<a id='ui-lightbox-button-close' class='ui-lightbox-button'>" +
 							"<span class='ui-icon ui-icon-closethick'>close</span>" +
 						"</a>" +
 					"</div>" +

@@ -97,6 +97,12 @@
 	padding: 0;
 }
 
+#ui-lightbox-bottombar-bottom {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+}
+
 #ui-lightbox-title-wrapper {
 	font-size: 14px;
 	height: 20px;
@@ -107,14 +113,31 @@
 #ui-lightbox-counter {
 	font-size: 9px;
 	line-height: 20px;
-	text-indent: 0;
+}
+
+#ui-lightbox-separator {
+    padding: 0 2px;
+}
+
+#ui-lightbox-button-prev, #ui-lightbox-button-next, #ui-lightbox-button-play {
+	display: inline-block;
+	line-height: 20px;
+	vertical-align: middle;
 }
 
 #ui-lightbox-button-close {
-	cursor: pointer;
 	position: absolute;
 	top: 17px;
 	right: 5px;
+}
+
+.ui-lightbox-button {
+	cursor: pointer;
+}
+
+.ui-lightbox-button.ui-state-highlight {
+	border-style: none;
+	background: none;
 }
 
 #ui-lightbox-map {
