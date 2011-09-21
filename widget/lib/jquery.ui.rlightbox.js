@@ -362,6 +362,22 @@ $.extend($.ui.rlightbox, {
 
 				// close the lightbox upon clicking on the close button and the overlay
 				$lb.close.add( $lb.overlay ).click( $.proxy(this.closeLightbox, this) );
+				
+				// goes to the next element when button is clicked
+				$lb.next.click(
+					function() {
+						data.side = "right";
+						self.navigationNext.apply( self );
+					}
+				);
+				
+				// and goes to the prev element when prev button is clicked
+				$lb.prev.click(
+					function() {
+						data.side = "left";
+						self.navigationNext.apply( self );
+					}
+				);				
 
 				// highlight buttons when mouse hovers over them
 				$lb.next
