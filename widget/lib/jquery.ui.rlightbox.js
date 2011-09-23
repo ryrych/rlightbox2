@@ -107,6 +107,38 @@ $.extend($.ui.rlightbox, {
 				_sets[_setName].splice( _setElementIndex, 0 , setElement );
 			}
 		},
+		
+		checkButtonsState: function() {
+			var data = this.data,
+				$lb = this.$lightbox,
+				_currentSet = data.currentSet,
+				_totalElements = data.totalElementsNumber,
+				_currentElement = data.currentElementNumber;
+				
+			// if lightbox is opened and there is only one element
+			// single element or one element in named set
+			if ( _currentSet === "single" || _totalElements === 1 ) {
+				this.setButtonState( "disabled" );
+			} else if ( _currentElement === 1 ) {
+				
+				// in case of 1st element
+				this.setButtonState( "disabled", $lb.prev );
+				
+				// when there are only two elements in a set
+				this.setButtonState( "default", $lb.next );
+			} else if ( _currentElement === _totalElements ) {
+				
+				// in case of last element
+				this.setButtonState( "disabled", $lb.next );
+				
+				// when there are only two elements in a set
+				this.setButtonState( "default", $lb.prev );				
+			} else {
+				
+				// between first and last elements
+				this.setButtonState( "default" );
+			}
+		},		
 
 		checkMinimalSize: function( size, number ) {
 
@@ -153,6 +185,9 @@ $.extend($.ui.rlightbox, {
 					
 				// hide arrow cue
 				this.navigationHideArrow();
+				
+				// reset control buttons states to default
+				this.setButtonState( "default" );
 
 				// reset panorama
 				this.panoramaHideIcon();
@@ -387,7 +422,12 @@ $.extend($.ui.rlightbox, {
 					.add( $lb.close )
 					.hover(
 						function() {
-							$( this ).toggleClass( "ui-state-highlight" );
+							if ( $(this).is(":not(.ui-state-disabled)") ) {
+								self.setButtonState( "highlight", $(this) );
+							}
+						},
+						function() {
+							$( this ).removeClass( "ui-state-highlight" );
 						}
 					);		
 
@@ -1058,7 +1098,7 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				sets = this.sets,
 				$lb = this.$lightbox,
-				_jqElement = thisElement.element,
+				_jqElement = thisElement.element,//TODO
 				_currentSet = this.getSetName( thisElement ),
 				_currentUrl = $( _jqElement ).attr( "href" );
 
@@ -1076,6 +1116,9 @@ $.extend($.ui.rlightbox, {
 			// set animation queues
 			this.setOpenQueue();
 			this.setNextQueue();
+			
+			// to fade or not to fade…
+			this.checkButtonsState();
 
 			// start opening the lighbox
 			$lb.queueContainer.open.dequeue( "lightboxOpen" );
@@ -1477,7 +1520,26 @@ $.extend($.ui.rlightbox, {
 
 			return htmlString;
 		},
-
+		
+		setButtonState: function( state, jqElement ) {
+			var $lb = this.$lightbox,
+				jqElement = jqElement || $lb.controlButtons;
+				
+			switch ( state ) {
+				case "default":
+					jqElement.removeClass( "ui-state-highlight ui-state-disabled" );
+					break;
+				
+				case "highlight":
+					jqElement.addClass( "ui-state-highlight" );
+					break;
+				
+				case "disabled":
+					jqElement.addClass( "ui-state-disabled" );
+					break;
+			}
+		},
+		
 		setNextQueue: function() {
 
 			// for description take a look at _setOpenQueue method
@@ -1536,6 +1598,7 @@ $.extend($.ui.rlightbox, {
 			$lb.next = $lb.root.find( "#ui-lightbox-button-next" );
 			$lb.prev = $lb.root.find( "#ui-lightbox-button-prev" );
 			$lb.play = $lb.root.find( "#ui-lightbox-button-play" );
+			$lb.controlButtons = $lb.next.add( $lb.prev ).add( $lb.play );
 			$lb.close = $lb.root.find( "#ui-lightbox-button-close" );
 			$lb.counter = $lb.root.find( "#ui-lightbox-counter" );
 			$lb.title = $lb.root.find( "#ui-lightbox-title" );
@@ -1877,6 +1940,9 @@ $.extend($.ui.rlightbox, {
 			// update title
 			this.updateTitleWidth();
 			this.updateTitle();
+			
+			// update buttons states
+			this.checkButtonsState();			
 
 			// indicate that animation queue is finshed
 			data.ready = true;
