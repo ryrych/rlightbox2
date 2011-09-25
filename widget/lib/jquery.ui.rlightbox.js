@@ -434,9 +434,10 @@ $.extend($.ui.rlightbox, {
 				// add handlers to the content container
 				$lb.contentContainer
 					.mousemove( $.proxy(this.navigationCheckSide, this) )
+					.mousemove( $.proxy(this.setCursor, this) )
 					.click( $.proxy(this.navigationNext, this) )
 					.mousedown( $.proxy(this.panoramaStart, this) )
-					.mouseup( $.proxy(this.panoramaStop, this ) )
+					.mouseup( $.proxy(this.panoramaStop, this ) )				
 					.mouseleave( $.proxy(this.navigationHideArrow, this) );
 
 				// zoom in or zoom out an image
@@ -987,20 +988,20 @@ $.extend($.ui.rlightbox, {
 		navigationCheckSide: function( event ) {
 			var data = this.data,
 				$lb = this.$lightbox,
-				$content = $lb.content,
+				$contentContainer = $lb.contentContainer,
 				$arrow = $lb.arrow,
 				_currentElementNumber = data.currentElementNumber,
-				_totalElementsNumber = data.totalElementsNumber;
+				_totalElementsNumber = data.totalElementsNumber,
+				_isError = data.showErrorMessage;
 
 			// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
 			// clicked image belongs to a gallery and we are not in the Panorama™ mode
-			if ( data.ready && data.currentSet !== "single" && data.currentSetElement.type === "image" && data.panoramaOn === false ) {
-				var _pos = event.pageX - $content.offset().left,
-					_center = Math.round( $content.width() / 2 );
+			if ( data.ready && data.currentSet !== "single" && (data.currentSetElement.type === "image" || _isError) && data.panoramaOn === false ) {
+				var _pos = event.pageX - $contentContainer.offset().left,
+					_center = Math.round( $contentContainer.width() / 2 );
 
 				if ( _pos <= _center && _currentElementNumber > 1 ) {
 					data.side = "left";
-					$content.css( "cursor", "pointer" );
 					$arrow
 						.show()
 						.removeClass("ui-lightbox-arrow-next ui-corner-left")
@@ -1010,7 +1011,6 @@ $.extend($.ui.rlightbox, {
 							.addClass("ui-icon-carat-1-w");
 				} else if ( _pos > _center && _currentElementNumber < _totalElementsNumber ) {
 					data.side = "right";
-					$content.css( "cursor", "pointer" );
 					$arrow
 						.show()
 						.removeClass("ui-lightbox-arrow-prev ui-corner-right")
@@ -1022,14 +1022,6 @@ $.extend($.ui.rlightbox, {
 					data.side = "";
 					$arrow.hide();
 				}
-			} else if ( data.panoramaDrag === false ) {
-
-				// we are no longer hover over the content container
-				data.side = "";
-				$content.css( "cursor", "default" );
-			} else {
-				data.side = "";
-				$content.css( "cursor", "move" );
 			}
 			
 			event.preventDefault();
@@ -1067,7 +1059,7 @@ $.extend($.ui.rlightbox, {
 				_set = data.currentSet;
 
 			// prevent from multi clicking and go to the next image only if it belongs to a gallery
-			if ( data.ready && _set !== "single" ) {
+			if ( data.ready && _set !== "single" && data.panoramaOn === false ) {
 				_currentElementNumber = data.currentElementNumber;
 
 				if ( _currentElementNumber + 1 <= data.totalElementsNumber && data.side === "right" ) {
@@ -1228,6 +1220,11 @@ $.extend($.ui.rlightbox, {
 			
 			// hide arrow cue
 			this.navigationHideArrow();
+			
+			// reset cursor when there is no movement; for example
+			// cursor was ‘pointer’, [Z] buttons was pressed (‘default’ cursor)
+			// [Z] was pressed again → cursor is still ‘pointer’
+			this.setCursor();
 		},
 
 		panoramaHideIcon: function() {
@@ -1402,6 +1399,11 @@ $.extend($.ui.rlightbox, {
 
 			// hide the map
 			this.panoramaHideMap();
+			
+			// reset cursor when there is no movement; for example
+			// cursor was ‘pointer’, [Z] buttons was pressed (‘default’ cursor)
+			// [Z] was pressed again → cursor is still ‘pointer’
+			this.setCursor();			
 		},		
 
 		panoramaStart: function( event ) {
@@ -1414,14 +1416,6 @@ $.extend($.ui.rlightbox, {
 					xStart: event.pageX,
 					yStart: event.pageY
 				};
-
-			// used to show the ‘move’ cursor on ‘content’ container
-			data.panoramaDrag = true;
-
-			// give clue that we can drag now
-			if ( data.panoramaOn ) {
-				$lb.content.css( "cursor", "move" );
-			}
 
 			event.preventDefault();
 		},
@@ -1436,9 +1430,6 @@ $.extend($.ui.rlightbox, {
 				_distY = ( event.pageY - data.panoramaPosition.yStart ) * -1,
 				$content = $lb.content,
 				_viewportRatio = data.viewportRatio;
-
-			// indicate that we can revert the cursor to the default one
-			data.panoramaDrag = false;
 
 			// if we are in the panorama mode (the panorama icon was clicked)
 			if ( data.panoramaOn ) {
@@ -1537,6 +1528,39 @@ $.extend($.ui.rlightbox, {
 				case "disabled":
 					jqElement.addClass( "ui-state-disabled" );
 					break;
+			}
+		},
+		
+		setCursor: function() {
+			var data = this.data,
+				$lb = this.$lightbox,
+				$contentContainer = $lb.contentContainer,
+				_currentSet = data.currentSet,
+				_setElement = data.currentSetElement.type,
+				_totalElements = data.totalElementsNumber,
+				_currentElement = data.currentElementNumber,
+				_side = data.side,
+				_panoramaEnabled = data.panoramaOn,
+				_isError = data.showErrorMessage;
+			
+			if ( data.ready ) {
+				if ( (_currentSet === "single" || _totalElements === 1 || (_currentElement === 1 && _side === "left" || _side === "") || (_currentElement === _totalElements && _side === "right" || _side === "")) && _panoramaEnabled === false && (_setElement === "image" || (_setElement !== "image" && _isError)) ) {
+
+					// single element or single element in a named set or first element in a set (when lightbox is open, data.side = "") or last element in a set WHEN panorama is DISABLED, and when element type is ‘image’ or the Error Screen is shown
+					$contentContainer.css( "cursor", "default" );
+				} else if ( _panoramaEnabled ) {
+
+					// panorama is enabled
+					$contentContainer.css( "cursor", "move" );
+				} else if ( _setElement === "image" || (_setElement !== "image" && _isError) ) {
+					
+					// between first and last element in an image set or when the Error Screen is shown
+					$contentContainer.css( "cursor", "pointer" );
+				} else {
+
+					// for flash videos
+					$contentContainer.css( "cursor", "auto" );
+				}
 			}
 		},
 		
@@ -1942,10 +1966,14 @@ $.extend($.ui.rlightbox, {
 			this.updateTitle();
 			
 			// update buttons states
-			this.checkButtonsState();			
-
+			this.checkButtonsState();
+			
 			// indicate that animation queue is finshed
 			data.ready = true;
+			
+			// if you go from penulimate/second element to the last/first element change cursor to ‘default’
+			// must be after ‘data.ready = true’!!!
+			this.setCursor();			
 		},
 
 		queueSlideUpHeader: function( next ) {
