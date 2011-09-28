@@ -1110,7 +1110,7 @@ $.extend($.ui.rlightbox, {
 			this.setNextQueue();
 			
 			// to fade or not to fade…
-			this.checkButtonsState();
+			this.checkButtonsState();		
 
 			// start opening the lighbox
 			$lb.queueContainer.open.dequeue( "lightboxOpen" );
@@ -1561,6 +1561,8 @@ $.extend($.ui.rlightbox, {
 					// for flash videos
 					$contentContainer.css( "cursor", "auto" );
 				}
+			} else {
+				$contentContainer.css( "cursor", "default" );
 			}
 		},
 		
@@ -1782,6 +1784,9 @@ $.extend($.ui.rlightbox, {
 
 			// let know that lightbox is not ready now
 			data.ready = false;
+			
+			// change cursor to default
+			this.setCursor();			
 
 			// show overlay
 			$( "body" ).css( "overflow", "hidden" );
@@ -1987,6 +1992,9 @@ $.extend($.ui.rlightbox, {
 			
 			// hide arrow cue
 			this.navigationHideArrow();
+			
+			// change cursor to default
+			this.setCursor();				
 			
 			$lb.header.slideUp ( _options.animationSpeed, next );
 		},
