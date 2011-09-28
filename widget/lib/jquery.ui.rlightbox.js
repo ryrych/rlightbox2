@@ -427,7 +427,9 @@ $.extend($.ui.rlightbox, {
 							}
 						},
 						function() {
-							$( this ).removeClass( "ui-state-highlight" );
+							if ( $(this).is(":not(.ui-state-disabled)") ) {
+								self.setButtonState( "default", $(this) );								
+							}
 						}
 					);		
 
