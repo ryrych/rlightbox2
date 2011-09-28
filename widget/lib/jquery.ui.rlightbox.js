@@ -399,20 +399,10 @@ $.extend($.ui.rlightbox, {
 				$lb.close.add( $lb.overlay ).click( $.proxy(this.closeLightbox, this) );
 				
 				// goes to the next element when button is clicked
-				$lb.next.click(
-					function() {
-						data.side = "right";
-						self.navigationNext.apply( self );
-					}
-				);
+				$lb.next.click( $.proxy(this.next, this) );
 				
 				// and goes to the prev element when prev button is clicked
-				$lb.prev.click(
-					function() {
-						data.side = "left";
-						self.navigationNext.apply( self );
-					}
-				);				
+				$lb.prev.click( $.proxy(this.prev, this) );			
 
 				// highlight buttons when mouse hovers over them
 				$lb.next
@@ -436,8 +426,17 @@ $.extend($.ui.rlightbox, {
 				// add handlers to the content container
 				$lb.contentContainer
 					.mousemove( $.proxy(this.navigationCheckSide, this) )
+					.mousemove( $.proxy(this.checkSide, this) )
 					.mousemove( $.proxy(this.setCursor, this) )
-					.click( $.proxy(this.navigationNext, this) )
+					.click(
+						function() {
+							if ( data.side === "left" ) {
+								self.prev.apply( self );
+							} else if ( data.side === "right" ) {
+								self.next.apply( self );
+							}
+						}
+					)
 					.mousedown( $.proxy(this.panoramaStart, this) )
 					.mouseup( $.proxy(this.panoramaStop, this ) )				
 					.mouseleave( $.proxy(this.navigationHideArrow, this) );
@@ -513,6 +512,22 @@ $.extend($.ui.rlightbox, {
 				_name = _classPattern.exec( _classNames );
 
 			return _name ? _name[1] : "single";
+		},
+		
+		checkSide: function( event ) {
+			var data = this.data,
+				$lb = this.$lightbox,
+				$container = $lb.contentContainer,
+				_pos = event.pageX - $container.offset().left,
+				_center = Math.round( $container.width() / 2 ),
+				_currentElementNumber = data.currentElementNumber,
+				_totalElementsNumber = data.totalElementsNumber;
+
+			if ( _pos <= _center ) {
+				data.side = "left";
+			} else if ( _pos > _center ) {
+				data.side = "right";
+			}
 		},
 
 		getSizes: function() {
@@ -668,19 +683,13 @@ $.extend($.ui.rlightbox, {
 			if ( _key === _keys.next[0] || _key === _keys.next[1] ) {
 
 				// next keys: [N] & [→]
-				// simulate checking side
-				data.side = "right";
-
 				// load next content if possible
-				this.navigationNext();
+				this.next();
 			} else if ( _key === _keys.previous[0] || _key === _keys.previous[1] ) {
 
 				// prev keys: [P] & [←]
-				// simulate checking side
-				data.side = "left";
-
 				// load previous content if possible
-				this.navigationNext();
+				this.prev();
 			} else if ( _key === _keys.close[0] || _key === _keys.close[1] ) {
 
 				// close keys: [C] & [ESC]
@@ -990,20 +999,15 @@ $.extend($.ui.rlightbox, {
 		navigationCheckSide: function( event ) {
 			var data = this.data,
 				$lb = this.$lightbox,
-				$contentContainer = $lb.contentContainer,
 				$arrow = $lb.arrow,
-				_currentElementNumber = data.currentElementNumber,
-				_totalElementsNumber = data.totalElementsNumber,
-				_isError = data.showErrorMessage;
+				_isError = data.showErrorMessage,
+				_side = data.side;
 
 			// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
 			// clicked image belongs to a gallery and we are not in the Panorama™ mode
 			if ( data.ready && data.currentSet !== "single" && (data.currentSetElement.type === "image" || _isError) && data.panoramaOn === false ) {
-				var _pos = event.pageX - $contentContainer.offset().left,
-					_center = Math.round( $contentContainer.width() / 2 );
 
-				if ( _pos <= _center && _currentElementNumber > 1 ) {
-					data.side = "left";
+				if ( _side === "left" ) {
 					$arrow
 						.show()
 						.removeClass("ui-lightbox-arrow-next ui-corner-left")
@@ -1011,8 +1015,7 @@ $.extend($.ui.rlightbox, {
 						.find("span")
 							.removeClass("ui-icon-carat-1-e")
 							.addClass("ui-icon-carat-1-w");
-				} else if ( _pos > _center && _currentElementNumber < _totalElementsNumber ) {
-					data.side = "right";
+				} else if ( _side === "right" ) {
 					$arrow
 						.show()
 						.removeClass("ui-lightbox-arrow-prev ui-corner-right")
@@ -1020,13 +1023,8 @@ $.extend($.ui.rlightbox, {
 						.find("span")
 							.removeClass("ui-icon-carat-1-w")
 							.addClass("ui-icon-carat-1-e");
-				} else {
-					data.side = "";
-					$arrow.hide();
 				}
 			}
-			
-			event.preventDefault();
 		},
 		
 		navigationHideArrow: function() {
@@ -1052,39 +1050,26 @@ $.extend($.ui.rlightbox, {
 			this.setNextQueue();
 			$lb.queueContainer.next.dequeue( "lightboxNext" );
 		},		
-
-		navigationNext: function() {
-			var _currentElementNumber, _currentSetElement,
-				data = this.data,
+		
+		next: function() {
+			var data = this.data,
 				sets = this.sets,
 				$lb = this.$lightbox,
-				_set = data.currentSet;
-
-			// prevent from multi clicking and go to the next image only if it belongs to a gallery
-			if ( data.ready && _set !== "single" && data.panoramaOn === false ) {
+				_set = data.currentSet,
+				_currentElementNumber = data.currentElementNumber,
+				_totalElementsNumber = data.totalElementsNumber;
+				
+			if ( data.ready && _set !== "single" && data.panoramaOn === false && _currentElementNumber + 1 <= data.totalElementsNumber ) {
 				_currentElementNumber = data.currentElementNumber;
+				data.currentElementNumber = _currentElementNumber + 1;
 
-				if ( _currentElementNumber + 1 <= data.totalElementsNumber && data.side === "right" ) {
-					data.currentElementNumber = _currentElementNumber + 1;
+				// update current element
+				_currentSetElement = sets[_set][_currentElementNumber];
+				data.currentSetElement = _currentSetElement;
 
-					// update current element
-					_currentSetElement = sets[_set][_currentElementNumber];
-					data.currentSetElement = _currentSetElement;
-
-					// next element - trigger the queue ‘next’ - first update it
-					this.setNextQueue();
-					$lb.queueContainer.next.dequeue( "lightboxNext" );
-				} else if ( _currentElementNumber - 1 >= 1 && data.side === "left" ){
-					data.currentElementNumber = _currentElementNumber - 1;
-
-					// update current element
-					_currentSetElement = sets[_set][_currentElementNumber - 2];
-					data.currentSetElement = _currentSetElement;
-
-					// next element - trigger the queue ‘next’ - first update it
-					this.setNextQueue();
-					$lb.queueContainer.next.dequeue( "lightboxNext" );
-				}
+				// next element - trigger the queue ‘next’ - first update it
+				this.setNextQueue();
+				$lb.queueContainer.next.dequeue( "lightboxNext" );
 			}
 		},
 
@@ -1468,6 +1453,29 @@ $.extend($.ui.rlightbox, {
 			} else if ( _isPanoramaEnabled && _panoramaOn ) {
 				this.panoramaShrink( event );			
 			}
+		},
+		
+		prev: function() {
+			var data = this.data,
+				sets = this.sets,
+				$lb = this.$lightbox,
+				_set = data.currentSet,
+				_currentElementNumber = data.currentElementNumber,
+				_totalElementsNumber = data.totalElementsNumber;
+
+			// prevent from multi clicking and go to the next image only if it belongs to a gallery
+			if ( data.ready && _set !== "single" && data.panoramaOn === false && _currentElementNumber - 1 >= 1 ) {
+				_currentElementNumber = data.currentElementNumber;
+				data.currentElementNumber = _currentElementNumber - 1;
+
+				// update current element
+				_currentSetElement = sets[_set][_currentElementNumber - 2];
+				data.currentSetElement = _currentSetElement;
+
+				// next element - trigger the queue ‘next’ - first update it
+				this.setNextQueue();
+				$lb.queueContainer.next.dequeue( "lightboxNext" );
+			}			
 		},
 
 		removeSetElement: function( number ) {
