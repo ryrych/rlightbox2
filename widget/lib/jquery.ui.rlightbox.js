@@ -2087,7 +2087,7 @@ $.extend($.ui.rlightbox, {
 				"<div id='ui-lightbox-map' style='display: none'>" +
 					"<div id='ui-lightbox-map-viewport'></div>" +
 				"</div>",
-			htmlOverlay: "<div id='ui-lightbox-overlay' class='ui-widget-overlay' title='click to close' style='display: none'></div>"			
+			htmlOverlay: "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>"			
 		}
 	}
 });
