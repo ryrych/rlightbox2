@@ -1405,7 +1405,10 @@ $.extend($.ui.rlightbox, {
 			// reset cursor when there is no movement; for example
 			// cursor was ‘pointer’, [Z] buttons was pressed (‘default’ cursor)
 			// [Z] was pressed again → cursor is still ‘pointer’
-			this.setCursor();			
+			this.setCursor();
+			
+			// fixes Panorama-hold mouse-Z-mouse up bug(?)
+			data.side = "";
 		},		
 
 		panoramaStart: function( event ) {
