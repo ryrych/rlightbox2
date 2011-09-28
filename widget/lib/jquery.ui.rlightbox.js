@@ -184,7 +184,7 @@ $.extend($.ui.rlightbox, {
 					.height( 20 );
 					
 				// hide arrow cue
-				this.navigationHideArrow();
+				this.hideArrow();
 				
 				// reset control buttons states to default
 				this.setButtonState( "default" );
@@ -425,7 +425,7 @@ $.extend($.ui.rlightbox, {
 
 				// add handlers to the content container
 				$lb.contentContainer
-					.mousemove( $.proxy(this.navigationCheckSide, this) )
+					.mousemove( $.proxy(this.showArrow, this) )
 					.mousemove( $.proxy(this.checkSide, this) )
 					.mousemove( $.proxy(this.setCursor, this) )
 					.click(
@@ -439,7 +439,7 @@ $.extend($.ui.rlightbox, {
 					)
 					.mousedown( $.proxy(this.panoramaStart, this) )
 					.mouseup( $.proxy(this.panoramaStop, this ) )				
-					.mouseleave( $.proxy(this.navigationHideArrow, this) );
+					.mouseleave( $.proxy(this.hideArrow, this) );
 
 				// zoom in or zoom out an image
 				$lb.panoramaIcon
@@ -700,6 +700,13 @@ $.extend($.ui.rlightbox, {
 				this.panoramaToggle( event );
 			}
 		},
+		
+		hideArrow: function() {
+			var $lb = this.$lightbox,
+				$arrow = $lb.arrow;
+				
+			$arrow.hide();
+		},		
 
 		liveResize: function() {
 			var data = this.data,
@@ -994,46 +1001,8 @@ $.extend($.ui.rlightbox, {
 			}
 
 			return _dfd.promise();
-		},		
-
-		navigationCheckSide: function( event ) {
-			var data = this.data,
-				$lb = this.$lightbox,
-				$arrow = $lb.arrow,
-				_isError = data.showErrorMessage,
-				_side = data.side;
-
-			// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
-			// clicked image belongs to a gallery and we are not in the Panorama™ mode
-			if ( data.ready && data.currentSet !== "single" && (data.currentSetElement.type === "image" || _isError) && data.panoramaOn === false ) {
-
-				if ( _side === "left" ) {
-					$arrow
-						.show()
-						.removeClass("ui-lightbox-arrow-next ui-corner-left")
-						.addClass("ui-lightbox-arrow-prev ui-corner-right")
-						.find("span")
-							.removeClass("ui-icon-carat-1-e")
-							.addClass("ui-icon-carat-1-w");
-				} else if ( _side === "right" ) {
-					$arrow
-						.show()
-						.removeClass("ui-lightbox-arrow-prev ui-corner-right")
-						.addClass("ui-lightbox-arrow-next ui-corner-left")
-						.find("span")
-							.removeClass("ui-icon-carat-1-w")
-							.addClass("ui-icon-carat-1-e");
-				}
-			}
 		},
 		
-		navigationHideArrow: function() {
-			var $lb = this.$lightbox,
-				$arrow = $lb.arrow;
-				
-			$arrow.hide();
-		},
-
 		navigationGoToElement: function( number ) {
 
 			// goes to a custom element
@@ -1206,7 +1175,7 @@ $.extend($.ui.rlightbox, {
 			}
 			
 			// hide arrow cue
-			this.navigationHideArrow();
+			this.hideArrow();
 			
 			// reset cursor when there is no movement; for example
 			// cursor was ‘pointer’, [Z] buttons was pressed (‘default’ cursor)
@@ -1648,6 +1617,40 @@ $.extend($.ui.rlightbox, {
 				next: $({})
 			};
 		},
+		
+		showArrow: function( event ) {
+			var data = this.data,
+				$lb = this.$lightbox,
+				$arrow = $lb.arrow,
+				_isError = data.showErrorMessage,
+				_side = data.side,
+				_currentElement = data.currentElementNumber,
+				_totalElements = data.totalElementsNumber;
+			
+			// show arrow cues only in image set or in The Error Screen when it is part of a set
+			if ( data.ready && data.currentSet !== "single" && (data.currentSetElement.type === "image" || _isError) && data.panoramaOn === false ) {
+
+				if ( _side === "left" && _currentElement > 1 ) {
+					$arrow
+						.show()
+						.removeClass("ui-lightbox-arrow-next ui-corner-left")
+						.addClass("ui-lightbox-arrow-prev ui-corner-right")
+						.find("span")
+							.removeClass("ui-icon-carat-1-e")
+							.addClass("ui-icon-carat-1-w");
+				} else if ( _side === "right" && _currentElement < _totalElements ) {
+					$arrow
+						.show()
+						.removeClass("ui-lightbox-arrow-prev ui-corner-right")
+						.addClass("ui-lightbox-arrow-next ui-corner-left")
+						.find("span")
+							.removeClass("ui-icon-carat-1-w")
+							.addClass("ui-icon-carat-1-e");
+				} else {
+					this.hideArrow();
+				}
+			}
+		},		
 
 		showErrorMessage: function() {
 
@@ -1991,7 +1994,10 @@ $.extend($.ui.rlightbox, {
 			
 			// if you go from penulimate/second element to the last/first element change cursor to ‘default’
 			// must be after ‘data.ready = true’!!!
-			this.setCursor();			
+			this.setCursor();
+			
+			// show arrow cue whenever possible when there is no mouse mouvement
+			this.showArrow();
 		},
 
 		queueSlideUpHeader: function( next ) {
@@ -2004,7 +2010,7 @@ $.extend($.ui.rlightbox, {
 			data.ready = false;
 			
 			// hide arrow cue
-			this.navigationHideArrow();
+			this.hideArrow();
 			
 			// change cursor to default
 			this.setCursor();				
