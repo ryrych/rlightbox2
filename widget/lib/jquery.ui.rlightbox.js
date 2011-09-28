@@ -1360,9 +1360,6 @@ $.extend($.ui.rlightbox, {
 			// cursor was ‘pointer’, [Z] buttons was pressed (‘default’ cursor)
 			// [Z] was pressed again → cursor is still ‘pointer’
 			this.setCursor();
-			
-			// fixes Panorama-hold mouse-Z-mouse up bug(?)
-			data.side = "";
 		},		
 
 		panoramaStart: function( event ) {
@@ -1526,7 +1523,7 @@ $.extend($.ui.rlightbox, {
 				_isError = data.showErrorMessage;
 			
 			if ( data.ready ) {
-				if ( (_currentSet === "single" || _totalElements === 1 || (_currentElement === 1 && _side === "left" || _side === "") || (_currentElement === _totalElements && _side === "right" || _side === "")) && _panoramaEnabled === false && (_setElement === "image" || (_setElement !== "image" && _isError)) ) {
+				if ( (_currentSet === "single" || _totalElements === 1 || _currentElement === 1 && _side === "left" || _currentElement === _totalElements && _side === "right") && _panoramaEnabled === false && (_setElement === "image" || (_setElement !== "image" && _isError)) ) {
 
 					// single element or single element in a named set or first element in a set (when lightbox is open, data.side = "") or last element in a set WHEN panorama is DISABLED, and when element type is ‘image’ or the Error Screen is shown
 					$contentContainer.css( "cursor", "default" );
