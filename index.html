@@ -31,8 +31,8 @@
     <div id="toc" class="section">
 	<ol>	    
 	    <li><a href="#about">About</a></li>	    
-	    <li><a href="#getting-started">Getting Started</a></li>
-	    <li><a href="#features">Features</a></li>    
+	    <li><a href="#features">Features</a></li>
+	    <li><a href="#getting-started">Getting Started</a></li>	    
 	    <li><a href="#options">Configuration Options</a></li>	    
 	    <li><a href="#compatibility">Compatibility</a></li>
 	    <li><a href="#themes">Themes</a></li>		    
@@ -47,6 +47,67 @@
 	<em>rlightbox</em> is a <em>jQuery UI</em> <strong>mediabox</strong> that can display many types of content such as
 	images, YouTube and Vimeo videos. It has many unique features like <em>Panorama</em> and <em>Live Re-size</em>.
 	Like other <em>jQuery UI</em> widgets, it is <em>ThemeRoller ready</em>.
+    </div>
+	    
+    <h2>Features</h2>    
+    <div id="features" class="section">
+	
+	<h3>Sets</h3>
+	<div class="section">
+	    Set is a group of images, Youtube, Vimeo, or Flash swf videos, or a mix of them all.
+	    There may be many sets on a page and elements belonging to a set does not have to be
+	    put one after another in a container.
+	</div>
+	
+	<h3>YouTube support</h3>
+	<p class="section">
+	    <em>rlightbox</em> supports playing YouTube videos. To add a YouTube video, use standard YouTube URL scheme like <em>http://www.youtube.com/watch?v=PLtGMqvazzo</em>.
+	    Short YouTube URLs are not supported. Additional parameters are not taken into account.
+	</p>
+	
+	<h3>Vimeo support</h3>
+	<p class="section">
+	    <em>rlightbox</em> supports playing Vimeo videos. To add a video use either URL like this: <em>http://vimeo.com/13763341</em> or
+	    this: <em>http://vimeo.com/groups/polska/videos/3116167</em>. Additional parameters are not taken into account.
+	</p>
+	
+	<h3>Flash swf video support</h3>
+	<p class="section">
+	    <em>rlightbox</em> also supports playing standard <strong>swf</strong> videos.
+	</p>	
+	
+	<h3>Panorama</h3>
+	<div class="section">
+	    <p>
+		<em>Panorama</em> is a way to display part of a full-sized image on the screen. Since often an image is larger than
+		the screen, it has to be scaled down. Panorama allows you to to see it in its native resolutions by <em>panning</em>, i.e. drag &amp; drop.
+	    </p>
+	    
+	    <p>
+		Panorama mode is available when <a href="documentation/img/doc/panorama.png" class="lb" title="Panorama icon with four arrows">the icon with four arrows</a> pops up at the top left corner of the widget. To turn it on, you can either
+		click on the icon or use keyboard (<strong>[Z]</strong> key is default).
+	    </p>
+	</div>
+	
+	<h3>Live Re-size</h3>
+	<p class="section">
+	    <em>rlightbox</em> is able to adapt to browser size, and it is great for so-called <em>responsive design</em>.
+	    To see it in action, open <a href="documentation/img/images/01.jpg" class="lb" title="resize your browser window">the following image</a> and re-size the browser window <strong>a few times</strong>.
+	</p>
+
+	<h3><em>ThemeRoller</em> ready!</h3>
+	<p class="section">
+	    <em>rlightbox</em> is compatible with <a href="http://jqueryui.com/themeroller/"><em>ThemeRoller</em></a>!
+	</p>
+	
+	<h3>Keyboard Navigation</h3>
+	<p class="section">Nearly no need to use your mouse! You can even customize keyboard keys to better suit you!</p>
+	
+	<h3>Nice error handling</h3>
+	<p class="section">
+	    When an error occurs, <a href="brokenurl.png" class="lb" title="The Error Screen">the user-friendly Error Screen</a> appears to help you decide what to do!
+	    You can change/translate the message and the labels on the buttons.
+	</p>
     </div>
     
     <h2>Getting Started</h2>
@@ -138,69 +199,7 @@
 	    Now the 2nd image in the <em>flower</em> set is shown as <strong>2 of 3</strong>.<br />
 	    To find out more about options, have a look at <a href="#options">Configuration Options</a> section.
 	</p>
-    </div>
-	    
-	
-    <h2>Features</h2>    
-    <div id="features" class="section">
-	
-	<h3>Sets</h3>
-	<div class="section">
-	    Set is a group of images, Youtube, Vimeo, or Flash swf videos, or a mix of them all.
-	    There may be many sets on a page and elements belonging to a set does not have to be
-	    put one after another in a container.
-	</div>
-	
-	<h3>YouTube support</h3>
-	<p class="section">
-	    <em>rlightbox</em> supports playing YouTube videos. To add a YouTube video, use standard YouTube URL scheme like <em>http://www.youtube.com/watch?v=PLtGMqvazzo</em>.
-	    Short YouTube URLs are not supported. Additional parameters are not taken into account.
-	</p>
-	
-	<h3>Vimeo support</h3>
-	<p class="section">
-	    <em>rlightbox</em> supports playing Vimeo videos. To add a video use either URL like this: <em>http://vimeo.com/13763341</em> or
-	    this: <em>http://vimeo.com/groups/polska/videos/3116167</em>. Additional parameters are not taken into account.
-	</p>
-	
-	<h3>Flash swf video support</h3>
-	<p class="section">
-	    <em>rlightbox</em> also supports playing standard <strong>swf</strong> videos.
-	</p>	
-	
-	<h3>Panorama</h3>
-	<div class="section">
-	    <p>
-		<em>Panorama</em> is a way to display part of a full-sized image on the screen. Since often an image is larger than
-		the screen, it has to be scaled down. Panorama allows you to to see it in its native resolutions by <em>panning</em>, i.e. drag &amp; drop.
-	    </p>
-	    
-	    <p>
-		Panorama mode is available when <a href="documentation/img/doc/panorama.png" class="lb" title="Panorama icon with four arrows">the icon with four arrows</a> pops up at the top left corner of the widget. To turn it on, you can either
-		click on the icon or use keyboard (<strong>[Z]</strong> key is default).
-	    </p>
-	</div>
-	
-	<h3>Live Re-size</h3>
-	<p class="section">
-	    <em>rlightbox</em> is able to adapt to browser size, and it is great for so-called <em>responsive design</em>.
-	    To see it in action, open <a href="documentation/img/images/01.jpg" class="lb" title="resize your browser window">the following image</a> and re-size the browser window <strong>a few times</strong>.
-	</p>
-
-	<h3><em>ThemeRoller</em> ready!</h3>
-	<p class="section">
-	    <em>rlightbox</em> is compatible with <a href="http://jqueryui.com/themeroller/"><em>ThemeRoller</em></a>!
-	</p>
-	
-	<h3>Keyboard Navigation</h3>
-	<p class="section">Nearly no need to use your mouse! You can even customize keyboard keys to better suit you!</p>
-	
-	<h3>Nice error handling</h3>
-	<p class="section">
-	    When an error occurs, <a href="brokenurl.png" class="lb" title="The Error Screen">the user-friendly Error Screen</a> appears to help you decide what to do!
-	    You can change/translate the message and the labels on the buttons.
-	</p>
-    </div>	
+    </div>    
     
     <h2>Configuration Options</h2>
     <div id="options" class="section">
