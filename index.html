@@ -51,10 +51,10 @@
     
     <h2>Getting Started</h2>
     <div id="getting-started" class="section">    
-	<p>To begin with, you have to add some JavaScript code that are required by the widget.
-	    Since <em>rlightbox</em> is a <em>jQuery UI</em> widget, and because it utilizes only <strong>minimal</strong>
-	    amount of dependencies, only few scripts are required. Remember that <em>jQuery UI</em> library needs
-	    basic <em>jQuery</em> library too.
+	<p>
+	    To get started, add the following <em>JavaScript</em> scripts. <em>rlightbox</em> is built on
+	    <em>jQuery</em> 1.6. Since <em>rlightbox</em> is a <em>jQuery UI</em> widget, some additional
+	    dependencies are required.
 	</p>
 	
 	<p>
@@ -70,13 +70,7 @@
 </pre>
 	
 	<p>
-	    As you can see, version of <em>jQuery</em> library points to <strong>1.6.x</strong>. <em>rlightbox</em> is built on version 1.6
-	    and makes use of many features that previous versions of the library don’t have.
-	    1.6 is the basis, but of course, you can use newer or updated versions when they are released.
-	</p>
-	
-	<p>
-	    You also have to add two style sheets to your page. Add these two lines in the <code>head</code> section:
+	    Then add the following style sheets in the <code>head</code> section:
 	</p>
 	
 <pre>
@@ -87,12 +81,11 @@
 	<p>
 	    <em>rlightbox</em> is compatible with <a href="http://jqueryui.com/themeroller/"><em>ThemeRoller</em></a>, and it uses <em>jQuery UI</em> themes.
 	    In above example I used <em>ui-lightness</em> theme, but you can
-	    use other: predefined, or even your own!
+	    use whatever you like.
 	</p>
 	
 	<p>
-	    But how to run the widget? Assume that you have 3 images and want to group it. A group of content is called a <strong>set</strong> in <em>rlightbox</em> terminology (you can find out more on sets
-	    in <a href="#sets">Sets</a> section of this documentation). First you have to add anchors (<code>a</code> elements) with URLs to these images:
+	    To make it work, add anchors (<code>a</code> elements) with URLs to resources. For example:
 	</p>
 
 <pre>
@@ -102,7 +95,8 @@
 </pre>
 
 	<p>
-	    As you can see, this is standard <abbr>HTML</abbr> code. To make a set (group them), add the following example class to them: <em>lb_flowers</em>:
+	    To group above elements (make a set), add some <strong>common</strong> class to them, preceded by a <strong>prefix</strong>
+	    (default is <em>lb</em>) and the <strong>underscore</strong> character:
 	</p>
 	
 <pre>
@@ -112,7 +106,7 @@
 </pre>
 
 	<p>
-	    Next we have to install <em>rlightbox</em>. To do this, add the following code:
+	    And finally, to make <em>rlightbox</em> open when one of above elements is clicked, type:
 	</p>
 
 <pre>
