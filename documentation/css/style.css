@@ -112,7 +112,7 @@ td {
 	padding: 24px 5px;
 }
 
-#customization a[id^=theme], #examples a {
+#themes a[id^=theme], #examples a {
 	cursor: pointer;
 	text-decoration: none;
 	display: block;
@@ -122,12 +122,12 @@ td {
 	line-height: 0;
 }
 
-#customization a > img, #examples a > img {
+#themes a > img, #examples a > img {
     margin: 0;
     padding: 0;
 }
 
-#customization span {
+#themes span {
 	display: block;
 	line-height: 24px;
 }
