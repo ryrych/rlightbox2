@@ -809,14 +809,15 @@ $.extend($.ui.rlightbox, {
 				_dfd = $.Deferred(),
 				$newImage = $( "<img />" );
 				
-			// start loading maximized image
+			// show spinner
 			$lb.content.addClass( "ui-lightbox-loader" );
 
-			// new Date().getTime() is used because of IEs caching problem
 			$newImage
-				.attr( "src", url + "?" + new Date().getTime() )
-				.load(
+				.attr( "src", url )
+				.bind("load",
 					function() {
+						$( this ).unbind( "load" );
+						
 						// keep original size of an image – needed when resizing
 						_currentElement.width = this.width;
 						_currentElement.height = this.height;
@@ -841,7 +842,20 @@ $.extend($.ui.rlightbox, {
 						// continue the animation queue
 						_dfd.resolve();
 					}
-				);
+				)				
+				.each(
+					function() {
+						// the code comes from https://github.com/desandro/imagesloaded
+						// cached images don't fire load sometimes, so we reset src.
+						if ( this.complete || this.complete === undefined ){
+						  var src = this.src;
+						  // webkit hack from http://groups.google.com/group/jquery-dev/browse_thread/thread/eee6ab7b2da50e1f
+						  // data uri bypasses webkit log warning (thx doug jones)
+						  this.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+						  this.src = src;
+						}						
+					}
+				);				
 
 			return _dfd.promise();
 		},
