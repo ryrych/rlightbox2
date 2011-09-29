@@ -33,14 +33,13 @@
 	    <li><a href="#about">About</a></li>	    
 	    <li><a href="#getting-started">Getting Started</a></li>
 	    <li><a href="#features">Features</a></li>
-	    <li><a href="#how-to">How To…</a></li>
 	    <li><a href="#sets">Sets</a></li>	    
 	    <li><a href="#error-screen">The Error Screen</a></li>
-	    <li><a href="#setting-size">Setting Size of Content</a></li>
 	    <li><a href="#options">Configuration Options</a></li>	    
 	    <li><a href="#compatibility">Compatibility</a></li>
 	    <li><a href="#themes">Themes</a></li>		    
 	    <li><a href="#examples">Examples</a></li>
+	    <li><a href="#how-to">How To…</a></li>	    
 	    <li><a href="#contribution">Contribution</a></li>		    
 	</ol>
     </div>
@@ -201,34 +200,7 @@
 	
 	<h3>Keyboard Navigation</h3>
 	<p class="section">Nearly no need to use your mouse! You can even customize keyboard keys to better suit you!</p>
-    </div>
-
-    <h2>How to…</h2>    
-    <div id="how-to" class="section">
-	
-	<h3>open</h3>
-	<p class="section">
-	    To open <em>rlightbox</em>, just click on an anchor <em>rlightbox</em> was initiated on.
-	</p>
-	
-	<h3>close</h3>
-	<p class="section">
-	    There are three ways to close the lightbox. You can either click the close icon (at the bottom bar), or click the <em>overlay</em> (it’s the background behind the widget),
-	    or use keyboard (default are <strong>[C]</strong> and <strong>[Esc]</strong> keys).
-	</p>
-	
-	<h3>load next/prev element</h3>
-	<p class="section">
-	    In order to load next or previous element you can either use mouse (in case of images), or keyboard (images, videos). The default
-	    keyboard keys to load next element are <strong>[→]</strong> and <strong>[N]</strong> key. To load previous one use
-	    <strong>[←]</strong> or <strong>[P]</strong> key.
-	</p>
-	
-	<h3>zoom images</h3>
-	<p class="section">
-	    To zoom in/out an image (enable or disable <em>Panorama</em> mode) use either icon with four arrows (when it appears) or press <strong>[Z]</strong> key.
-	</p>
-    </div>
+    </div>	
     
     <h2><em>Sets</em></h2>    
     <div id="sets" class="section">
@@ -262,32 +234,6 @@
 	<p>
 	    <em>Reject this content</em> is useful when consecutive trial of loading content failed. It removes such content from a set and <strong>uninstalls</strong> <em>rlightbox</em> from the anchor.
 	</p>
-    </div>
-    
-    <h2>Setting Size of Content</h2>
-    <div id="setting-size" class="section">
-	<h3>Images</h3>
-	<p class="section">
-	    There is no need to set size for an image. <em>rlightbox</em> uses its native size.
-	</p>
-	
-	<h3>YouTube, Vimeo</h3>
-	<p class="section">
-	    Use <code>videoHeight</code> and <code>videoWidth</code> options to set size of this kind of content.
-	</p>
-	
-	<h3>Flash swf video</h3>
-	<div class="section">
-	    <p>
-		If you do not want swf video to use <code>videoHeight</code> and <code>videoWidth</code> you can overwrite them adding parameters <strong>at the end of the URL</strong>:
-	    </p>
-<pre>
-&lt;a href="http://www.adobe.com/products/flashplayer/include/marquee/design.swf<strong>?width=790&height=290</strong>" title="flash video"&gt;Flash video&lt;/a&gt;
-</pre>
-	    <p>
-		Only integers are accepted – <strong>no</strong> <code>width=42<strong>px</strong></code> please!
-	    </p>
-	</div>
     </div>
     
     <h2>Configuration Options</h2>
@@ -480,7 +426,63 @@
 	</div>
     </div>
 
-    <h2 class="clear">Contribution</h2>
+    <h2 class="clear">How to…</h2>    
+    <div id="how-to" class="section">
+	<h3>Control the Lightbox</h3>
+	<div class="section">
+	    <h4>open the lightbox</h4>
+	    <p class="section">
+		To open <em>rlightbox</em>, just click on an anchor <em>rlightbox</em> was initiated on.
+	    </p>
+	    
+	    <h4>close the lightbox</h4>
+	    <p class="section">
+		There are three ways to close the lightbox. You can either click the close icon (at the bottom bar), or click the <em>overlay</em> (it’s the background behind the widget),
+		or use keyboard (default are <strong>[C]</strong> and <strong>[Esc]</strong> keys).
+	    </p>
+	    
+	    <h4>load next/prev element</h4>
+	    <p class="section">
+		In order to load next or previous element you can either use mouse (in case of images), or keyboard (images, videos). The default
+		keyboard keys to load next element are <strong>[→]</strong> and <strong>[N]</strong> key. To load previous one use
+		<strong>[←]</strong> or <strong>[P]</strong> key.
+	    </p>
+	    
+	    <h4>zoom images</h4>
+	    <p class="section">
+		To zoom in/out an image (enable or disable <em>Panorama</em> mode) use either icon with four arrows (when it appears) or press <strong>[Z]</strong> key.
+	    </p>
+	</div>
+	
+	
+	<h3>Set Size of Content</h3>
+	<div class="section">
+	    <h4>Images</h4>
+	    <p class="section">
+		There is no need to set size for an image. <em>rlightbox</em> uses its native size.
+	    </p>
+	    
+	    <h4>YouTube, Vimeo</h4>
+	    <p class="section">
+		Use <code>videoHeight</code> and <code>videoWidth</code> options to set size of this kind of content.
+	    </p>
+	    
+	    <h4>Flash swf video</h4>
+	    <div class="section">
+		<p>
+		    If you do not want swf video to use <code>videoHeight</code> and <code>videoWidth</code> you can overwrite them adding parameters <strong>at the end of the URL</strong>:
+		</p>
+<pre>
+&lt;a href="http://www.adobe.com/products/flashplayer/include/marquee/design.swf<strong>?width=790&height=290</strong>" title="flash video"&gt;Flash video&lt;/a&gt;
+</pre>
+		<p>
+		    Only integers are accepted – <strong>no</strong> <code>width=42<strong>px</strong></code> please!
+		</p>
+	    </div>
+	</div>
+    </div>
+    
+    <h2>Contribution</h2>
     <div id="contribution" class="section">
 	Because I write and maintain <em>rlightbox</em> in my spare time, any help will be appreciated. Of course you don’t have to send patches (you can if you like), but
 	you can also contribute to another way. For example you could improve this documentation (as I am not native and probably used bad grammar many times), or

@@ -45,6 +45,10 @@ h3 + .section {
 	margin-left: 60px
 }
 
+h4 + .section {
+	margin-left: 60px;
+}
+
 ol {
 	list-style: decimal outside;
 }
