@@ -441,7 +441,12 @@ $.extend($.ui.rlightbox, {
 					)
 					.mousedown( $.proxy(this.panoramaStart, this) )
 					.mouseup( $.proxy(this.panoramaStop, this ) )				
-					.mouseleave( $.proxy(this.hideArrow, this) );
+					.mouseleave(
+						function() {
+							self.hideArrow.apply( self );
+							data.side = "";
+						}
+					);
 
 				// zoom in or zoom out an image
 				$lb.panoramaIcon
