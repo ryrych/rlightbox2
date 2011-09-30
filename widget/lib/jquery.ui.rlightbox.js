@@ -27,7 +27,8 @@ $.widget( "ui.rlightbox", {
 			previous: [80, 37],
 			close: [67, 27],
 			panorama: [90, null]
-		}
+		},
+		loop: false
 	},
 
 	_create: function() {
@@ -113,20 +114,21 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				_currentSet = data.currentSet,
 				_totalElements = data.totalElementsNumber,
-				_currentElement = data.currentElementNumber;
+				_currentElement = data.currentElementNumber,
+				_isLoop = data.currentSetElement.self.options.loop;
 				
 			// if lightbox is opened and there is only one element
 			// single element or one element in named set
 			if ( _currentSet === "single" || _totalElements === 1 ) {
 				this.setButtonState( "disabled" );
-			} else if ( _currentElement === 1 ) {
+			} else if ( _currentElement === 1 && _isLoop === false ) {
 				
-				// in case of 1st element
+				// in case of 1st element when loop is disabled
 				this.setButtonState( "disabled", $lb.prev );
 				
 				// when there are only two elements in a set
 				this.setButtonState( "default", $lb.next );
-			} else if ( _currentElement === _totalElements ) {
+			} else if ( _currentElement === _totalElements && _isLoop === false ) {
 				
 				// in case of last element
 				this.setButtonState( "disabled", $lb.next );
@@ -135,7 +137,7 @@ $.extend($.ui.rlightbox, {
 				this.setButtonState( "default", $lb.prev );				
 			} else {
 				
-				// between first and last elements
+				// between first and last elements or when the loop is enabled
 				this.setButtonState( "default" );
 			}
 		},		
@@ -1038,21 +1040,32 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				sets = this.sets,
 				$lb = this.$lightbox,
+				_isReady = data.ready,
+				_isPanoramaOn = data.panoramaOn,
 				_set = data.currentSet,
 				_currentElementNumber = data.currentElementNumber,
-				_totalElementsNumber = data.totalElementsNumber;
+				_totalElementsNumber = data.totalElementsNumber,
+				_options = data.currentSetElement.self.options,
+				_isLoop = _options.loop,
+				_play = true;
 				
-			if ( data.ready && _set !== "single" && data.panoramaOn === false && _currentElementNumber + 1 <= data.totalElementsNumber ) {
-				_currentElementNumber = data.currentElementNumber;
-				data.currentElementNumber = _currentElementNumber + 1;
-
-				// update current element
-				_currentSetElement = sets[_set][_currentElementNumber];
-				data.currentSetElement = _currentSetElement;
-
-				// next element - trigger the queue ‘next’ - first update it
-				this.setNextQueue();
-				$lb.queueContainer.next.dequeue( "lightboxNext" );
+			if ( _isReady && _set !== "single" && _isPanoramaOn === false ) {
+				if ( _currentElementNumber + 1 <= _totalElementsNumber ) {
+					data.currentElementNumber = _currentElementNumber = _currentElementNumber + 1;			
+				} else if ( _currentElementNumber + 1 > _totalElementsNumber && _isLoop ) {
+					data.currentElementNumber = _currentElementNumber = 1;
+				} else {
+					// to prevent form loading last element again when loop is disabled
+					_play = false;
+				}
+				
+				if ( _play) {
+					data.currentSetElement = sets[_set][_currentElementNumber - 1];
+	
+					// next element - trigger the queue ‘next’ - first update it
+					this.setNextQueue();
+					$lb.queueContainer.next.dequeue( "lightboxNext" );					
+				}
 			}
 		},
 
@@ -1439,23 +1452,33 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				sets = this.sets,
 				$lb = this.$lightbox,
+				_isReady = data.ready,
+				_isPanoramaOn = data.panoramaOn,
 				_set = data.currentSet,
 				_currentElementNumber = data.currentElementNumber,
-				_totalElementsNumber = data.totalElementsNumber;
+				_totalElementsNumber = data.totalElementsNumber,
+				_options = data.currentSetElement.self.options,
+				_isLoop = _options.loop,
+				_play = true;
+				
+			if ( _isReady && _set !== "single" && _isPanoramaOn === false ) {
+				if ( _currentElementNumber - 1 >= 1 ) {
+					data.currentElementNumber = _currentElementNumber = _currentElementNumber - 1;			
+				} else if ( _currentElementNumber - 1 < 1 && _isLoop ) {
+					data.currentElementNumber = _currentElementNumber = _totalElementsNumber;
+				} else {
+					// to prevent from loading first element again when loop is disabled
+					_play = false;
+				}
 
-			// prevent from multi clicking and go to the next image only if it belongs to a gallery
-			if ( data.ready && _set !== "single" && data.panoramaOn === false && _currentElementNumber - 1 >= 1 ) {
-				_currentElementNumber = data.currentElementNumber;
-				data.currentElementNumber = _currentElementNumber - 1;
-
-				// update current element
-				_currentSetElement = sets[_set][_currentElementNumber - 2];
-				data.currentSetElement = _currentSetElement;
-
-				// next element - trigger the queue ‘next’ - first update it
-				this.setNextQueue();
-				$lb.queueContainer.next.dequeue( "lightboxNext" );
-			}			
+				if ( _play ) {
+					data.currentSetElement = sets[_set][_currentElementNumber - 1];
+	
+					// next element - trigger the queue ‘next’ - first update it
+					this.setNextQueue();
+					$lb.queueContainer.next.dequeue( "lightboxNext" );					
+				}
+			}		
 		},
 
 		removeSetElement: function( number ) {
@@ -1529,23 +1552,35 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				$contentContainer = $lb.contentContainer,
 				_currentSet = data.currentSet,
-				_setElement = data.currentSetElement.type,
+				_currentSetElement = data.currentSetElement,
+				_setElementType = data.currentSetElement.type,
 				_totalElements = data.totalElementsNumber,
 				_currentElement = data.currentElementNumber,
 				_side = data.side,
 				_panoramaEnabled = data.panoramaOn,
-				_isError = data.showErrorMessage;
+				_isError = data.showErrorMessage,
+				_options = _currentSetElement.self.options,
+				_isLoop = _options.loop;
 			
 			if ( data.ready ) {
-				if ( (_currentSet === "single" || _totalElements === 1 || _currentElement === 1 && _side === "left" || _currentElement === _totalElements && _side === "right") && _panoramaEnabled === false && (_setElement === "image" || (_setElement !== "image" && _isError)) ) {
+				if ( (_currentSet === "single" || _totalElements === 1 || _currentElement === 1 && _side === "left" || _currentElement === _totalElements && _side === "right") && _panoramaEnabled === false && (_setElementType === "image" || (_setElementType !== "image" && _isError)) ) {
 
-					// single element or single element in a named set or first element in a set (when lightbox is open, data.side = "") or last element in a set WHEN panorama is DISABLED, and when element type is ‘image’ or the Error Screen is shown
-					$contentContainer.css( "cursor", "default" );
+					// single element or single element in a named set or first element in a set or last element in a set
+					// WHEN panorama is DISABLED, and when element type is ‘image’ or the Error Screen is shown
+					// and when loop is DISABLED
+					if ( _isLoop === false ) {
+						$contentContainer.css( "cursor", "default" );						
+					} else {
+						
+						// otherwise show ‘pointer’ in cases mentioned above
+						$contentContainer.css( "cursor", "pointer" );						
+					}
+
 				} else if ( _panoramaEnabled ) {
 
 					// panorama is enabled
 					$contentContainer.css( "cursor", "move" );
-				} else if ( _setElement === "image" || (_setElement !== "image" && _isError) ) {
+				} else if ( _setElementType === "image" || (_setElementType !== "image" && _isError) ) {
 					
 					// between first and last element in an image set or when the Error Screen is shown
 					$contentContainer.css( "cursor", "pointer" );
@@ -1636,12 +1671,13 @@ $.extend($.ui.rlightbox, {
 				_isError = data.showErrorMessage,
 				_side = data.side,
 				_currentElement = data.currentElementNumber,
-				_totalElements = data.totalElementsNumber;
+				_totalElements = data.totalElementsNumber,
+				_isLoop = data.currentSetElement.self.options.loop;
 			
 			// show arrow cues only in image set or in The Error Screen when it is part of a set
 			if ( data.ready && data.currentSet !== "single" && (data.currentSetElement.type === "image" || _isError) && data.panoramaOn === false ) {
 
-				if ( _side === "left" && _currentElement > 1 ) {
+				if ( _side === "left" && (_currentElement > 1 || _isLoop) ) {
 					$arrow
 						.show()
 						.removeClass("ui-lightbox-arrow-next ui-corner-left")
@@ -1649,7 +1685,7 @@ $.extend($.ui.rlightbox, {
 						.find("span")
 							.removeClass("ui-icon-carat-1-e")
 							.addClass("ui-icon-carat-1-w");
-				} else if ( _side === "right" && _currentElement < _totalElements ) {
+				} else if ( _side === "right" && (_currentElement < _totalElements || _isLoop) ) {
 					$arrow
 						.show()
 						.removeClass("ui-lightbox-arrow-prev ui-corner-right")
