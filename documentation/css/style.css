@@ -32,7 +32,7 @@ p, ul, ol, pre, table, .section {
     margin-bottom: 24px;
 }
 
-p + p {
+.section p + p {
     text-indent: 1em;
     margin-top: -24px;
 }
