@@ -410,7 +410,7 @@ $.extend($.ui.rlightbox, {
 				$lb.next
 					.add( $lb.prev )
 					.add( $lb.next )
-					.add( $lb.play )
+					//.add( $lb.play )
 					.add( $lb.close )
 					.hover(
 						function() {
@@ -1656,8 +1656,8 @@ $.extend($.ui.rlightbox, {
 			$lb.overlay = $( "#ui-lightbox-overlay" );
 			$lb.next = $lb.root.find( "#ui-lightbox-button-next" );
 			$lb.prev = $lb.root.find( "#ui-lightbox-button-prev" );
-			$lb.play = $lb.root.find( "#ui-lightbox-button-play" );
-			$lb.controlButtons = $lb.next.add( $lb.prev ).add( $lb.play );
+			//$lb.play = $lb.root.find( "#ui-lightbox-button-play" );
+			$lb.controlButtons = $lb.next.add( $lb.prev );//.add( $lb.play );
 			$lb.close = $lb.root.find( "#ui-lightbox-button-close" );
 			$lb.counter = $lb.root.find( "#ui-lightbox-counter" );
 			$lb.title = $lb.root.find( "#ui-lightbox-title" );
@@ -2142,10 +2142,10 @@ $.extend($.ui.rlightbox, {
 							"<a id='ui-lightbox-button-next' class='ui-lightbox-button'>" +
 								"<span class='ui-icon ui-icon-circle-arrow-e'>next</span>" +
 							"</a>" +
-							"<span id='ui-lightbox-separator'>|</span>" +
-							"<a id='ui-lightbox-button-play' class='ui-lightbox-button'>" +
-								"<span class='ui-icon ui-icon-circle-triangle-e'>play</span>" +
-							"</a>" +
+							//"<span id='ui-lightbox-separator'>|</span>" +
+							//"<a id='ui-lightbox-button-play' class='ui-lightbox-button'>" +
+							//	"<span class='ui-icon ui-icon-circle-triangle-e'>play</span>" +
+							//"</a>" +
 						"</p>" +
 						"<a id='ui-lightbox-button-close' class='ui-lightbox-button'>" +
 							"<span class='ui-icon ui-icon-closethick'>close</span>" +
