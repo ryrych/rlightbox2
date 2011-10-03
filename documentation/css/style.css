@@ -99,7 +99,6 @@ table {
 
 thead {
 	background-color: #E5E5E5;
-	height: 48px;
 }
 
 tr:nth-child(2n) {
@@ -109,6 +108,10 @@ tr:nth-child(2n) {
 th, td {
 	text-align: center;
 	vertical-align: middle;
+}
+
+th {
+	height: 48px;
 }
 
 td {
