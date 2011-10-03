@@ -378,7 +378,7 @@
     
     <h2 class="clear">Themes</h2>
     <div id="themes" class="section">
-	<a id="theme-lightness" href="documentation/css/themes/lightness/jquery-ui-1.8.16.custom.css"><img src="documentation/img/doc/theme_lightness_thumb.png" alt="theme thumb" /><span>Lightness</span></a>
+	<a id="theme-lightness" href="documentation/css/themes/lightness/jquery-ui-1.8.16.custom.css" class="active"><img src="documentation/img/doc/theme_lightness_thumb.png" alt="theme thumb" /><span>Lightness</span></a>
 	<a id="theme-blitzer" href="documentation/css/themes/blitzer/jquery-ui-1.8.16.custom.css"><img src="documentation/img/doc/theme_blitzer_thumb.png" alt="theme thumb" /><span>Blitzer</span></a>
 	<a id="theme-smoothness" href="documentation/css/themes/smoothness/jquery-ui-1.8.16.custom.css"><img src="documentation/img/doc/theme_smoothness_thumb.png" alt="theme thumb" /><span>Smoothness</span></a>
 	<a id="theme-start" href="documentation/css/themes/start/jquery-ui-1.8.16.custom.css"><img src="documentation/img/doc/theme_start_thumb.png" alt="theme thumb" /><span>Start</span></a>
@@ -387,7 +387,7 @@
 	<p class="clear">
 	    <em>rlightbox</em> is compatible with <a href="http://jqueryui.com/themeroller/"><em>ThemeRoller</em></a>, so you can choose
 	    many themes to fit your needs. As an example to see what <em>rlightbox</em> can look like, select one of above themes and open
-	    any <a href="#examples">example</a>.
+	    an <a href="http://www.youtube.com/watch?v=PLtGMqvazzo" class="lb" title="Animated history of Poland">example</a>.
 	</p>
     </div>    
 
@@ -467,6 +467,10 @@
 		function() {
 		    $chosenSheet = $( this ).attr( "href" );
 		    $( "#theme").attr( "href", $chosenSheet );
+		    
+		    // mark this A as an active
+		    $stylesheets.removeClass( "active" );
+		    $( this ).addClass( "active" );
 		    return false;
 		}
 	    );

@@ -62,11 +62,11 @@ a:visited {
 }
 
 a[href]:hover {
-	color: #FF2019
+	color: #FF2019;
 }
 
 a:active {
-	color: #FF2019
+	color: #FF2019;
 }
 
 pre {
@@ -126,6 +126,10 @@ td {
 	line-height: 0;
 }
 
+#themes a[id^=theme] > img {
+	border: 3px solid transparent;
+}
+
 #themes a > img, #examples a > img {
     margin: 0;
     padding: 0;
@@ -136,6 +140,9 @@ td {
 	line-height: 24px;
 }
 
+#themes a[id^=theme]:hover > img, #themes a[id^=theme].active > img {
+	border: 3px solid #FF2019;
+}
 
 #browsers li {
     position: relative;
