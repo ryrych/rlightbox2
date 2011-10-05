@@ -946,7 +946,15 @@ $.extend($.ui.rlightbox, {
 				_width = _options.videoWidth,
 				_height = _options.videoHeight,
 				_structure = data.htmlYoutube;
+				
+			function _showError() {
+				$lb.content.removeClass( "ui-lightbox-loader" );
+				self.showErrorMessage();
 
+				// continue the animation queue
+				_dfd.resolve();				
+			}
+			
 			// show loader
 			$lb.content.addClass( "ui-lightbox-loader" );
 			$.ajax(
@@ -1012,14 +1020,6 @@ $.extend($.ui.rlightbox, {
 			.error(function() {
 				_showError();
 			});
-			
-			function _showError() {
-				$lb.content.removeClass( "ui-lightbox-loader" );
-				self.showErrorMessage();
-
-				// continue the animation queue
-				_dfd.resolve();				
-			}
 
 			return _dfd.promise();
 		},
