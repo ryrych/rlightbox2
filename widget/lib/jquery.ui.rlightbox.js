@@ -1535,19 +1535,19 @@ $.extend($.ui.rlightbox, {
 		
 		setButtonState: function( state, jqElement ) {
 			var $lb = this.$lightbox,
-				jqElement = jqElement || $lb.controlButtons;
+				jqElem = jqElement || $lb.controlButtons;
 				
 			switch ( state ) {
 				case "default":
-					jqElement.removeClass( "ui-state-highlight ui-state-disabled" );
+					jqElem.removeClass( "ui-state-highlight ui-state-disabled" );
 					break;
 				
 				case "highlight":
-					jqElement.addClass( "ui-state-highlight" );
+					jqElem.addClass( "ui-state-highlight" );
 					break;
 				
 				case "disabled":
-					jqElement.addClass( "ui-state-disabled" );
+					jqElem.addClass( "ui-state-disabled" );
 					break;
 			}
 		},
