@@ -535,6 +535,9 @@ $.extend($.ui.rlightbox, {
 			} else if ( _pos > _center ) {
 				data.side = "right";
 			}
+			
+			// for Panorama to work in IE7 & IE8			
+			event.preventDefault();
 		},
 
 		getSizes: function() {
@@ -1552,7 +1555,7 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 		
-		setCursor: function() {
+		setCursor: function( event ) {
 			var data = this.data,
 				$lb = this.$lightbox,
 				$contentContainer = $lb.contentContainer,
@@ -1596,6 +1599,11 @@ $.extend($.ui.rlightbox, {
 				}
 			} else {
 				$contentContainer.css( "cursor", "default" );
+			}
+			
+			// for Panorama to work in IE7 & IE8
+			if ( event ) {
+				event.preventDefault();
 			}
 		},
 		
@@ -1701,6 +1709,11 @@ $.extend($.ui.rlightbox, {
 				} else {
 					this.hideArrow();
 				}
+			}
+			
+			// for Panorama to work in IE7 & IE8			
+			if ( event ) {
+				event.preventDefault();
 			}
 		},		
 
