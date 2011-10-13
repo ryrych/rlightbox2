@@ -1187,7 +1187,10 @@ $.extend($.ui.rlightbox, {
 			} else {
 				this.panoramaShowIcon( "shrink" );
 			}
-
+			
+			// fixes issue with Panorama in Firefox 3.0, 3.5, 3.6
+			$lb.content.css( "overflow", "hidden" );
+			
 			// give the natural size to the image
 			$lb.content
 				.find( "img" )
@@ -1384,6 +1387,9 @@ $.extend($.ui.rlightbox, {
 			// resize an image to its previous size and center it
 			this.queueResizeLightbox();
 			this.queueCenterContent();
+			
+			// fixes issue with Panorama in Firefox 3.0, 3.5, 3.6
+			$lb.content.css( "overflow", "visible" );			
 			
 			// update header width
 			this.updateTitleWidth();
