@@ -153,7 +153,7 @@ td:last-child {
 
 #browsers li {
     position: relative;
-    background-image: expression(this.runtimeStyle.backgroundImage="none", this.innerHTML = '<img alt="" src="img/doc/browsers.png">'+this.innerHTML);
+    background-image: expression(this.runtimeStyle.backgroundImage="none", this.innerHTML = '<img alt="" src="documentation/img/doc/browsers.png">'+this.innerHTML);
 }
 
 #browsers li:before, #browsers li img {
