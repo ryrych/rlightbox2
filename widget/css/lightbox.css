@@ -1,18 +1,30 @@
+#ui-lightbox, #ui-lightbox-panorama-icon, #ui-lightbox-content-container,
+#ui-lightbox-content, #ui-lightbox-content > *, #ui-lightbox-arrow,
+#ui-lightbox-arrow > span, #ui-lightbox-bottombar, #ui-lightbox-title-wrapper,
+#ui-lightbox-title, #ui-lightbox-bottombar-bottom, #ui-lightbox-button-prev,
+#ui-lightbox-button-prev > span, #ui-lightbox-counter, #ui-lightbox-button-next,
+#ui-lightbox-button-next > span, #ui-lightbox-button-close,
+#ui-lightbox-button-close > span, #ui-lightbox-map, #ui-lightbox-map-viewport,
+#ui-lightbox-overlay {
+	margin: 0;
+	padding: 0;
+}
+
 #ui-lightbox {
 	font-size: 62.5%;
 	padding: 5px;
-	margin: 0;
 	position: fixed;
 	z-index: 9999;
 	width: auto;
 	height: auto;
 }
 
+#ui-lightbox-content-container {
+    position: relative;
+}
+
 #ui-lightbox-content {
-	border: 0 none;
-	margin: 0;
-	overflow: hidden;
-	padding: 0;
+	border: 0;
 	position: relative;
 	width: 20px;
 	height: 20px;
@@ -22,8 +34,25 @@
 	display: block;
 	position: absolute;
 	z-index: 100;
-	padding: 0;
-	margin: 0;
+}
+
+#ui-lightbox-arrow {
+	cursor: pointer;
+	display: block;
+	position: absolute;
+	top: 50%;
+	margin-top: -8px;
+	z-index: 101;   
+}
+
+.ui-lightbox-arrow-next {
+	border-right: 0;
+	right: 0;
+}
+
+.ui-lightbox-arrow-prev {
+	border-left: 0;
+	left: 0;
 }
 
 #ui-lightbox-panorama-icon {
@@ -56,37 +85,62 @@
 	background: url(loader.gif) center center no-repeat;
 }
 
-#ui-lightbox-header {
-	margin: 0;
+#ui-lightbox-bottombar {
 	margin-top: 5px;
 	padding: 5px;
 	height: 40px;
 	position: relative;
 }
 
-#ui-lightbox-header > p {
-	margin: 0;
+#ui-lightbox-bottombar > p {
 	margin-right: 20px;
-	padding: 0;
-}
-
-#ui-lightbox-header-wrapper {
-	font-size: 14px;
 	height: 20px;
 	line-height: 20px;
-	overflow: hidden;
 }
 
-#ui-lightbox-header-counter {
+#ui-lightbox-bottombar-bottom {
+	text-align: left;
+}
+
+#ui-lightbox-title-wrapper {
+	font-size: 14px;
+	height: 20px;
+	overflow: hidden;
+	text-align: left;
+}
+
+#ui-lightbox-counter {
 	font-size: 9px;
 	line-height: 20px;
+	vertical-align: middle;
 }
 
-#ui-lightbox-header-close {
-	cursor: pointer;
+#ui-lightbox-separator {
+    line-height: 20px;
+    padding: 0 2px;
+    vertical-align: middle;
+}
+
+#ui-lightbox-button-prev, #ui-lightbox-button-next, #ui-lightbox-button-play {
+	display: inline-block;
+	line-height: 20px;
+	vertical-align: middle;
+}
+
+#ui-lightbox-button-close {
+	line-height: 20px;
 	position: absolute;
 	top: 17px;
 	right: 5px;
+}
+
+.ui-lightbox-button {
+	cursor: pointer;
+}
+
+.ui-lightbox-button.ui-state-highlight {
+	border-style: none;
+	background: none;
 }
 
 #ui-lightbox-map {
@@ -110,32 +164,24 @@
 }
 
 #ui-lightbox-overlay {
-	margin: 0;
-	padding: 0;
-	position: fixed;
 	border: 0;
+	position: fixed;
 }
 
 #ui-lightbox-error {
 	background: url(error_bg.png) repeat left top;
-	margin: 0;
-	padding: 0;
 }
 
 #ui-lightbox-error-message {
 	color: #ffffff;
 	font-size: 14px;
 	line-height: 1.5;
-	margin: 0;
 	margin-bottom: 21px;
-	padding: 0;
 	padding-top: 274px;
 	text-align: center;
 }
 
 #ui-lightbox-error-footer {
-	margin: 0;
-	padding: 0;
 	text-align: center;
 }
 

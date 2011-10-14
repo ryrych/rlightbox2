@@ -27,7 +27,8 @@ $.widget( "ui.rlightbox", {
 			previous: [80, 37],
 			close: [67, 27],
 			panorama: [90, null]
-		}
+		},
+		loop: false
 	},
 
 	_create: function() {
@@ -107,6 +108,39 @@ $.extend($.ui.rlightbox, {
 				_sets[_setName].splice( _setElementIndex, 0 , setElement );
 			}
 		},
+		
+		checkButtonsState: function() {
+			var data = this.data,
+				$lb = this.$lightbox,
+				_currentSet = data.currentSet,
+				_totalElements = data.totalElementsNumber,
+				_currentElement = data.currentElementNumber,
+				_isLoop = data.currentSetElement.self.options.loop;
+				
+			// if lightbox is opened and there is only one element
+			// single element or one element in named set
+			if ( _currentSet === "single" || _totalElements === 1 ) {
+				this.setButtonState( "disabled" );
+			} else if ( _currentElement === 1 && _isLoop === false ) {
+				
+				// in case of 1st element when loop is disabled
+				this.setButtonState( "disabled", $lb.prev );
+				
+				// when there are only two elements in a set
+				this.setButtonState( "default", $lb.next );
+			} else if ( _currentElement === _totalElements && _isLoop === false ) {
+				
+				// in case of last element
+				this.setButtonState( "disabled", $lb.next );
+				
+				// when there are only two elements in a set
+				this.setButtonState( "default", $lb.prev );				
+			} else {
+				
+				// between first and last elements or when the loop is enabled
+				this.setButtonState( "default" );
+			}
+		},		
 
 		checkMinimalSize: function( size, number ) {
 
@@ -150,6 +184,12 @@ $.extend($.ui.rlightbox, {
 					.empty()
 					.width( 20 )
 					.height( 20 );
+					
+				// hide arrow cue
+				this.hideArrow();
+				
+				// reset control buttons states to default
+				this.setButtonState( "default" );
 
 				// reset panorama
 				this.panoramaHideIcon();
@@ -170,31 +210,13 @@ $.extend($.ui.rlightbox, {
 		},
 
 		createStructure: function() {
-			var _lightbox = "<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>" +
-						"<div id='ui-lightbox-panorama-icon' style='display: none'></div>" +
-						"<div id='ui-lightbox-content' class='ui-widget-content'></div>" +
-						"<div id='ui-lightbox-header' class='ui-widget-header ui-corner-all' style='display: none'>" +
-							"<p id='ui-lightbox-header-wrapper'>" +
-								"<span id='ui-lightbox-header-title'></span>" +
-							"</p>" +
-							"<p id='ui-lightbox-header-counter'></p>" +
-							"<a id='ui-lightbox-header-close'>" +
-								"<span class='ui-icon ui-icon-closethick'>close</span>" +
-							"</a>" +
-						"</div>" +
-					"</div>",
-
-				_map = "<div id='ui-lightbox-map' style='display: none'>" +
-						"<div id='ui-lightbox-map-viewport'></div>" +
-					"</div>",
-
-				_overlay = "<div id='ui-lightbox-overlay' class='ui-widget-overlay' title='click to close' style='display: none'></div>";
+			var data= this.data;
 
 			// append the structure
-			$( _lightbox )
+			$( data.htmlLightbox )
 				.appendTo( "body" )
-				.after( _map )
-				.after( _overlay );
+				.after( data.htmlMap )
+				.after( data.htmlOverlay );
 		},
 
 		destroy: function() {
@@ -377,20 +399,54 @@ $.extend($.ui.rlightbox, {
 
 				// close the lightbox upon clicking on the close button and the overlay
 				$lb.close.add( $lb.overlay ).click( $.proxy(this.closeLightbox, this) );
+				
+				// goes to the next element when button is clicked
+				$lb.next.click( $.proxy(this.next, this) );
+				
+				// and goes to the prev element when prev button is clicked
+				$lb.prev.click( $.proxy(this.prev, this) );			
 
-				// highlight the close button when mouse hovers over it
-				$lb.close.hover(
-					function() {
-						$( this ).toggleClass( "ui-state-hover" );
-					}
-				);
+				// highlight buttons when mouse hovers over them
+				$lb.next
+					.add( $lb.prev )
+					.add( $lb.next )
+					//.add( $lb.play )
+					.add( $lb.close )
+					.hover(
+						function() {
+							if ( $(this).is(":not(.ui-state-disabled)") ) {
+								self.setButtonState( "highlight", $(this) );
+							}
+						},
+						function() {
+							if ( $(this).is(":not(.ui-state-disabled)") ) {
+								self.setButtonState( "default", $(this) );								
+							}
+						}
+					);		
 
 				// add handlers to the content container
-				$lb.content
-					.mousemove( $.proxy(this.navigationCheckSide, this) )
-					.click( $.proxy(this.navigationNext, this) )
+				$lb.contentContainer
+					.mousemove( $.proxy(this.showArrow, this) )
+					.mousemove( $.proxy(this.checkSide, this) )
+					.mousemove( $.proxy(this.setCursor, this) )
+					.click(
+						function() {
+							if ( data.side === "left" ) {
+								self.prev.apply( self );
+							} else if ( data.side === "right" ) {
+								self.next.apply( self );
+							}
+						}
+					)
 					.mousedown( $.proxy(this.panoramaStart, this) )
-					.mouseup( $.proxy(this.panoramaStop, this ) );
+					.mouseup( $.proxy(this.panoramaStop, this ) )				
+					.mouseleave(
+						function() {
+							self.hideArrow.apply( self );
+							data.side = "";
+						}
+					);
 
 				// zoom in or zoom out an image
 				$lb.panoramaIcon
@@ -463,6 +519,25 @@ $.extend($.ui.rlightbox, {
 				_name = _classPattern.exec( _classNames );
 
 			return _name ? _name[1] : "single";
+		},
+		
+		checkSide: function( event ) {
+			var data = this.data,
+				$lb = this.$lightbox,
+				$container = $lb.contentContainer,
+				_pos = event.pageX - $container.offset().left,
+				_center = Math.round( $container.width() / 2 ),
+				_currentElementNumber = data.currentElementNumber,
+				_totalElementsNumber = data.totalElementsNumber;
+
+			if ( _pos <= _center ) {
+				data.side = "left";
+			} else if ( _pos > _center ) {
+				data.side = "right";
+			}
+			
+			// for Panorama to work in IE7 & IE8			
+			event.preventDefault();
 		},
 
 		getSizes: function() {
@@ -618,19 +693,13 @@ $.extend($.ui.rlightbox, {
 			if ( _key === _keys.next[0] || _key === _keys.next[1] ) {
 
 				// next keys: [N] & [→]
-				// simulate checking side
-				data.side = "right";
-
 				// load next content if possible
-				this.navigationNext();
+				this.next();
 			} else if ( _key === _keys.previous[0] || _key === _keys.previous[1] ) {
 
 				// prev keys: [P] & [←]
-				// simulate checking side
-				data.side = "left";
-
 				// load previous content if possible
-				this.navigationNext();
+				this.prev();
 			} else if ( _key === _keys.close[0] || _key === _keys.close[1] ) {
 
 				// close keys: [C] & [ESC]
@@ -641,6 +710,13 @@ $.extend($.ui.rlightbox, {
 				this.panoramaToggle( event );
 			}
 		},
+		
+		hideArrow: function() {
+			var $lb = this.$lightbox,
+				$arrow = $lb.arrow;
+				
+			$arrow.hide();
+		},		
 
 		liveResize: function() {
 			var data = this.data,
@@ -743,14 +819,15 @@ $.extend($.ui.rlightbox, {
 				_dfd = $.Deferred(),
 				$newImage = $( "<img />" );
 				
-			// start loading maximized image
+			// show spinner
 			$lb.content.addClass( "ui-lightbox-loader" );
 
-			// new Date().getTime() is used because of IEs caching problem
 			$newImage
-				.attr( "src", url + "?" + new Date().getTime() )
-				.load(
+				.attr( "src", url )
+				.bind("load",
 					function() {
+						$( this ).unbind( "load" );
+						
 						// keep original size of an image – needed when resizing
 						_currentElement.width = this.width;
 						_currentElement.height = this.height;
@@ -775,7 +852,20 @@ $.extend($.ui.rlightbox, {
 						// continue the animation queue
 						_dfd.resolve();
 					}
-				);
+				)				
+				.each(
+					function() {
+						// the code comes from https://github.com/desandro/imagesloaded
+						// cached images don't fire load sometimes, so we reset src.
+						if ( this.complete || this.complete === undefined ){
+						  var src = this.src;
+						  // webkit hack from http://groups.google.com/group/jquery-dev/browse_thread/thread/eee6ab7b2da50e1f
+						  // data uri bypasses webkit log warning (thx doug jones)
+						  this.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+						  this.src = src;
+						}						
+					}
+				);				
 
 			return _dfd.promise();
 		},
@@ -859,7 +949,15 @@ $.extend($.ui.rlightbox, {
 				_width = _options.videoWidth,
 				_height = _options.videoHeight,
 				_structure = data.htmlYoutube;
+				
+			function _showError() {
+				$lb.content.removeClass( "ui-lightbox-loader" );
+				self.showErrorMessage();
 
+				// continue the animation queue
+				_dfd.resolve();				
+			}
+			
 			// show loader
 			$lb.content.addClass( "ui-lightbox-loader" );
 			$.ajax(
@@ -925,54 +1023,10 @@ $.extend($.ui.rlightbox, {
 			.error(function() {
 				_showError();
 			});
-			
-			function _showError() {
-				$lb.content.removeClass( "ui-lightbox-loader" );
-				self.showErrorMessage();
-
-				// continue the animation queue
-				_dfd.resolve();				
-			}
 
 			return _dfd.promise();
-		},		
-
-		navigationCheckSide: function( event ) {
-			var data = this.data,
-				$lb = this.$lightbox,
-				$content = $lb.content,
-				_currentElementNumber = data.currentElementNumber,
-				_totalElementsNumber = data.totalElementsNumber;
-
-			// Check which side we are on. Check it only if the lightbox is ready (no animation in progress)
-			// clicked image belongs to a gallery and we are not in the Panorama™ mode
-			if ( data.ready && data.currentSet !== "single" && data.currentSetElement.type === "image" && data.panoramaOn === false ) {
-				var _pos = event.pageX - $content.offset().left,
-					_center = Math.round( $content.width() / 2 );
-
-				if ( _pos <= _center && _currentElementNumber > 1 ) {
-					data.side = "left";
-					$content.css( "cursor", "w-resize" );
-				} else if ( _pos > _center && _currentElementNumber < _totalElementsNumber ) {
-					data.side = "right";
-					$content.css( "cursor","e-resize" );
-				} else {
-					data.side = "";
-					$content.css( "cursor", "default" );
-				}
-			} else if ( data.panoramaDrag === false ) {
-
-				// we are no longer hover over the content container
-				data.side = "";
-				$content.css( "cursor", "default" );
-			} else {
-				data.side = "";
-				$content.css( "cursor", "move" );
-			}
-			
-			event.preventDefault();
 		},
-
+		
 		navigationGoToElement: function( number ) {
 
 			// goes to a custom element
@@ -989,38 +1043,36 @@ $.extend($.ui.rlightbox, {
 			this.setNextQueue();
 			$lb.queueContainer.next.dequeue( "lightboxNext" );
 		},		
-
-		navigationNext: function() {
-			var _currentElementNumber, _currentSetElement,
-				data = this.data,
+		
+		next: function() {
+			var data = this.data,
 				sets = this.sets,
 				$lb = this.$lightbox,
-				_set = data.currentSet;
-
-			// prevent from multi clicking and go to the next image only if it belongs to a gallery
-			if ( data.ready && _set !== "single" ) {
-				_currentElementNumber = data.currentElementNumber;
-
-				if ( _currentElementNumber + 1 <= data.totalElementsNumber && data.side === "right" ) {
-					data.currentElementNumber = _currentElementNumber + 1;
-
-					// update current element
-					_currentSetElement = sets[_set][_currentElementNumber];
-					data.currentSetElement = _currentSetElement;
-
+				_isReady = data.ready,
+				_isPanoramaOn = data.panoramaOn,
+				_set = data.currentSet,
+				_currentElementNumber = data.currentElementNumber,
+				_totalElementsNumber = data.totalElementsNumber,
+				_options = data.currentSetElement.self.options,
+				_isLoop = _options.loop,
+				_play = true;
+				
+			if ( _isReady && _set !== "single" && _isPanoramaOn === false ) {
+				if ( _currentElementNumber + 1 <= _totalElementsNumber ) {
+					data.currentElementNumber = _currentElementNumber = _currentElementNumber + 1;			
+				} else if ( _currentElementNumber + 1 > _totalElementsNumber && _isLoop ) {
+					data.currentElementNumber = _currentElementNumber = 1;
+				} else {
+					// to prevent form loading last element again when loop is disabled
+					_play = false;
+				}
+				
+				if ( _play) {
+					data.currentSetElement = sets[_set][_currentElementNumber - 1];
+	
 					// next element - trigger the queue ‘next’ - first update it
 					this.setNextQueue();
-					$lb.queueContainer.next.dequeue( "lightboxNext" );
-				} else if ( _currentElementNumber - 1 >= 1 && data.side === "left" ){
-					data.currentElementNumber = _currentElementNumber - 1;
-
-					// update current element
-					_currentSetElement = sets[_set][_currentElementNumber - 2];
-					data.currentSetElement = _currentSetElement;
-
-					// next element - trigger the queue ‘next’ - first update it
-					this.setNextQueue();
-					$lb.queueContainer.next.dequeue( "lightboxNext" );
+					$lb.queueContainer.next.dequeue( "lightboxNext" );					
 				}
 			}
 		},
@@ -1029,7 +1081,7 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				sets = this.sets,
 				$lb = this.$lightbox,
-				_jqElement = thisElement.element,
+				_jqElement = thisElement.element,//TODO
 				_currentSet = this.getSetName( thisElement ),
 				_currentUrl = $( _jqElement ).attr( "href" );
 
@@ -1047,6 +1099,9 @@ $.extend($.ui.rlightbox, {
 			// set animation queues
 			this.setOpenQueue();
 			this.setNextQueue();
+			
+			// to fade or not to fade…
+			this.checkButtonsState();		
 
 			// start opening the lighbox
 			$lb.queueContainer.open.dequeue( "lightboxOpen" );
@@ -1132,7 +1187,10 @@ $.extend($.ui.rlightbox, {
 			} else {
 				this.panoramaShowIcon( "shrink" );
 			}
-
+			
+			// fixes issue with Panorama in Firefox 3.0, 3.5, 3.6
+			$lb.content.css( "overflow", "hidden" );
+			
 			// give the natural size to the image
 			$lb.content
 				.find( "img" )
@@ -1153,6 +1211,14 @@ $.extend($.ui.rlightbox, {
 			if ( _options.showMap ) {
 				this.panoramaShowMap();
 			}
+			
+			// hide arrow cue
+			this.hideArrow();
+			
+			// reset cursor when there is no movement; for example
+			// cursor was ‘pointer’, [Z] buttons was pressed (‘default’ cursor)
+			// [Z] was pressed again → cursor is still ‘pointer’
+			this.setCursor();
 		},
 
 		panoramaHideIcon: function() {
@@ -1322,11 +1388,19 @@ $.extend($.ui.rlightbox, {
 			this.queueResizeLightbox();
 			this.queueCenterContent();
 			
+			// fixes issue with Panorama in Firefox 3.0, 3.5, 3.6
+			$lb.content.css( "overflow", "visible" );			
+			
 			// update header width
 			this.updateTitleWidth();
 
 			// hide the map
 			this.panoramaHideMap();
+			
+			// reset cursor when there is no movement; for example
+			// cursor was ‘pointer’, [Z] buttons was pressed (‘default’ cursor)
+			// [Z] was pressed again → cursor is still ‘pointer’
+			this.setCursor();
 		},		
 
 		panoramaStart: function( event ) {
@@ -1339,14 +1413,6 @@ $.extend($.ui.rlightbox, {
 					xStart: event.pageX,
 					yStart: event.pageY
 				};
-
-			// used to show the ‘move’ cursor on ‘content’ container
-			data.panoramaDrag = true;
-
-			// give clue that we can drag now
-			if ( data.panoramaOn ) {
-				$lb.content.css( "cursor", "move" );
-			}
 
 			event.preventDefault();
 		},
@@ -1361,9 +1427,6 @@ $.extend($.ui.rlightbox, {
 				_distY = ( event.pageY - data.panoramaPosition.yStart ) * -1,
 				$content = $lb.content,
 				_viewportRatio = data.viewportRatio;
-
-			// indicate that we can revert the cursor to the default one
-			data.panoramaDrag = false;
 
 			// if we are in the panorama mode (the panorama icon was clicked)
 			if ( data.panoramaOn ) {
@@ -1397,6 +1460,39 @@ $.extend($.ui.rlightbox, {
 			} else if ( _isPanoramaEnabled && _panoramaOn ) {
 				this.panoramaShrink( event );			
 			}
+		},
+		
+		prev: function() {
+			var data = this.data,
+				sets = this.sets,
+				$lb = this.$lightbox,
+				_isReady = data.ready,
+				_isPanoramaOn = data.panoramaOn,
+				_set = data.currentSet,
+				_currentElementNumber = data.currentElementNumber,
+				_totalElementsNumber = data.totalElementsNumber,
+				_options = data.currentSetElement.self.options,
+				_isLoop = _options.loop,
+				_play = true;
+				
+			if ( _isReady && _set !== "single" && _isPanoramaOn === false ) {
+				if ( _currentElementNumber - 1 >= 1 ) {
+					data.currentElementNumber = _currentElementNumber = _currentElementNumber - 1;			
+				} else if ( _currentElementNumber - 1 < 1 && _isLoop ) {
+					data.currentElementNumber = _currentElementNumber = _totalElementsNumber;
+				} else {
+					// to prevent from loading first element again when loop is disabled
+					_play = false;
+				}
+
+				if ( _play ) {
+					data.currentSetElement = sets[_set][_currentElementNumber - 1];
+	
+					// next element - trigger the queue ‘next’ - first update it
+					this.setNextQueue();
+					$lb.queueContainer.next.dequeue( "lightboxNext" );					
+				}
+			}		
 		},
 
 		removeSetElement: function( number ) {
@@ -1445,7 +1541,78 @@ $.extend($.ui.rlightbox, {
 
 			return htmlString;
 		},
+		
+		setButtonState: function( state, jqElement ) {
+			var $lb = this.$lightbox,
+				jqElem = jqElement || $lb.controlButtons;
+				
+			switch ( state ) {
+				case "default":
+					jqElem.removeClass( "ui-state-highlight ui-state-disabled" );
+					break;
+				
+				case "highlight":
+					jqElem.addClass( "ui-state-highlight" );
+					break;
+				
+				case "disabled":
+					jqElem.addClass( "ui-state-disabled" );
+					break;
+			}
+		},
+		
+		setCursor: function( event ) {
+			var data = this.data,
+				$lb = this.$lightbox,
+				$contentContainer = $lb.contentContainer,
+				_currentSet = data.currentSet,
+				_currentSetElement = data.currentSetElement,
+				_setElementType = data.currentSetElement.type,
+				_totalElements = data.totalElementsNumber,
+				_currentElement = data.currentElementNumber,
+				_side = data.side,
+				_panoramaEnabled = data.panoramaOn,
+				_isError = data.showErrorMessage,
+				_options = _currentSetElement.self.options,
+				_isLoop = _options.loop;
+			
+			if ( data.ready ) {
+				if ( (_currentSet === "single" || _totalElements === 1 || _currentElement === 1 && _side === "left" || _currentElement === _totalElements && _side === "right") && _panoramaEnabled === false && (_setElementType === "image" || (_setElementType !== "image" && _isError)) ) {
 
+					// single element or single element in a named set or first element in a set or last element in a set
+					// WHEN panorama is DISABLED, and when element type is ‘image’ or the Error Screen is shown
+					// and when loop is DISABLED
+					if ( _isLoop === false ) {
+						$contentContainer.css( "cursor", "default" );						
+					} else {
+						
+						// otherwise show ‘pointer’ in cases mentioned above
+						$contentContainer.css( "cursor", "pointer" );						
+					}
+
+				} else if ( _panoramaEnabled ) {
+
+					// panorama is enabled
+					$contentContainer.css( "cursor", "move" );
+				} else if ( _setElementType === "image" || (_setElementType !== "image" && _isError) ) {
+					
+					// between first and last element in an image set or when the Error Screen is shown
+					$contentContainer.css( "cursor", "pointer" );
+				} else {
+
+					// for flash videos
+					$contentContainer.css( "cursor", "auto" );
+				}
+			} else {
+				$contentContainer.css( "cursor", "default" );
+			}
+			
+			// for Panorama to work in IE7 & IE8
+			if ( event ) {
+				event.preventDefault();
+			}
+		},
+		
 		setNextQueue: function() {
 
 			// for description take a look at _setOpenQueue method
@@ -1495,13 +1662,19 @@ $.extend($.ui.rlightbox, {
 			// save references to wrapped set for later use
 			$lb.root = $( "#ui-lightbox" );
 			$lb.panoramaIcon = $lb.root.find( "#ui-lightbox-panorama-icon" );
-			$lb.content = $lb.root.find( "#ui-lightbox-content" );
-			$lb.header = $lb.root.find( "#ui-lightbox-header" );
-			$lb.headerWrapper = $lb.header.find( "#ui-lightbox-header-wrapper" );		
+			$lb.contentContainer = $lb.root.find( "#ui-lightbox-content-container" );
+			$lb.content = $lb.contentContainer.find( "#ui-lightbox-content" );
+			$lb.arrow = $lb.contentContainer.find( "#ui-lightbox-arrow" );
+			$lb.header = $lb.root.find( "#ui-lightbox-bottombar" );
+			$lb.headerWrapper = $lb.header.find( "#ui-lightbox-title-wrapper" );		
 			$lb.overlay = $( "#ui-lightbox-overlay" );
-			$lb.close = $( "#ui-lightbox-header-close" );
-			$lb.counter = $lb.root.find( "#ui-lightbox-header-counter" );
-			$lb.title = $lb.root.find( "#ui-lightbox-header-title" );
+			$lb.next = $lb.root.find( "#ui-lightbox-button-next" );
+			$lb.prev = $lb.root.find( "#ui-lightbox-button-prev" );
+			//$lb.play = $lb.root.find( "#ui-lightbox-button-play" );
+			$lb.controlButtons = $lb.next.add( $lb.prev );//.add( $lb.play );
+			$lb.close = $lb.root.find( "#ui-lightbox-button-close" );
+			$lb.counter = $lb.root.find( "#ui-lightbox-counter" );
+			$lb.title = $lb.root.find( "#ui-lightbox-title" );
 			$lb.map = $( "#ui-lightbox-map" );
 			$lb.viewport = $lb.map.children().eq( 0 );
 			$lb.queueContainer = {
@@ -1509,6 +1682,46 @@ $.extend($.ui.rlightbox, {
 				next: $({})
 			};
 		},
+		
+		showArrow: function( event ) {
+			var data = this.data,
+				$lb = this.$lightbox,
+				$arrow = $lb.arrow,
+				_isError = data.showErrorMessage,
+				_side = data.side,
+				_currentElement = data.currentElementNumber,
+				_totalElements = data.totalElementsNumber,
+				_isLoop = data.currentSetElement.self.options.loop;
+			
+			// show arrow cues only in image set or in The Error Screen when it is part of a set
+			if ( data.ready && data.currentSet !== "single" && (data.currentSetElement.type === "image" || _isError) && data.panoramaOn === false ) {
+
+				if ( _side === "left" && (_currentElement > 1 || _isLoop) ) {
+					$arrow
+						.show()
+						.removeClass("ui-lightbox-arrow-next ui-corner-left")
+						.addClass("ui-lightbox-arrow-prev ui-corner-right")
+						.find("span")
+							.removeClass("ui-icon-carat-1-e")
+							.addClass("ui-icon-carat-1-w");
+				} else if ( _side === "right" && (_currentElement < _totalElements || _isLoop) ) {
+					$arrow
+						.show()
+						.removeClass("ui-lightbox-arrow-prev ui-corner-right")
+						.addClass("ui-lightbox-arrow-next ui-corner-left")
+						.find("span")
+							.removeClass("ui-icon-carat-1-w")
+							.addClass("ui-icon-carat-1-e");
+				} else {
+					this.hideArrow();
+				}
+			}
+			
+			// for Panorama to work in IE7 & IE8			
+			if ( event ) {
+				event.preventDefault();
+			}
+		},		
 
 		showErrorMessage: function() {
 
@@ -1658,6 +1871,9 @@ $.extend($.ui.rlightbox, {
 
 			// let know that lightbox is not ready now
 			data.ready = false;
+			
+			// change cursor to default
+			this.setCursor();			
 
 			// show overlay
 			$( "body" ).css( "overflow", "hidden" );
@@ -1840,9 +2056,19 @@ $.extend($.ui.rlightbox, {
 			// update title
 			this.updateTitleWidth();
 			this.updateTitle();
-
+			
+			// update buttons states
+			this.checkButtonsState();
+			
 			// indicate that animation queue is finshed
 			data.ready = true;
+			
+			// if you go from penulimate/second element to the last/first element change cursor to ‘default’
+			// must be after ‘data.ready = true’!!!
+			this.setCursor();
+			
+			// show arrow cue whenever possible when there is no mouse mouvement
+			this.showArrow();
 		},
 
 		queueSlideUpHeader: function( next ) {
@@ -1853,6 +2079,13 @@ $.extend($.ui.rlightbox, {
 
 			// structure is not ready - start an animation
 			data.ready = false;
+			
+			// hide arrow cue
+			this.hideArrow();
+			
+			// change cursor to default
+			this.setCursor();				
+			
 			$lb.header.slideUp ( _options.animationSpeed, next );
 		},
 
@@ -1882,7 +2115,8 @@ $.extend($.ui.rlightbox, {
 				width: 500,
 				height: 500
 			},
-			htmlFlash: "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='{width}' height='{height}'>" +
+			htmlFlash: "" +
+				"<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' width='{width}' height='{height}'>" +
 					"<param name='movie' value='{url}' />" +
 						"<!--[if !IE]>-->" +
 						"<object type='application/x-shockwave-flash' data='{url}' width='{width}' height='{height}'>" +
@@ -1890,21 +2124,58 @@ $.extend($.ui.rlightbox, {
 						"<!--[if !IE]>-->" +
 						"</object>" +
 						"<!--<![endif]-->" +
-					"</object>",
-			htmlErrorScreen: "<div id='ui-lightbox-error'>" +
-				"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign'>{message}</div>" +
-				"<div id='ui-lightbox-error-footer'>" +
-					"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
-						"<span class='ui-button-icon-primary ui-icon ui-icon-refresh'></span>" +
-						"<span class='ui-button-text'>{labelAgain}</span>" +
-					"</button>" +
-					"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
-						"<span class='ui-button-icon-primary ui-icon ui-icon-trash'></span>" +
-						"<span class='ui-button-text'>{labelReject}</span>" +
-					"</button>" + 
-				"</div>" +
-			"</div>",
-			htmlYoutube: "<iframe class='youtube-player' type='text/html' width='{width}' height='{height}' src='http://www.youtube.com/embed/{url}' frameborder='0'></iframe>"
+				"</object>",
+			htmlErrorScreen: "" +
+				"<div id='ui-lightbox-error'>" +
+					"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign'>{message}</div>" +
+					"<div id='ui-lightbox-error-footer'>" +
+						"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+							"<span class='ui-button-icon-primary ui-icon ui-icon-refresh'></span>" +
+							"<span class='ui-button-text'>{labelAgain}</span>" +
+						"</button>" +
+						"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+							"<span class='ui-button-icon-primary ui-icon ui-icon-trash'></span>" +
+							"<span class='ui-button-text'>{labelReject}</span>" +
+						"</button>" + 
+					"</div>" +
+				"</div>",
+			htmlYoutube: "<iframe class='youtube-player' type='text/html' width='{width}' height='{height}' src='http://www.youtube.com/embed/{url}' frameborder='0'></iframe>",
+			htmlLightbox: "" +
+				"<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>" +
+					"<div id='ui-lightbox-panorama-icon' style='display: none'></div>" +
+					"<div id='ui-lightbox-content-container'>" +
+						"<div id='ui-lightbox-content' class='ui-widget-content'></div>" +
+						"<a id='ui-lightbox-arrow' class='ui-widget-header' style='display: none'>" +
+							"<span class='ui-icon'>go</span>" +
+						"</a>" +
+					"</div>" +
+					"<div id='ui-lightbox-bottombar' class='ui-widget-header ui-corner-all' style='display: none'>" +
+						"<p id='ui-lightbox-title-wrapper'>" +
+							"<span id='ui-lightbox-title'></span>" +
+						"</p>" +
+						"<p id='ui-lightbox-bottombar-bottom'>" +
+							"<a id='ui-lightbox-button-prev' class='ui-lightbox-button'>" +
+								"<span class='ui-icon ui-icon-circle-arrow-w'>prev</span>" +
+							"</a>" +
+							"<span id='ui-lightbox-counter'></span>" +
+							"<a id='ui-lightbox-button-next' class='ui-lightbox-button'>" +
+								"<span class='ui-icon ui-icon-circle-arrow-e'>next</span>" +
+							"</a>" +
+							//"<span id='ui-lightbox-separator'>|</span>" +
+							//"<a id='ui-lightbox-button-play' class='ui-lightbox-button'>" +
+							//	"<span class='ui-icon ui-icon-circle-triangle-e'>play</span>" +
+							//"</a>" +
+						"</p>" +
+						"<a id='ui-lightbox-button-close' class='ui-lightbox-button'>" +
+							"<span class='ui-icon ui-icon-closethick'>close</span>" +
+						"</a>" +
+					"</div>" +
+				"</div>",
+			htmlMap: "" +
+				"<div id='ui-lightbox-map' style='display: none'>" +
+					"<div id='ui-lightbox-map-viewport'></div>" +
+				"</div>",
+			htmlOverlay: "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>"			
 		}
 	}
 });
