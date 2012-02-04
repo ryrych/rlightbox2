@@ -1876,7 +1876,6 @@ $.extend($.ui.rlightbox, {
 			this.setCursor();			
 
 			// show overlay
-			$( "body" ).css( "overflow", "hidden" );
 			$lb.overlay.fadeIn( _currentElement.options.animationSpeed, next );
 		},
 
