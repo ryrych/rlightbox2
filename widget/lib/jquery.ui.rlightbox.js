@@ -1915,8 +1915,7 @@ $.extend($.ui.rlightbox, {
 		},
 
 		queueResizeLightbox: function( next ) {
-
-			// resizes the lightbox to to house content and centers it on the screen
+			// resizes the lightbox to house content and centers it on the screen
 			var _speed, _animate, _sizes, _imageTargetWidth, _imageTargetHeight,
 				_lightboxTargetWidth, _lightboxTargetHeight, _img,
 				data = this.data,
