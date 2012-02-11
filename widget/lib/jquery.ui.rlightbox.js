@@ -1856,7 +1856,7 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				_currentElement = data.currentSetElement.self;
 
-			// let know that lightbox is not ready now
+			// let know that lightbox is not ready
 			data.ready = false;
 			
 			// change cursor to default
