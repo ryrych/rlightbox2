@@ -1063,7 +1063,7 @@ $.extend($.ui.rlightbox, {
 	
 					// next element - trigger the queue ‘next’ - first update it
 					this.setNextQueue();
-					$lb.queueContainer.next.dequeue( "lightboxNext" );					
+					$lb.queues.dequeue( "lightboxNext" );					
 				}
 			}
 		},
@@ -1092,7 +1092,7 @@ $.extend($.ui.rlightbox, {
 			this.setNextQueue();	
 
 			// start opening the lighbox
-			$lb.queueContainer.open.dequeue( "lightboxOpen" );
+			$lb.queues.dequeue( "lightboxOpen" );
 		},
 
 		panoramaCenterContent: function() {
@@ -1478,7 +1478,7 @@ $.extend($.ui.rlightbox, {
 	
 					// next element - trigger the queue ‘next’ - first update it
 					this.setNextQueue();
-					$lb.queueContainer.next.dequeue( "lightboxNext" );					
+					$lb.queues.dequeue( "lightboxNext" );					
 				}
 			}		
 		},
@@ -1615,7 +1615,7 @@ $.extend($.ui.rlightbox, {
 				];
 
 			// place start animation queue in the queue container
-			$lb.queueContainer.next.queue( "lightboxNext", queueList );
+			$lb.queues.queue( "lightboxNext", queueList );
 		},
 
 		setOpenQueue: function() {
@@ -1640,7 +1640,7 @@ $.extend($.ui.rlightbox, {
 				];
 
 			// place start animation queue in the queue container
-			$lb.queueContainer.open.queue( "lightboxOpen", queueList );
+			$lb.queues.queue( "lightboxOpen", queueList );
 		},		
 
 		setReferences: function() {
@@ -1664,10 +1664,7 @@ $.extend($.ui.rlightbox, {
 			$lb.title = $lb.root.find( "#ui-lightbox-title" );
 			$lb.map = $( "#ui-lightbox-map" );
 			$lb.viewport = $lb.map.children().eq( 0 );
-			$lb.queueContainer = {
-				open: $({}),
-				next: $({})
-			};
+			$lb.queues = $({});
 		},
 		
 		showArrow: function( event ) {
