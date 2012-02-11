@@ -1602,7 +1602,6 @@ $.extend($.ui.rlightbox, {
 		},
 		
 		setNextQueue: function() {
-
 			// for description take a look at _setOpenQueue method
 			var $lb = this.$lightbox,
 				queueList = [
