@@ -64,9 +64,9 @@ $.widget( "ui.rlightbox", {
 // In almost every jQuery UI plugin, in an element the plugin is initialised on
 // its initial DOM structure it transformed into the plugin's one. Therefore
 // ‘this’ always refers to the plugin instance.
-// rlightbox takes other approach: there are many elements (anchors) the plugin
+// rlightbox takes another approach: there are many elements (anchors) the plugin
 // is installed on, but there is only one UI – one DOM structure.
-// If we put all these below methods in the widget factory's scope, (the same as
+// If we put all these methods below in the widget factory's scope, (the same as
 // options and _create) and created only one UI, the UI would have ‘this’ scope
 // of the first matched element – the first element in the DOM that rlightbox
 // is initialised on. Since different instances can have different
@@ -388,7 +388,7 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				self = this;
 
-			// do it only once!
+			// if the structure has not been created
 			if ( !$lb.root ) {
 
 				// create the DOM structure of the lightbox
@@ -397,7 +397,7 @@ $.extend($.ui.rlightbox, {
 				// remember references to lightbox structure
 				this.setReferences();
 
-				// close the lightbox upon clicking on the close button and the overlay
+				// close the lightbox when clicking on the close button and the overlay
 				$lb.close.add( $lb.overlay ).click( $.proxy(this.closeLightbox, this) );
 				
 				// goes to the next element when button is clicked
