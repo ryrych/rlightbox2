@@ -323,7 +323,6 @@ $.extend($.ui.rlightbox, {
 			var _currentNumber,
 				data = this.data,
 				sets = this.sets,
-				self = this,
 				_currentSet = sets[data.currentSet];
 
 			// returns a 1 based ordinal number of an image in a set
