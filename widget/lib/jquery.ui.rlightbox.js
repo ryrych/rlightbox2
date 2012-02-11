@@ -120,21 +120,18 @@ $.extend($.ui.rlightbox, {
 			if ( _currentSet === "single" || _totalElements === 1 ) {
 				this.setButtonState( "disabled" );
 			} else if ( _currentElement === 1 && _isLoop === false ) {
-				
 				// in case of 1st element when loop is disabled
 				this.setButtonState( "disabled", $lb.prev );
 				
 				// when there are only two elements in a set
 				this.setButtonState( "default", $lb.next );
 			} else if ( _currentElement === _totalElements && _isLoop === false ) {
-				
 				// in case of last element
 				this.setButtonState( "disabled", $lb.next );
 				
 				// when there are only two elements in a set
 				this.setButtonState( "default", $lb.prev );				
 			} else {
-				
 				// between first and last elements or when the loop is enabled
 				this.setButtonState( "default" );
 			}
