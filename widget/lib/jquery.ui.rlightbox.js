@@ -49,7 +49,7 @@ $.widget( "ui.rlightbox", {
 
 			global.addToSet( _extractedAnchor );
 
-			// open the lightbox upon click
+			// open the lightbox when clicking
 			this.element.click(function(event) {
 				global.open( self );
 				event.preventDefault();
