@@ -229,7 +229,19 @@ $.extend($.ui.rlightbox, {
 				.unbind( "click" )
 				.removeData( "rlightbox" );
 		},
+		
+        dequeue: function( object, name, data ) {
+			var _queue = object[name],
+				_fn = _queue.shift(),
+				self = this;
 
+			if ( _fn ) {
+				_fn.call(this, function( d ) {
+					self.dequeue( object, name, d );
+				}, data);
+			}
+        },
+		
 		extractAnchor: function( anchor ) {
 			// _extractAnchor elicits information from an anchor element (DOM A element)
 			// @url are used for loading content such as images, youtube videos, etc
@@ -1032,7 +1044,7 @@ $.extend($.ui.rlightbox, {
 
 			// reload animation queue and trigger it
 			this.setNextQueue();
-			$lb.queueContainer.next.dequeue( "lightboxNext" );
+			this.dequeue( data.queues, "lightboxNext" );
 		},		
 		
 		next: function() {
@@ -1063,7 +1075,7 @@ $.extend($.ui.rlightbox, {
 	
 					// next element - trigger the queue ‘next’ - first update it
 					this.setNextQueue();
-					$lb.queues.dequeue( "lightboxNext" );					
+					this.dequeue( data.queues, "lightboxNext" );					
 				}
 			}
 		},
@@ -1092,7 +1104,7 @@ $.extend($.ui.rlightbox, {
 			this.setNextQueue();	
 
 			// start opening the lighbox
-			$lb.queues.dequeue( "lightboxOpen" );
+			this.dequeue( data.queues, "lightboxOpen" );
 		},
 
 		panoramaCenterContent: function() {
@@ -1478,7 +1490,7 @@ $.extend($.ui.rlightbox, {
 	
 					// next element - trigger the queue ‘next’ - first update it
 					this.setNextQueue();
-					$lb.queues.dequeue( "lightboxNext" );					
+					this.dequeue( data.queues, "lightboxNext" );					
 				}
 			}		
 		},
@@ -1603,19 +1615,20 @@ $.extend($.ui.rlightbox, {
 		
 		setNextQueue: function() {
 			// for description take a look at _setOpenQueue method
-			var $lb = this.$lightbox,
+			var data = this.data,
+				$lb = this.$lightbox,
 				queueList = [
-					$.proxy( this.queueSlideUpHeader, this ),
-					$.proxy( this.queueHideContent, this ),
-					$.proxy( this.queueLoadContent, this ),
-					$.proxy( this.queueResizeLightbox, this ),
-					$.proxy( this.queueCenterContent, this ),
-					$.proxy( this.queueShowContent, this ),
-					$.proxy( this.queueSlideDownHeader, this )
+					this.queueSlideUpHeader,
+					this.queueHideContent,
+					this.queueLoadContent,
+					this.queueResizeLightbox,
+					this.queueCenterContent,
+					this.queueShowContent,
+					this.queueSlideDownHeader
 				];
 
 			// place start animation queue in the queue container
-			$lb.queues.queue( "lightboxNext", queueList );
+			data.queues.lightboxNext = queueList.slice( 0 );
 		},
 
 		setOpenQueue: function() {
@@ -1627,20 +1640,20 @@ $.extend($.ui.rlightbox, {
 			// method in the queue.
 			// $proxy is needed to have an access to a ‘global’ scope of the plugin – every method that is called in the queue
 			// is run in its internal scope - we need to have an access to such method as _getSizes, _open, etc - one the same level.
-
-			var $lb = this.$lightbox,
+			var data = this.data,
+				$lb = this.$lightbox,
 				queueList = [
-					$.proxy( this.queueShowOverlay, this ),
-					$.proxy( this.queueCenterLightbox, this ),
-					$.proxy( this.queueLoadContent, this ),
-					$.proxy( this.queueResizeLightbox, this ),
-					$.proxy( this.queueCenterContent, this ),
-					$.proxy( this.queueShowContent, this ),
-					$.proxy( this.queueSlideDownHeader, this )
+					this.queueShowOverlay,
+					this.queueCenterLightbox,
+					this.queueLoadContent,
+					this.queueResizeLightbox,
+					this.queueCenterContent,
+					this.queueShowContent,
+					this.queueSlideDownHeader
 				];
 
 			// place start animation queue in the queue container
-			$lb.queues.queue( "lightboxOpen", queueList );
+			data.queues.lightboxOpen = queueList.slice( 0 );
 		},		
 
 		setReferences: function() {
@@ -1664,7 +1677,6 @@ $.extend($.ui.rlightbox, {
 			$lb.title = $lb.root.find( "#ui-lightbox-title" );
 			$lb.map = $( "#ui-lightbox-map" );
 			$lb.viewport = $lb.map.children().eq( 0 );
-			$lb.queues = $({});
 		},
 		
 		showArrow: function( event ) {
@@ -1911,7 +1923,7 @@ $.extend($.ui.rlightbox, {
 			});
 		},
 
-		queueResizeLightbox: function( next ) {
+		queueResizeLightbox: function( next, data ) {
 			// resizes the lightbox to house content and centers it on the screen
 			var _speed, _animate, _sizes, _imageTargetWidth, _imageTargetHeight,
 				_lightboxTargetWidth, _lightboxTargetHeight, _img,
@@ -2154,7 +2166,8 @@ $.extend($.ui.rlightbox, {
 				"<div id='ui-lightbox-map' style='display: none'>" +
 					"<div id='ui-lightbox-map-viewport'></div>" +
 				"</div>",
-			htmlOverlay: "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>"			
+			htmlOverlay: "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>",
+			queues: {}
 		}
 	}
 });
