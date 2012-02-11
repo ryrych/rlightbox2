@@ -506,9 +506,8 @@ $.extend($.ui.rlightbox, {
 		},
 
 		getSetName: function( thisElement ) {
-
-			// if an anchor has class of e.g. ‘lb_gallery’ _getSetName() returns ‘gallery’ string as a set
-			// otherwise it returns "single" - single content is placed under "single" set  
+			// if an anchor has class of e.g. ‘lb_gallery’ getSetName() returns ‘gallery’ string as a set name
+			// otherwise it returns ‘single’ - single content is placed under ‘single’ set  
 			var _classNames = $( thisElement.element ).attr( "class" ),
 				_classPrefix = thisElement.options.setPrefix + "_",
 				_classPattern = new RegExp( _classPrefix + "([\\w-_]+)" ),
