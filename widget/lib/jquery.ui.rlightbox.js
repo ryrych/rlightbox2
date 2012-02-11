@@ -45,7 +45,7 @@ $.widget( "ui.rlightbox", {
 
 		// add type, url, jQuery element and title of content to a set if content is supported by the lightbox
 		// otherwise fall silently
-		if ( _setElement.type !== undefined ) {
+		if ( _extractedAnchor.type !== undefined ) {
 
 			global.addToSet( _extractedAnchor );
 
