@@ -280,12 +280,12 @@ $.extend($.ui.rlightbox, {
 									id: _res[2],
 									type: content.type,
 									element: $anchor,
-									self: thisElement
+									self: anchor
 								};
 
 								// image and flash urls are not normalised; in case of flash content
 								// there may be &with and &height parameters
-								if ( content.type === "image" || content.type === "flash" || thisElement.options.overwriteTitle ) {
+								if ( content.type === "image" || content.type === "flash" || anchor.options.overwriteTitle ) {
 									_result.title = $anchor.attr( "title" );
 									_result.url = _url;
 								}
