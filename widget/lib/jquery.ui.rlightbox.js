@@ -78,7 +78,6 @@ $.widget( "ui.rlightbox", {
 $.extend($.ui.rlightbox, {
 	global: {
 		addToSet: function( setElement ) {
-
 			// set structure is following:
 			// sets: {
 			//		setName: [
@@ -98,13 +97,12 @@ $.extend($.ui.rlightbox, {
 				_setElementIndex = $( _class ).index( setElement.element );
 
 			if ( !_sets[_setName] ) {
-
-				// first time - such set had not been created before
+				// first time - such set has not been created before
 				_sets[_setName] = [];
 				_sets[_setName].push( setElement );
 			} else {
-
-				// set exists yet - just add element to it
+				// set exists already - just add element to it
+				// added element respects changes in DOM
 				_sets[_setName].splice( _setElementIndex, 0 , setElement );
 			}
 		},
