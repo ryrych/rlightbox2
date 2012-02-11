@@ -1072,13 +1072,13 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 
-		open: function( thisElement ) {
+		open: function( jQElement ) {
 			var data = this.data,
 				sets = this.sets,
 				$lb = this.$lightbox,
-				_jqElement = thisElement.element,//TODO
-				_currentSet = this.getSetName( thisElement ),
-				_currentUrl = $( _jqElement ).attr( "href" );
+				_anchor = jQElement.element,
+				_currentSet = this.getSetName( jQElement ),
+				_currentUrl = $( _anchor ).attr( "href" );
 
 			// remember which set content belongs to
 			data.currentSet = _currentSet;
@@ -1086,7 +1086,7 @@ $.extend($.ui.rlightbox, {
 			// determine and remember how many elements belong to a set
 			// determine the current (and clicked) element in a set
 			data.totalElementsNumber = sets[_currentSet].length;
-			data.currentElementNumber = this.getCurrentElementNumber( _jqElement );
+			data.currentElementNumber = this.getCurrentElementNumber( _anchor );
 
 			// keep a reference to a current element in a set (consisting of a url, type…)
 			data.currentSetElement = sets[_currentSet][data.currentElementNumber - 1];
