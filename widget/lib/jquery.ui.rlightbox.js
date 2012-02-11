@@ -235,9 +235,8 @@ $.extend($.ui.rlightbox, {
 				.removeData( "rlightbox" );
 		},
 
-		extractAnchor: function( thisElement ) {
-
-			// _extractAnchor elicits information from anchor element (DOM A element)
+		extractAnchor: function( anchor ) {
+			// _extractAnchor elicits information from an anchor element (DOM A element)
 			// @url are used for loading content such as images, youtube videos, etc
 			// @type is needed to choose suitable loading method in _queueLoadContent
 			// @title is used to dispay title of an image or flash content (.flv) –
@@ -245,7 +244,7 @@ $.extend($.ui.rlightbox, {
 			// $element keeps jQuery object of an anchor and it’s used for example
 			// in _getCurrentElementNumber to get the index in array in a set of clicked content
 			var _result = {type: undefined},
-				$anchor = $( thisElement.element ),
+				$anchor = $( anchor.element ),
 				_url = $anchor.attr( "href" ),
 				_service = {
 					youtube: {
@@ -267,15 +266,16 @@ $.extend($.ui.rlightbox, {
 				};
 
 			$.each(_service,
-				function(name, content) {
+				function( name, content ) {
+					// outer loop: _service.youtube, _service.image, etc.
 					var _found = false;
 
-					// outer loop: _content.youtube, _content.image, etc.
+					
 					$.each(content.urls,
 						function( index, regExp ) {
+							// inner loop: urls array
 							var _res = regExp.exec( _url );
 
-							// inner loop: urls array
 							if ( _res !== null ) {
 
 								// for Youtube, Vimeo we return a normalised url
@@ -303,7 +303,6 @@ $.extend($.ui.rlightbox, {
 						});
 
 					if ( _found ) {
-
 						// no need to loop
 						return false;
 					}
