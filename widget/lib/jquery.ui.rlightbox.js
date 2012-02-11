@@ -1961,12 +1961,10 @@ $.extend($.ui.rlightbox, {
 				}
 
 			} else if ( (_currentElement.type === "youtube" || _currentElement.type === "vimeo") && _isError === false ){
-
 				// do not let lightbox size be smaller than the minimal one
 				_lightboxTargetWidth = this.checkMinimalSize( "width", _currentElement.width );
 				_lightboxTargetHeight = this.checkMinimalSize( "height", _currentElement.height );
 			} else if ( _currentElement.type === "flash" && _isError === false ) {
-
 				// do not let lightbox size be smaller than the minimal one or larger than the window
 				_lightboxTargetWidth = this.getOptimalSize( "width", _currentElement.width );
 				_lightboxTargetHeight = this.getOptimalSize( "height", _currentElement.height );				
@@ -1975,7 +1973,6 @@ $.extend($.ui.rlightbox, {
 				_lightboxTargetWidth = _errorScreenWidth;
 				_lightboxTargetHeight = _errorScreenHeight;
 			}
-
 
 			// scale and resize the lightbox
 			$lb.root
