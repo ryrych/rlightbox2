@@ -1092,10 +1092,7 @@ $.extend($.ui.rlightbox, {
 
 			// set animation queues
 			this.setOpenQueue();
-			this.setNextQueue();
-			
-			// to fade or not to fade…
-			this.checkButtonsState();		
+			this.setNextQueue();	
 
 			// start opening the lighbox
 			$lb.queueContainer.open.dequeue( "lightboxOpen" );
