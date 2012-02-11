@@ -409,7 +409,6 @@ $.extend($.ui.rlightbox, {
 				// highlight buttons when mouse hovers over them
 				$lb.next
 					.add( $lb.prev )
-					.add( $lb.next )
 					//.add( $lb.play )
 					.add( $lb.close )
 					.hover(
