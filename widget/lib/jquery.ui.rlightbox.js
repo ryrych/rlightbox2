@@ -137,31 +137,6 @@ $.extend($.ui.rlightbox, {
 			}
 		},		
 
-		checkMinimalSize: function( size, number ) {
-
-			// checks if the ‘number’ of a given ‘size’ (width, height) is smaller
-			// then the minimal lightbox size. If so, it returns the minimal size
-			// otherwise it returns the ‘number’
-			var data = this.data,
-				_minimalLightboxSize = data.minimalLightboxSize,
-				_minimalLightboxWidth = _minimalLightboxSize.width,
-				_minimalLightboxHeight = _minimalLightboxSize.height;
-
-			if ( size === "width" ) {
-				if ( number < _minimalLightboxWidth ) {
-					return _minimalLightboxWidth;
-				} else {
-					return number;
-				}
-			} else if ( size === "height" ) {
-				if ( number < _minimalLightboxHeight ) {
-					return _minimalLightboxHeight;
-				} else {
-					return number;
-				}
-			}			
-		},
-
 		closeLightbox: function() {
 			var data = this.data,
 				$lb = this.$lightbox;
@@ -465,11 +440,9 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 
-		getOptimalSize: function( size, number ) {
-
+		getOptimalSize: function( sizeName, size ) {
 			// returns size not smaller than the minimal size and not bigger than
 			// the window size
-
 			var data = this.data,
 				_minimalLightboxSize = data.minimalLightboxSize,
 				_minimalLightboxWidth = _minimalLightboxSize.width,
@@ -478,21 +451,21 @@ $.extend($.ui.rlightbox, {
 				_screenWidth = _screenSize.width,
 				_screenHeight = _screenSize.height;
 
-			if ( size === "width" ) {
-				if ( number < _minimalLightboxWidth ) {
+			if ( sizeName === "width" ) {
+				if ( size < _minimalLightboxWidth ) {
 					return _minimalLightboxWidth;
-				} else if ( number > _screenWidth ) {
+				} else if ( size > _screenWidth ) {
 					return _screenWidth;
 				} else {
-					return number;
+					return size;
 				}
-			} else if ( size === "height" ) {
-				if ( number < _minimalLightboxHeight ) {
+			} else {
+				if ( size < _minimalLightboxHeight ) {
 					return _minimalLightboxHeight;
-				} else if ( number > _screenHeight ) {
+				} else if ( size > _screenHeight ) {
 					return _screenHeight;
 				} else {
-					return number;
+					return size;
 				}
 			}
 		},
@@ -943,8 +916,8 @@ $.extend($.ui.rlightbox, {
 						_currentElement.title = data.title;
 					}
 
-					_lightboxTargetWidth = self.checkMinimalSize( "width", data.width );
-					_lightboxTargetHeight = self.checkMinimalSize( "height", data.height );
+					_lightboxTargetWidth = self.getOptimalSize( "width", data.width );
+					_lightboxTargetHeight = self.getOptimalSize( "height", data.height );
 					
 					// continue the animation queue
 					_dfd.resolve(
@@ -1044,8 +1017,8 @@ $.extend($.ui.rlightbox, {
 						_currentElement.title = json.data.title;
 					}
 					
-					_lightboxTargetWidth = self.checkMinimalSize( "width", _width );
-					_lightboxTargetHeight = self.checkMinimalSize( "height", _height );						
+					_lightboxTargetWidth = self.getOptimalSize( "width", _width );
+					_lightboxTargetHeight = self.getOptimalSize( "height", _height );						
 				
 					// continue the animation queue
 					_dfd.resolve(
