@@ -723,18 +723,16 @@ $.extend($.ui.rlightbox, {
 
 		liveResize: function() {
 			var data = this.data,
-				self = this,
-				$lb = this.$lightbox,
 				_elementType = data.currentSetElement.type;
 
 			// resizes an image when size of the browser window resizes and when Panorama is turned off
 			if ( data.ready && data.panoramaOn === false && _elementType === "image" ) {
-				this.queueResizeLightbox();
+				this.updateImageSize();
+				this.updateLightboxSize();
 				this.updateTitleWidth();
 				this.queueCenterContent();
 				this.panoramaCheckAvailability();
 			} else if ( data.ready && data.panoramaOn && _elementType === "image" ) {
-
 				// otherwise keep the lightbox centered especially when window is bigger than the lightbox
 				this.queueCenterLightbox();
 				this.panoramaShrink();
@@ -745,7 +743,7 @@ $.extend($.ui.rlightbox, {
 		},
 
 		loadContentFlash: function( url ) {
-			var _width, _height, $contentWrapper,
+			var _width, _height, $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight,
 				data = this.data,
 				$lb = this.$lightbox,
 				self = this,
@@ -764,6 +762,9 @@ $.extend($.ui.rlightbox, {
 				// if any exist; ‘inline’ width and height overwrite that of options
 				_width = self.getParam( "width", url );
 				_height = self.getParam( "height", url );
+				
+				_lightboxTargetWidth = self.getOptimalSize( "width", _width );
+				_lightboxTargetHeight = self.getOptimalSize( "height", _height );				
 
 				// if &width and &height are invalid, use a default one
 				if ( _width === null || isNaN(_width) ) {
@@ -772,10 +773,7 @@ $.extend($.ui.rlightbox, {
 
 				if ( _height === null || isNaN(_height) ) {
 					_height = _options.videoHeight;
-				}
-
-				_currentElement.width = _width;
-				_currentElement.height = _height;				
+				}			
 
 				// use real data
 				_structure = self.replaceHtmlPatterns(_structure,
@@ -805,7 +803,12 @@ $.extend($.ui.rlightbox, {
 					.children()
 						.wrap( $contentWrapper );
 				
-				_dfd.resolve();
+				_dfd.resolve(
+					{
+						width: _lightboxTargetWidth,
+						height: _lightboxTargetHeight
+					}
+				);	
 			}
 
 			// delay ‘_load’ because we have to return promise
@@ -815,7 +818,8 @@ $.extend($.ui.rlightbox, {
 		},
 
 		loadContentImage: function( url ) {
-			var $lb = this.$lightbox,
+			var _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
+				$lb = this.$lightbox,
 				data = this.data,
 				self = this,
 				_currentElement = data.currentSetElement,
@@ -834,7 +838,22 @@ $.extend($.ui.rlightbox, {
 						// keep original size of an image – needed when resizing
 						_currentElement.width = this.width;
 						_currentElement.height = this.height;
-
+						
+						_sizes = self.getSizes();
+						_imageTargetWidth = _sizes.imageTargetWidth;
+						_imageTargetHeight = _sizes.imageTargetHeight;
+						_lightboxTargetWidth = _sizes.lightboxTargetWidth;
+						_lightboxTargetHeight = _sizes.lightboxTargetHeight;
+		
+						// if scaled size is smaller than the original, show Panorama
+						_currentElement.currentWidth = _imageTargetWidth;
+						_currentElement.currentHeight = _imageTargetHeight;
+		
+						// scale the image
+						$( this )
+							.width( _imageTargetWidth )
+							.height( _imageTargetHeight );						
+						
 						// add the loaded image and hide it
 						$lb.content
 							.removeClass( "ui-lightbox-loader" )			
@@ -844,7 +863,12 @@ $.extend($.ui.rlightbox, {
 								.hide();
 
 						// continue the animation queue
-						_dfd.resolve();					
+						_dfd.resolve(
+							{
+								width: _lightboxTargetWidth,
+								height: _lightboxTargetHeight
+							}
+						);					
 					}
 				)
 				.error(
@@ -874,7 +898,7 @@ $.extend($.ui.rlightbox, {
 		},
 
 		loadContentVimeo: function( url ) {
-			var _width, _height,
+			var _width, _height, _lightboxTargetWidth, _lightboxTargetHeight,
 				data = this.data,
 				$lb = this.$lightbox,			
 				self = this,
@@ -919,12 +943,16 @@ $.extend($.ui.rlightbox, {
 						_currentElement.title = data.title;
 					}
 
-					// and returned width and height
-					_currentElement.width = data.width;
-					_currentElement.height = data.height;
-
+					_lightboxTargetWidth = self.checkMinimalSize( "width", data.width );
+					_lightboxTargetHeight = self.checkMinimalSize( "height", data.height );
+					
 					// continue the animation queue
-					_dfd.resolve();
+					_dfd.resolve(
+						{
+							width: _lightboxTargetWidth,
+							height: _lightboxTargetHeight
+						}
+					);
 				}
 			)
 			.error(function() {
@@ -939,7 +967,7 @@ $.extend($.ui.rlightbox, {
 		},
 		
 		loadContentYoutube: function( url ) {
-			var $contentWrapper,
+			var $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight,
 				data = this.data,
 				$lb = this.$lightbox,
 				$content = $lb.content,
@@ -1011,16 +1039,21 @@ $.extend($.ui.rlightbox, {
 						.children()
 							.wrap( $contentWrapper );
 							
-						// remember video title
-						if ( _options.overwriteTitle === false ) {
-							_currentElement.title = json.data.title;
-						}
-	
-						// and returned width and height
-						_currentElement.width = _width;
-						_currentElement.height = _height;							
+					// remember video title
+					if ( _options.overwriteTitle === false ) {
+						_currentElement.title = json.data.title;
+					}
 					
-					_dfd.resolve();					
+					_lightboxTargetWidth = self.checkMinimalSize( "width", _width );
+					_lightboxTargetHeight = self.checkMinimalSize( "height", _height );						
+				
+					// continue the animation queue
+					_dfd.resolve(
+						{
+							width: _lightboxTargetWidth,
+							height: _lightboxTargetHeight
+						}
+					);				
 				}
 			)
 			.error(function() {
@@ -1385,7 +1418,8 @@ $.extend($.ui.rlightbox, {
 			}
 
 			// resize an image to its previous size and center it
-			this.queueResizeLightbox();
+			this.updateImageSize();
+			this.updateLightboxSize();
 			this.queueCenterContent();
 			
 			// fixes issue with Panorama in Firefox 3.0, 3.5, 3.6
@@ -1811,6 +1845,27 @@ $.extend($.ui.rlightbox, {
 
 			$lb.counter.text( _newCounter );
 		},
+		
+		updateImageSize: function() {
+			var $lb = this.$lightbox,
+				$img = $lb.content.find( "img" ),
+				_sizes = this.getSizes();
+				
+			$img
+				.width( _sizes.imageTargetWidth )
+				.height( _sizes.imageTargetHeight )
+		},
+		
+		updateLightboxSize: function() {
+			var _sizes = this.getSizes();
+			
+			this.queueResizeLightbox(
+				{
+					width: _sizes.lightboxTargetWidth,
+					height: _sizes.lightboxTargetHeight
+				}
+			);
+		},
 
 		updateTitle: function() {
 			var data = this.data,
@@ -1918,79 +1973,43 @@ $.extend($.ui.rlightbox, {
 					_loadContentMethod = "loadContentFlash";
 			}
 
-			$.when( this[_loadContentMethod](_currentSetElement.url) ).then(function() {
-				next();
+			$.when( this[_loadContentMethod](_currentSetElement.url) ).then(function(d) {
+				next( d );
 			});
 		},
 
-		queueResizeLightbox: function( next, data ) {
+		queueResizeLightbox: function( next, targetSize ) {
 			// resizes the lightbox to house content and centers it on the screen
-			var _speed, _animate, _sizes, _imageTargetWidth, _imageTargetHeight,
-				_lightboxTargetWidth, _lightboxTargetHeight, _img,
+			var _speed, _targetWidth, _targetHeight,
 				data = this.data,
 				$lb = this.$lightbox,
+				$root = $lb.root,
+				_screenWidth = this.getWindowSize( "width" ),
+				_screenHeight = this.getWindowSize( "height" ),
 				_padding = data.lightboxPadding,
 				_headerHeight = data.headerHeight,
 				_currentElement = data.currentSetElement,
-				_options = _currentElement.self.options,
-				_isError = data.showErrorMessage,
-				_errorScreenSize = data.errorScreenSize,
-				_errorScreenWidth = _errorScreenSize.width,
-				_errorScreenHeight = _errorScreenSize.height,
-				_minimalLightboxSize = data.minimalLightboxSize,
-				_minimalLightboxWidth = _minimalLightboxSize.width,
-				_minimalLightboxHeight = _minimalLightboxSize.height;
-
-			// when it is used in context of a queue
-			_speed = _options.animationSpeed;
-
-			// if content is type of image, resize it to fit the screen
-			if ( _currentElement.type === "image" && _isError === false ) {
-				_sizes = this.getSizes();
-				_imageTargetWidth = _sizes.imageTargetWidth;
-				_imageTargetHeight = _sizes.imageTargetHeight;
-				_lightboxTargetWidth = _sizes.lightboxTargetWidth;
-				_lightboxTargetHeight = _sizes.lightboxTargetHeight;
-				_img = $lb.content.find( "img" );
-
-				// if scaled size is smaller than the original, show Panorama
-				_currentElement.currentWidth = _imageTargetWidth;
-				_currentElement.currentHeight = _imageTargetHeight;
-
-				// scale the image
-				_img
-					.width( _imageTargetWidth )
-					.height( _imageTargetHeight );
-
-				// if you use this method in the context of a queue then use animation; otherwise when used in live resize, don’t animate it
-				if ( $.isFunction(next) ) {
-					_speed = _options.animationSpeed;
-				} else {
-					_speed = 0;
-				}
-
-			} else if ( (_currentElement.type === "youtube" || _currentElement.type === "vimeo") && _isError === false ){
-				// do not let lightbox size be smaller than the minimal one
-				_lightboxTargetWidth = this.checkMinimalSize( "width", _currentElement.width );
-				_lightboxTargetHeight = this.checkMinimalSize( "height", _currentElement.height );
-			} else if ( _currentElement.type === "flash" && _isError === false ) {
-				// do not let lightbox size be smaller than the minimal one or larger than the window
-				_lightboxTargetWidth = this.getOptimalSize( "width", _currentElement.width );
-				_lightboxTargetHeight = this.getOptimalSize( "height", _currentElement.height );				
-			} else if ( _isError ) {
+				_options = _currentElement.self.options;
+			
+			if ( !$.isFunction(next) ) {
+				// used in the context of live resize
+				_targetWidth = next.width;
+				_targetHeight = next.height;
 				_speed = 0;
-				_lightboxTargetWidth = _errorScreenWidth;
-				_lightboxTargetHeight = _errorScreenHeight;
+			} else {
+				// in the context of the queue
+				_targetWidth = targetSize.width;
+				_targetHeight = targetSize.height;
+				_speed = _options.animationSpeed;
 			}
 
-			// scale and resize the lightbox
-			$lb.root
+			$root
 				.find( "#ui-lightbox-content" )
-					.animate( {width: _lightboxTargetWidth}, _speed )
-					.animate( {height: _lightboxTargetHeight}, _speed )
+					.animate( {width: _targetWidth}, _speed )
+					.animate( {height: _targetHeight}, _speed )
 					.end()
-				.animate( {left: (this.getWindowSize("width") - _lightboxTargetWidth - _padding) / 2}, _speed )
-				.animate( {top: (this.getWindowSize("height") - _lightboxTargetHeight - _padding - _headerHeight) / 2}, _speed, next);
+				.animate( {left: (_screenWidth - _targetWidth - _padding) / 2}, _speed )
+				.animate( {top: (_screenHeight - _targetHeight - _padding - _headerHeight) / 2}, _speed, next);				
 		},
 
 		queueCenterContent: function( next ) {
