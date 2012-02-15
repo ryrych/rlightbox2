@@ -111,21 +111,22 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				$lb = this.$lightbox,
 				_currentSet = data.currentSet,
-				_totalElements = data.totalElementsNumber,
-				_currentElement = data.currentElementNumber,
-				_isLoop = data.currentSetElement.self.options.loop;
+				_currentSetName = _currentSet.name,
+				_totalElements = _currentSet.totalElements,
+				_currentIndex = _currentSet.currentIndex,
+				_isLoop = _currentSet.currentElement.self.options.loop;
 				
 			// if lightbox is opened and there is only one element
 			// single element or one element in named set
-			if ( _currentSet === "single" || _totalElements === 1 ) {
+			if ( _currentSetName === "single" || _totalElements === 1 ) {
 				this.setButtonState( "disabled" );
-			} else if ( _currentElement === 1 && _isLoop === false ) {
+			} else if ( _currentIndex === 1 && _isLoop === false ) {
 				// in case of 1st element when loop is disabled
 				this.setButtonState( "disabled", $lb.prev );
 				
 				// when there are only two elements in a set
 				this.setButtonState( "default", $lb.next );
-			} else if ( _currentElement === _totalElements && _isLoop === false ) {
+			} else if ( _currentIndex === _totalElements && _isLoop === false ) {
 				// in case of last element
 				this.setButtonState( "disabled", $lb.next );
 				
@@ -139,7 +140,8 @@ $.extend($.ui.rlightbox, {
 
 		closeLightbox: function() {
 			var data = this.data,
-				$lb = this.$lightbox;
+				$lb = this.$lightbox,
+				_currentSet = data.currentSet;
 
 			if ( data.ready ) {
 				$lb.overlay
@@ -165,8 +167,8 @@ $.extend($.ui.rlightbox, {
 				this.panoramaHideIcon();
 
 				// reset the counter
-				data.currentElementNumber = null;
-				data.totalElementsNumber = null;
+				_currentSet.currentIndex = null;
+				_currentSet.totalElements = null;
 
 				// remove old title
 				$lb.title.empty();		
@@ -194,7 +196,7 @@ $.extend($.ui.rlightbox, {
 			// unwrap $currentElement from jQuery wrapped object and
 			// prevents it from being acted upon, unbinding event handlers
 			var data = this.data,
-				$currentElement = data.currentSetElement.element;
+				$currentElement = data.currentSet.currentElement.element;
 
 			// code taken from jqury.ui.widget.js – it is the default behaviour
 			// from the widget factory but we can’t call it because it acts upon
@@ -307,7 +309,7 @@ $.extend($.ui.rlightbox, {
 			var _currentNumber,
 				data = this.data,
 				sets = this.sets,
-				_currentSet = sets[data.currentSet];
+				_currentSet = sets[data.currentSet.name];
 
 			// returns a 1 based ordinal number of an image in a set
 			$.each(_currentSet, function(i, v) {
@@ -331,7 +333,7 @@ $.extend($.ui.rlightbox, {
 			// 2 - content is larger than the window
 			var _statusWidth, _statusHeight,
 				data = this.data,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_windowWidth = this.getWindowSize( "width" ),
 				_windowHeight = this.getWindowSize( "height" ),
 				_minimalLightboxWidth = data.minimalLightboxSize.width,
@@ -499,12 +501,9 @@ $.extend($.ui.rlightbox, {
 		
 		checkSide: function( event ) {
 			var data = this.data,
-				$lb = this.$lightbox,
-				$container = $lb.contentContainer,
+				$container = this.$lightbox.contentContainer,
 				_pos = event.pageX - $container.offset().left,
-				_center = Math.round( $container.width() / 2 ),
-				_currentElementNumber = data.currentElementNumber,
-				_totalElementsNumber = data.totalElementsNumber;
+				_center = Math.round( $container.width() / 2 );
 
 			if ( _pos <= _center ) {
 				data.side = "left";
@@ -522,7 +521,7 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				data = this.data,
 				self = this,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_windowWidth = this.getWindowSize( "width" ),
 				_windowHeight = this.getWindowSize( "height" ),
 				_minimalLightboxWidth = data.minimalLightboxSize.width,
@@ -656,7 +655,7 @@ $.extend($.ui.rlightbox, {
 
 		handleKeyboard: function( event ) {
 			var data = this.data,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_options = _currentElement.self.options,
 				_keys = _options.keys,
 				_key = event.which;
@@ -696,7 +695,7 @@ $.extend($.ui.rlightbox, {
 
 		liveResize: function() {
 			var data = this.data,
-				_elementType = data.currentSetElement.type;
+				_elementType = data.currentSet.currentElement.type;
 
 			// resizes an image when size of the browser window resizes and when Panorama is turned off
 			if ( data.ready && data.panoramaOn === false && _elementType === "image" ) {
@@ -723,7 +722,7 @@ $.extend($.ui.rlightbox, {
 				$content = $lb.content,
 				_dfd = $.Deferred(),
 				_structure = data.htmlFlash,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_options = _currentElement.self.options;
 
 			// show the spinner
@@ -795,7 +794,7 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				data = this.data,
 				self = this,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_dfd = $.Deferred(),
 				$newImage = $( "<img />" );
 				
@@ -877,7 +876,7 @@ $.extend($.ui.rlightbox, {
 				self = this,
 				_dfd = $.Deferred(),
 				_apiEnd = data.providers.vimeo,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_options = _currentElement.self.options,
 				_minimalLightboxSize = data.minimalLightboxSize;
 
@@ -947,7 +946,7 @@ $.extend($.ui.rlightbox, {
 				self = this,
 				_dfd = $.Deferred(),
 				_apiEnd = data.providers.youtube,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_options = _currentElement.self.options,
 				_minimalLightboxSize = data.minimalLightboxSize,
 				_width = _options.videoWidth,
@@ -1042,11 +1041,12 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				sets = this.sets,
 				$lb = this.$lightbox,
-				_currentSet = data.currentSet;
+				_currentSet = data.currentSet,
+				_currentSetName = _currentSet.name
 
 			// which element go to
-			data.currentElementNumber = number;
-			data.currentSetElement = sets[_currentSet][number - 1];
+			_currentSet.currentIndex = number;
+			_currentSet.currentElement = sets[_currentSetName][number - 1];
 
 			// reload animation queue and trigger it
 			this.setNextQueue();
@@ -1059,25 +1059,26 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				_isReady = data.ready,
 				_isPanoramaOn = data.panoramaOn,
-				_set = data.currentSet,
-				_currentElementNumber = data.currentElementNumber,
-				_totalElementsNumber = data.totalElementsNumber,
-				_options = data.currentSetElement.self.options,
+				_currentSet = data.currentSet,
+				_currentSetName = _currentSet.name,
+				_currentIndex = _currentSet.currentIndex,
+				_totalElements = _currentSet.totalElements,
+				_options = _currentSet.currentElement.self.options,
 				_isLoop = _options.loop,
 				_play = true;
 				
-			if ( _isReady && _set !== "single" && _isPanoramaOn === false ) {
-				if ( _currentElementNumber + 1 <= _totalElementsNumber ) {
-					data.currentElementNumber = _currentElementNumber = _currentElementNumber + 1;			
-				} else if ( _currentElementNumber + 1 > _totalElementsNumber && _isLoop ) {
-					data.currentElementNumber = _currentElementNumber = 1;
+			if ( _isReady && _currentSetName !== "single" && _isPanoramaOn === false ) {
+				if ( _currentIndex + 1 <= _totalElements ) {
+					_currentSet.currentIndex = _currentIndex = _currentIndex + 1;			
+				} else if ( _currentIndex + 1 > _totalElements && _isLoop ) {
+					_currentSet.totalElements = _currentIndex = 1;
 				} else {
 					// to prevent form loading last element again when loop is disabled
 					_play = false;
 				}
 				
 				if ( _play) {
-					data.currentSetElement = sets[_set][_currentElementNumber - 1];
+					_currentSet.currentElement = sets[_currentSetName][_currentIndex - 1];
 	
 					// next element - trigger the queue ‘next’ - first update it
 					this.setNextQueue();
@@ -1091,19 +1092,20 @@ $.extend($.ui.rlightbox, {
 				sets = this.sets,
 				$lb = this.$lightbox,
 				_anchor = jQElement.element,
-				_currentSet = this.getSetName( jQElement ),
+				_currentSet = data.currentSet,
+				_currentSetName = this.getSetName( jQElement ),
 				_currentUrl = $( _anchor ).attr( "href" );
 
 			// remember which set content belongs to
-			data.currentSet = _currentSet;
+			_currentSet.name = _currentSetName;
 
 			// determine and remember how many elements belong to a set
 			// determine the current (and clicked) element in a set
-			data.totalElementsNumber = sets[_currentSet].length;
-			data.currentElementNumber = this.getCurrentElementNumber( _anchor );
+			_currentSet.totalElements = sets[_currentSetName].length;
+			_currentSet.currentIndex = this.getCurrentElementNumber( _anchor );
 
 			// keep a reference to a current element in a set (consisting of a url, type…)
-			data.currentSetElement = sets[_currentSet][data.currentElementNumber - 1];
+			_currentSet.currentElement = sets[_currentSetName][_currentSet.currentIndex - 1];
 
 			// set animation queues
 			this.setOpenQueue();
@@ -1117,7 +1119,7 @@ $.extend($.ui.rlightbox, {
 			var _left, _top,
 				data = this.data,
 				$lb = this.$lightbox,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_screenSize = this.getAvailableScreenSize(),
 				_screenWidth = _screenSize.width,
 				_screenHeight = _screenSize.height,
@@ -1157,7 +1159,7 @@ $.extend($.ui.rlightbox, {
 			// Panorama™ is enabled only when the image can’t be displayed in its
 			// orignal size.
 			var data = this.data,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_originalImageWidth = _currentElement.width,
 				_originalImageHeight = _currentElement.height,
 				_currentImageWidth = _currentElement.currentWidth,
@@ -1179,7 +1181,7 @@ $.extend($.ui.rlightbox, {
 			// _panoramaExpand does the main goal of the Panorama™: it displays the natural image size
 			var data = this.data,
 				$lb = this.$lightbox,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_options = _currentElement.self.options;
 
 			// let know that we can scroll now
@@ -1271,7 +1273,7 @@ $.extend($.ui.rlightbox, {
 			var _contentWidth, _contentHeight,
 				data = this.data,
 				$lb = this.$lightbox,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_minLightboxSize = data.minimalLightboxSize,
 				_minLightboxWidth = _minLightboxSize.width,
 				_minLightboxHeight = _minLightboxSize.height,
@@ -1335,7 +1337,7 @@ $.extend($.ui.rlightbox, {
 				$image = $content.find( "img" ),
 				_imageWidth = $image.width(),
 				_imageHeight = $image.height(),
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_mapSize = data.mapSize;
 
 			// show the map and give the viewport relevant size
@@ -1475,25 +1477,26 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				_isReady = data.ready,
 				_isPanoramaOn = data.panoramaOn,
-				_set = data.currentSet,
-				_currentElementNumber = data.currentElementNumber,
-				_totalElementsNumber = data.totalElementsNumber,
-				_options = data.currentSetElement.self.options,
+				_currentSet = data.currentSet,
+				_currentSetName = data.currentSet.name,
+				_currentIndex = _currentSet.currentIndex,
+				_totalElements = _currentSet.totalElements,
+				_options = _currentSet.currentElement.self.options,
 				_isLoop = _options.loop,
 				_play = true;
 				
-			if ( _isReady && _set !== "single" && _isPanoramaOn === false ) {
-				if ( _currentElementNumber - 1 >= 1 ) {
-					data.currentElementNumber = _currentElementNumber = _currentElementNumber - 1;			
-				} else if ( _currentElementNumber - 1 < 1 && _isLoop ) {
-					data.currentElementNumber = _currentElementNumber = _totalElementsNumber;
+			if ( _isReady && _currentSetName !== "single" && _isPanoramaOn === false ) {
+				if ( _currentIndex - 1 >= 1 ) {
+					_currentSet.currentIndex = _currentIndex = _currentIndex - 1;			
+				} else if ( _currentIndex - 1 < 1 && _isLoop ) {
+					_currentSet.currentIndex = _currentIndex = _totalElements;
 				} else {
 					// to prevent from loading first element again when loop is disabled
 					_play = false;
 				}
 
 				if ( _play ) {
-					data.currentSetElement = sets[_set][_currentElementNumber - 1];
+					_currentSet.currentElement = sets[_currentSetName][_currentIndex - 1];
 	
 					// next element - trigger the queue ‘next’ - first update it
 					this.setNextQueue();
@@ -1511,13 +1514,14 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				sets = this.sets,
 				_currentSet = data.currentSet,
-				_total = data.totalElementsNumber;
+				_currentSetName = _currentSet.name,
+				_totalElements = _currentSet.totalElements;
 
 			// remove given element from a set
-			sets[_currentSet].splice( number - 1, 1 );
+			sets[_currentSetName].splice( number - 1, 1 );
 
 			// if there is only one element left, close the lightbox, otherwise load next element
-			if( _total === 1 || _currentSet === "single" ) {
+			if( _totalElements === 1 || _currentSetName === "single" ) {
 				this.closeLightbox();
 
 				// remove the instance from encapsulated DOM element (jquery one)
@@ -1526,10 +1530,10 @@ $.extend($.ui.rlightbox, {
 				this.destroy();
 
 				// update total element numbers
-				data.totalElementsNumber = sets[_currentSet].length;
+				_currentSet.totalElements = sets[_currentSetName].length;
 
 				// go to a new element
-				if ( number === _total ) {
+				if ( number === _totalElements ) {
 					this.navigationGoToElement( number - 1 );
 				} else {
 					this.navigationGoToElement( number );
@@ -1573,18 +1577,19 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				$contentContainer = $lb.contentContainer,
 				_currentSet = data.currentSet,
-				_currentSetElement = data.currentSetElement,
-				_setElementType = data.currentSetElement.type,
-				_totalElements = data.totalElementsNumber,
-				_currentElement = data.currentElementNumber,
+				_currentSetName = _currentSet.name,
+				_currentElement = _currentSet.currentElement,
+				_setElementType = _currentElement.type,
+				_currentIndex = _currentSet.currentIndex,				
+				_totalElements = _currentSet.totalElements,
 				_side = data.side,
 				_panoramaEnabled = data.panoramaOn,
 				_isError = data.showErrorMessage,
-				_options = _currentSetElement.self.options,
+				_options = _currentElement.self.options,
 				_isLoop = _options.loop;
 			
 			if ( data.ready ) {
-				if ( (_currentSet === "single" || _totalElements === 1 || _currentElement === 1 && _side === "left" || _currentElement === _totalElements && _side === "right") && _panoramaEnabled === false && (_setElementType === "image" || (_setElementType !== "image" && _isError)) ) {
+				if ( (_currentSetName === "single" || _totalElements === 1 || _currentIndex === 1 && _side === "left" || _currentIndex === _totalElements && _side === "right") && _panoramaEnabled === false && (_setElementType === "image" || (_setElementType !== "image" && _isError)) ) {
 
 					// single element or single element in a named set or first element in a set or last element in a set
 					// WHEN panorama is DISABLED, and when element type is ‘image’ or the Error Screen is shown
@@ -1692,14 +1697,17 @@ $.extend($.ui.rlightbox, {
 				$arrow = $lb.arrow,
 				_isError = data.showErrorMessage,
 				_side = data.side,
-				_currentElement = data.currentElementNumber,
-				_totalElements = data.totalElementsNumber,
-				_isLoop = data.currentSetElement.self.options.loop;
+				_currentSet = data.currentSet,
+				_currentElement = _currentSet.currentElement,
+				_currentSetName = _currentSet.name,
+				_currentIndex = _currentSet.currentIndex,
+				_totalElements = _currentSet.totalElements,
+				_isLoop = _currentElement.self.options.loop;
 			
 			// show arrow cues only in image set or in The Error Screen when it is part of a set
-			if ( data.ready && data.currentSet !== "single" && (data.currentSetElement.type === "image" || _isError) && data.panoramaOn === false ) {
+			if ( data.ready && data.currentSetName !== "single" && (_currentElement.type === "image" || _isError) && data.panoramaOn === false ) {
 
-				if ( _side === "left" && (_currentElement > 1 || _isLoop) ) {
+				if ( _side === "left" && (_currentIndex > 1 || _isLoop) ) {
 					$arrow
 						.show()
 						.removeClass("ui-lightbox-arrow-next ui-corner-left")
@@ -1707,7 +1715,7 @@ $.extend($.ui.rlightbox, {
 						.find("span")
 							.removeClass("ui-icon-carat-1-e")
 							.addClass("ui-icon-carat-1-w");
-				} else if ( _side === "right" && (_currentElement < _totalElements || _isLoop) ) {
+				} else if ( _side === "right" && (_currentIndex < _totalElements || _isLoop) ) {
 					$arrow
 						.show()
 						.removeClass("ui-lightbox-arrow-prev ui-corner-right")
@@ -1736,9 +1744,10 @@ $.extend($.ui.rlightbox, {
 				data = this.data,
 				$lb = this.$lightbox,
 				self = this,
-				_currentElement = data.currentSetElement,
+				_currentSet = data.currentSet,
+				_currentElement = _currentSet.currentElement,
 				_options = _currentElement.self.options,
-				_currentElementNumber = data.currentElementNumber,
+				_currentIndex = _currentSet.currentIndex,
 				_errorMessage = _options.errorMessage,
 				_againLabel = _options.againButtonLabel,
 				_rejectLabel = _options.rejectButtonLabel,
@@ -1763,7 +1772,7 @@ $.extend($.ui.rlightbox, {
 			// ‘again’ button give a user a chance to try loading content again
 			$again
 				.click(function() {
-					self.navigationGoToElement( _currentElementNumber );
+					self.navigationGoToElement( _currentIndex );
 				})
 				.hover(
 					function() {
@@ -1774,7 +1783,7 @@ $.extend($.ui.rlightbox, {
 			// removes the broken content from list of known contents
 			$reject
 				.click(function() {
-					self.removeSetElement( _currentElementNumber );
+					self.removeSetElement( _currentIndex );
 				})
 				.hover(
 					function() {
@@ -1802,13 +1811,14 @@ $.extend($.ui.rlightbox, {
 			var _current, _total, _newCounter,
 				data = this.data,
 				$lb = this.$lightbox,
-				_currentElement = data.currentSetElement,
+				_currentSet = data.currentSet,
+				_currentElement = _currentSet.currentElement,
 				_options = _currentElement.self.options,
-				_currentSet = data.currentSet;
+				_currentSetName = _currentSet.name;
 
-				if ( _currentSet !== "single" ) {
-					_current = data.currentElementNumber;
-					_total = data.totalElementsNumber;
+				if ( _currentSetName !== "single" ) {
+					_current = _currentSet.currentIndex;
+					_total = _currentSet.totalElements;
 				} else {
 					_current = 1;
 					_total = 1;
@@ -1843,7 +1853,7 @@ $.extend($.ui.rlightbox, {
 		updateTitle: function() {
 			var data = this.data,
 				$lb = this.$lightbox,
-				_currentElement = data.currentSetElement;
+				_currentElement = data.currentSet.currentElement;
 
 			// set new label for the title and trim it if it is too long - no scrolling at the moment
 			// 20px is a safety distance between text and the close button
@@ -1868,7 +1878,7 @@ $.extend($.ui.rlightbox, {
 		queueHideContent: function( next ) {
 			var data = this.data,
 				$lb = this.$lightbox,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_options = _currentElement.self.options;
 
 			$lb.content.children()
@@ -1891,7 +1901,7 @@ $.extend($.ui.rlightbox, {
 		queueShowOverlay: function( next ) {
 			var data = this.data,
 				$lb = this.$lightbox,
-				_currentElement = data.currentSetElement.self;
+				_currentElement = data.currentSet.currentElement.self;
 
 			// let know that lightbox is not ready
 			data.ready = false;
@@ -1920,16 +1930,15 @@ $.extend($.ui.rlightbox, {
 		},
 
 		queueLoadContent: function( next ) {
-
 			// loads appropriate content using right method
 			var _loadContentMethod,
 				data = this.data,
-				_currentSetElement = data.currentSetElement;
+				_currentElement = data.currentSet.currentElement;
 
 			// assume that there will be no error
 			data.showErrorMessage = false;
 
-			switch ( _currentSetElement.type ) {
+			switch ( _currentElement.type ) {
 				case "image":
 					_loadContentMethod = "loadContentImage";
 					break;
@@ -1946,7 +1955,7 @@ $.extend($.ui.rlightbox, {
 					_loadContentMethod = "loadContentFlash";
 			}
 
-			$.when( this[_loadContentMethod](_currentSetElement.url) ).then(function(d) {
+			$.when( this[_loadContentMethod](_currentElement.url) ).then(function(d) {
 				next( d );
 			});
 		},
@@ -1961,7 +1970,7 @@ $.extend($.ui.rlightbox, {
 				_screenHeight = this.getWindowSize( "height" ),
 				_padding = data.lightboxPadding,
 				_headerHeight = data.headerHeight,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_options = _currentElement.self.options;
 			
 			if ( !$.isFunction(next) ) {
@@ -2008,7 +2017,7 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				$lb = this.$lightbox,
 				self = this,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_options = _currentElement.self.options,
 				_isError = data.showErrorMessage;			
 
@@ -2028,7 +2037,7 @@ $.extend($.ui.rlightbox, {
 		queueSlideDownHeader: function( next ) {
 			var data = this.data,
 				$lb = this.$lightbox,
-				_options = data.currentSetElement.self.options;
+				_options = data.currentSet.currentElement.self.options;
 
 			// show header
 			$lb.header.slideDown( _options.animationSpeed, next );
@@ -2057,7 +2066,7 @@ $.extend($.ui.rlightbox, {
 		queueSlideUpHeader: function( next ) {
 			var data = this.data,
 				$lb = this.$lightbox,
-				_currentElement = data.currentSetElement,
+				_currentElement = data.currentSet.currentElement,
 				_options = _currentElement.self.options;
 
 			// structure is not ready - start an animation
@@ -2092,7 +2101,7 @@ $.extend($.ui.rlightbox, {
 				youtube: "http://gdata.youtube.com/feeds/api/videos/"
 			},
 			showErrorMessage: false,
-			currentSetElement: {},
+			currentSet: {},
 			enablePanorama: false,
 			errorScreenSize: {
 				width: 500,
