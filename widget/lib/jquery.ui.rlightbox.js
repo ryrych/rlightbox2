@@ -219,7 +219,7 @@ $.extend($.ui.rlightbox, {
 			}
         },
 		
-		extractAnchor: function( anchor ) {
+		extractAnchor: function( jQElement ) {
 			// _extractAnchor elicits information from an anchor element (DOM A element)
 			// @url are used for loading content such as images, youtube videos, etc
 			// @type is needed to choose suitable loading method in _queueLoadContent
@@ -228,7 +228,7 @@ $.extend($.ui.rlightbox, {
 			// $element keeps jQuery object of an anchor and it’s used for example
 			// in _getCurrentElementNumber to get the index in array in a set of clicked content
 			var _result = {type: undefined},
-				$anchor = $( anchor.element ),
+				$anchor = jQElement.element,
 				_url = $anchor.attr( "href" ),
 				_service = {
 					youtube: {
@@ -267,7 +267,7 @@ $.extend($.ui.rlightbox, {
 										url: _url,
 										type: content.type,
 										element: $anchor,
-										self: anchor,
+										self: jQElement,
 										title: $anchor.attr( "title" )
 									};										
 								} else if ( content.type === "youtube" || content.type === "vimeo" ) {
@@ -278,10 +278,10 @@ $.extend($.ui.rlightbox, {
 										id: _res[2],
 										type: content.type,
 										element: $anchor,
-										self: anchor
+										self: jQElement
 									};
 									
-									if ( anchor.options.overwriteTitle ) {
+									if ( jQElement.options.overwriteTitle ) {
 										_result.title = $anchor.attr( "title" );
 									}
 								}
