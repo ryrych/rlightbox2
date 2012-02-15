@@ -32,7 +32,7 @@ $.widget( "ui.rlightbox", {
 	},
 
 	_create: function() {
-		var _extractedAnchor,
+		var _setElement,
 			global = $.ui.rlightbox.global,
 			self = this;
 
@@ -41,13 +41,13 @@ $.widget( "ui.rlightbox", {
 
 		// which type content belongs to: youtube, vimeo, flash, image, etc.
 		// what is its url, title (for images), etc …
-		_extractedAnchor = global.extractAnchor( this );
+		_setElement = global.extractAnchor( this );
 
 		// add type, url, jQuery element and title of content to a set if content is supported by the lightbox
 		// otherwise fall silently
-		if ( _extractedAnchor.type !== undefined ) {
+		if ( _setElement.type !== undefined ) {
 
-			global.addToSet( _extractedAnchor );
+			global.addToSet( _setElement );
 
 			// open the lightbox when clicking
 			this.element.click(function(event) {
