@@ -254,29 +254,36 @@ $.extend($.ui.rlightbox, {
 					// outer loop: _service.youtube, _service.image, etc.
 					var _found = false;
 
-					
 					$.each(content.urls,
 						function( index, regExp ) {
 							// inner loop: urls array
 							var _res = regExp.exec( _url );
 
 							if ( _res !== null ) {
-
-								// for Youtube, Vimeo we return a normalised url
-								// without additional parameters
-								_result = {
-									url: _res[1],
-									id: _res[2],
-									type: content.type,
-									element: $anchor,
-									self: anchor
-								};
-
-								// image and flash urls are not normalised; in case of flash content
-								// there may be &with and &height parameters
-								if ( content.type === "image" || content.type === "flash" || anchor.options.overwriteTitle ) {
-									_result.title = $anchor.attr( "title" );
-									_result.url = _url;
+								if ( content.type === "image" || content.type === "flash" ) {
+									// image and flash urls are not normalised; in case of flash content
+									// there may be &with and &height parameters
+									_result = {
+										url: _url,
+										type: content.type,
+										element: $anchor,
+										self: anchor,
+										title: $anchor.attr( "title" )
+									};										
+								} else if ( content.type === "youtube" || content.type === "vimeo" ) {
+									// for Youtube, Vimeo we return a normalised url
+									// without additional parameters									
+									_result = {
+										url: _res[1],
+										id: _res[2],
+										type: content.type,
+										element: $anchor,
+										self: anchor
+									};
+									
+									if ( anchor.options.overwriteTitle ) {
+										_result.title = $anchor.attr( "title" );
+									}
 								}
 
 								_found = true;
