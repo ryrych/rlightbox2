@@ -89,7 +89,7 @@ $.extend($.ui.rlightbox, {
 			//		],
 			//		setName2: […]
 			//
-			var _setName = this.getSetName( setElement.self ),
+			var _setName = this.getSetName( setElement ),
 				_sets = $.ui.rlightbox.global.sets,
 				_options = setElement.options,
 				_setPrefix = _options.setPrefix,
@@ -267,7 +267,6 @@ $.extend($.ui.rlightbox, {
 										url: _url,
 										type: content.type,
 										element: $anchor,
-										self: jQElement,
 										title: $anchor.attr( "title" ),
 										options: jQElement.options
 									};										
@@ -279,7 +278,6 @@ $.extend($.ui.rlightbox, {
 										id: _res[2],
 										type: content.type,
 										element: $anchor,
-										self: jQElement,
 										options: jQElement.options
 									};
 									
@@ -497,11 +495,11 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 
-		getSetName: function( thisElement ) {
+		getSetName: function( setElement ) {
 			// if an anchor has class of e.g. ‘lb_gallery’ getSetName() returns ‘gallery’ string as a set name
 			// otherwise it returns ‘single’ - single content is placed under ‘single’ set  
-			var _classNames = $( thisElement.element ).attr( "class" ),
-				_classPrefix = thisElement.options.setPrefix + "_",
+			var _classNames = setElement.element.attr( "class" ),
+				_classPrefix = setElement.options.setPrefix + "_",
 				_classPattern = new RegExp( _classPrefix + "([\\w-_]+)" ),
 				_name = _classPattern.exec( _classNames );
 
@@ -1910,7 +1908,7 @@ $.extend($.ui.rlightbox, {
 		queueShowOverlay: function( next ) {
 			var data = this.data,
 				$lb = this.$lightbox,
-				_currentElement = data.currentSet.currentElement.self;
+				_options = data.currentSet.currentElement.options;
 
 			// let know that lightbox is not ready
 			data.ready = false;
@@ -1919,7 +1917,7 @@ $.extend($.ui.rlightbox, {
 			this.setCursor();			
 
 			// show overlay
-			$lb.overlay.fadeIn( _currentElement.options.animationSpeed, next );
+			$lb.overlay.fadeIn( _options.animationSpeed, next );
 		},
 
 		queueCenterLightbox: function( next ) {
