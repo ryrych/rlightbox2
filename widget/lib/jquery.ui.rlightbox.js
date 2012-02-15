@@ -91,7 +91,7 @@ $.extend($.ui.rlightbox, {
 			//
 			var _setName = this.getSetName( setElement.self ),
 				_sets = $.ui.rlightbox.global.sets,
-				_options = setElement.self.options,
+				_options = setElement.options,
 				_setPrefix = _options.setPrefix,
 				_class = "." + _setPrefix + "_" + _setName,
 				_setElementIndex = $( _class ).index( setElement.element );
@@ -114,7 +114,7 @@ $.extend($.ui.rlightbox, {
 				_currentSetName = _currentSet.name,
 				_totalElements = _currentSet.totalElements,
 				_currentIndex = _currentSet.currentIndex,
-				_isLoop = _currentSet.currentElement.self.options.loop;
+				_isLoop = _currentSet.currentElement.options.loop;
 				
 			// if lightbox is opened and there is only one element
 			// single element or one element in named set
@@ -268,7 +268,8 @@ $.extend($.ui.rlightbox, {
 										type: content.type,
 										element: $anchor,
 										self: jQElement,
-										title: $anchor.attr( "title" )
+										title: $anchor.attr( "title" ),
+										options: jQElement.options
 									};										
 								} else if ( content.type === "youtube" || content.type === "vimeo" ) {
 									// for Youtube, Vimeo we return a normalised url
@@ -278,7 +279,8 @@ $.extend($.ui.rlightbox, {
 										id: _res[2],
 										type: content.type,
 										element: $anchor,
-										self: jQElement
+										self: jQElement,
+										options: jQElement.options
 									};
 									
 									if ( jQElement.options.overwriteTitle ) {
@@ -663,7 +665,7 @@ $.extend($.ui.rlightbox, {
 		handleKeyboard: function( event ) {
 			var data = this.data,
 				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.self.options,
+				_options = _currentElement.options,
 				_keys = _options.keys,
 				_key = event.which;
 
@@ -730,7 +732,7 @@ $.extend($.ui.rlightbox, {
 				_dfd = $.Deferred(),
 				_structure = data.htmlFlash,
 				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.self.options;
+				_options = _currentElement.options;
 
 			// show the spinner
 			$content.addClass( "ui-lightbox-loader" );
@@ -884,7 +886,7 @@ $.extend($.ui.rlightbox, {
 				_dfd = $.Deferred(),
 				_apiEnd = data.providers.vimeo,
 				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.self.options,
+				_options = _currentElement.options,
 				_minimalLightboxSize = data.minimalLightboxSize;
 
 			// show loader
@@ -954,7 +956,7 @@ $.extend($.ui.rlightbox, {
 				_dfd = $.Deferred(),
 				_apiEnd = data.providers.youtube,
 				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.self.options,
+				_options = _currentElement.options,
 				_minimalLightboxSize = data.minimalLightboxSize,
 				_width = _options.videoWidth,
 				_height = _options.videoHeight,
@@ -1070,7 +1072,7 @@ $.extend($.ui.rlightbox, {
 				_currentSetName = _currentSet.name,
 				_currentIndex = _currentSet.currentIndex,
 				_totalElements = _currentSet.totalElements,
-				_options = _currentSet.currentElement.self.options,
+				_options = _currentSet.currentElement.options,
 				_isLoop = _options.loop,
 				_play = true;
 				
@@ -1189,7 +1191,7 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				$lb = this.$lightbox,
 				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.self.options;
+				_options = _currentElement.options;
 
 			// let know that we can scroll now
 			data.panoramaOn = true;
@@ -1488,7 +1490,7 @@ $.extend($.ui.rlightbox, {
 				_currentSetName = data.currentSet.name,
 				_currentIndex = _currentSet.currentIndex,
 				_totalElements = _currentSet.totalElements,
-				_options = _currentSet.currentElement.self.options,
+				_options = _currentSet.currentElement.options,
 				_isLoop = _options.loop,
 				_play = true;
 				
@@ -1592,7 +1594,7 @@ $.extend($.ui.rlightbox, {
 				_side = data.side,
 				_panoramaEnabled = data.panoramaOn,
 				_isError = data.showErrorMessage,
-				_options = _currentElement.self.options,
+				_options = _currentElement.options,
 				_isLoop = _options.loop;
 			
 			if ( data.ready ) {
@@ -1709,7 +1711,7 @@ $.extend($.ui.rlightbox, {
 				_currentSetName = _currentSet.name,
 				_currentIndex = _currentSet.currentIndex,
 				_totalElements = _currentSet.totalElements,
-				_isLoop = _currentElement.self.options.loop;
+				_isLoop = _currentElement.options.loop;
 			
 			// show arrow cues only in image set or in The Error Screen when it is part of a set
 			if ( data.ready && data.currentSetName !== "single" && (_currentElement.type === "image" || _isError) && data.panoramaOn === false ) {
@@ -1753,7 +1755,7 @@ $.extend($.ui.rlightbox, {
 				self = this,
 				_currentSet = data.currentSet,
 				_currentElement = _currentSet.currentElement,
-				_options = _currentElement.self.options,
+				_options = _currentElement.options,
 				_currentIndex = _currentSet.currentIndex,
 				_errorMessage = _options.errorMessage,
 				_againLabel = _options.againButtonLabel,
@@ -1820,7 +1822,7 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				_currentSet = data.currentSet,
 				_currentElement = _currentSet.currentElement,
-				_options = _currentElement.self.options,
+				_options = _currentElement.options,
 				_currentSetName = _currentSet.name;
 
 				if ( _currentSetName !== "single" ) {
@@ -1886,7 +1888,7 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				$lb = this.$lightbox,
 				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.self.options;
+				_options = _currentElement.options;
 
 			$lb.content.children()
 				.fadeOut( _options.animationSpeed, function() {
@@ -1978,7 +1980,7 @@ $.extend($.ui.rlightbox, {
 				_padding = data.lightboxPadding,
 				_headerHeight = data.headerHeight,
 				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.self.options;
+				_options = _currentElement.options;
 			
 			if ( !$.isFunction(next) ) {
 				// used in the context of live resize
@@ -2025,7 +2027,7 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				self = this,
 				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.self.options,
+				_options = _currentElement.options,
 				_isError = data.showErrorMessage;			
 
 			// show content
@@ -2044,7 +2046,7 @@ $.extend($.ui.rlightbox, {
 		queueSlideDownHeader: function( next ) {
 			var data = this.data,
 				$lb = this.$lightbox,
-				_options = data.currentSet.currentElement.self.options;
+				_options = data.currentSet.currentElement.options;
 
 			// show header
 			$lb.header.slideDown( _options.animationSpeed, next );
@@ -2074,7 +2076,7 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				$lb = this.$lightbox,
 				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.self.options;
+				_options = _currentElement.options;
 
 			// structure is not ready - start an animation
 			data.ready = false;
