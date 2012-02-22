@@ -236,7 +236,7 @@ $.extend($.ui.rlightbox, {
 						type: "youtube"
 					},
 					image: {
-						urls: [/.jpg$|.jpeg$|.png$|.gif$/],
+						urls: [/.jpg$|.jpeg$|.png$|.gif$/i],
 						type: "image"
 					},
 					vimeo: {
@@ -244,7 +244,7 @@ $.extend($.ui.rlightbox, {
 						type: "vimeo"
 					},
 					flash: {
-						urls: [/.swf/],
+						urls: [/.swf/i],
 						type: "flash"
 					}
 				};
