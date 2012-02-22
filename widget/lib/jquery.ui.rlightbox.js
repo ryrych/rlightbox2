@@ -33,25 +33,23 @@ $.widget( "ui.rlightbox", {
 
 	_create: function() {
 		var _setElement,
-			global = $.ui.rlightbox.global,
-			self = this;
+			global = $.ui.rlightbox.global;
 
 		// init the lightbox – do in only once
 		global.getLightbox();
 
 		// which type content belongs to: youtube, vimeo, flash, image, etc.
-		// what is its url, title (for images), etc …
+		// what is its url, title (for images), etc…
 		_setElement = global.extractAnchor( this );
 
 		// add type, url, jQuery element and title of content to a set if content is supported by the lightbox
 		// otherwise fall silently
 		if ( _setElement.type !== undefined ) {
-
 			global.addToSet( _setElement );
 
 			// open the lightbox when clicking
-			this.element.click(function(event) {
-				global.open( self );
+			this.element.on( "click", {setElement: _setElement}, function(event) {
+				global.open( event.data.setElement );
 				event.preventDefault();
 			});
 		}
@@ -89,12 +87,12 @@ $.extend($.ui.rlightbox, {
 			//		],
 			//		setName2: […]
 			//
-			var _setName = this.getSetName( setElement ),
-				_sets = $.ui.rlightbox.global.sets,
+			var _setName = setElement.setName,
+				_sets = this.sets,
 				_options = setElement.options,
 				_setPrefix = _options.setPrefix,
 				_class = "." + _setPrefix + "_" + _setName,
-				_setElementIndex = $( _class ).index( setElement.element );
+				_setElementIndex = $( _class ).index( setElement.$anchor );
 
 			if ( !_sets[_setName] ) {
 				// first time - such set has not been created before
@@ -196,12 +194,12 @@ $.extend($.ui.rlightbox, {
 			// unwrap $currentElement from jQuery wrapped object and
 			// prevents it from being acted upon, unbinding event handlers
 			var data = this.data,
-				$currentElement = data.currentSet.currentElement.element;
+				$rlbInstance = data.currentSet.currentElement.$anchor;
 
 			// code taken from jqury.ui.widget.js – it is the default behaviour
 			// from the widget factory but we can’t call it because it acts upon
 			// this.element – we have to act on a arbitrary one
-			$currentElement
+			$rlbInstance
 				.unbind( "." + "rlightbox" )
 				.unbind( "click" )
 				.removeData( "rlightbox" );
@@ -220,16 +218,18 @@ $.extend($.ui.rlightbox, {
         },
 		
 		extractAnchor: function( jQElement ) {
-			// _extractAnchor elicits information from an anchor element (DOM A element)
-			// @url are used for loading content such as images, youtube videos, etc
+			// _extractAnchor gets information from an anchor element (DOM A element)
+			// @url is used for loading content such as images, youtube videos, etc
 			// @type is needed to choose suitable loading method in _queueLoadContent
 			// @title is used to dispay title of an image or flash content (.flv) –
-			// since youtube and vimeo content is got via oembed, title is got later after loading the content
-			// $element keeps jQuery object of an anchor and it’s used for example
-			// in _getCurrentElementNumber to get the index in array in a set of clicked content
+			// since vimeo content is got via oembed, title is got later after loading the content
+			// @setName is a name of a set, an element belongs to; it is used for the first time in open method
+			// @options is a handy shortcut to options of an element rlightbox is initiated on
+			// @anchor is a direct access to an anchor rlightbox is initiated on
 			var _result = {type: undefined},
 				$anchor = jQElement.element,
 				_url = $anchor.attr( "href" ),
+				_setName = this.getSetName( jQElement );
 				_service = {
 					youtube: {
 						urls: [/(http:\/\/www\.youtube\.com\/watch\?v=([\w-_]+))&?/],
@@ -266,9 +266,10 @@ $.extend($.ui.rlightbox, {
 									_result = {
 										url: _url,
 										type: content.type,
-										element: $anchor,
 										title: $anchor.attr( "title" ),
-										options: jQElement.options
+										setName: _setName,
+										options: jQElement.options,
+										$anchor: $anchor
 									};										
 								} else if ( content.type === "youtube" || content.type === "vimeo" ) {
 									// for Youtube, Vimeo we return a normalised url
@@ -277,8 +278,9 @@ $.extend($.ui.rlightbox, {
 										url: _res[1],
 										id: _res[2],
 										type: content.type,
-										element: $anchor,
-										options: jQElement.options
+										setName: _setName,
+										options: jQElement.options,
+										$anchor: $anchor
 									};
 									
 									if ( jQElement.options.overwriteTitle ) {
@@ -322,7 +324,7 @@ $.extend($.ui.rlightbox, {
 			$.each(_currentSet, function(i, v) {
 
 				// compare DOM elements
-				if ( $(element).get(0) === v.element.get(0) ) {
+				if ( $(element).get(0) === v.$anchor.get(0) ) {
 					_currentNumber = i + 1;
 
 					// exit $.each()
@@ -495,11 +497,11 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 
-		getSetName: function( setElement ) {
+		getSetName: function( jQElement ) {
 			// if an anchor has class of e.g. ‘lb_gallery’ getSetName() returns ‘gallery’ string as a set name
-			// otherwise it returns ‘single’ - single content is placed under ‘single’ set  
-			var _classNames = setElement.element.attr( "class" ),
-				_classPrefix = setElement.options.setPrefix + "_",
+			// otherwise it returns ‘single’ - single content is placed under ‘single’ set
+			var _classNames = jQElement.element.attr( "class" ),
+				_classPrefix = jQElement.options.setPrefix + "_",
 				_classPattern = new RegExp( _classPrefix + "([\\w-_]+)" ),
 				_name = _classPattern.exec( _classNames );
 
@@ -1094,25 +1096,24 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 
-		open: function( jQElement ) {
+		open: function( setElement ) {
 			var data = this.data,
 				sets = this.sets,
-				$lb = this.$lightbox,
-				_anchor = jQElement.element,
+				$anchor = setElement.$anchor,
 				_currentSet = data.currentSet,
-				_currentSetName = this.getSetName( jQElement ),
-				_currentUrl = $( _anchor ).attr( "href" );
+				_setName = setElement.setName,
+				_url = setElement.url;
 
 			// remember which set content belongs to
-			_currentSet.name = _currentSetName;
+			_currentSet.name = _setName;
 
 			// determine and remember how many elements belong to a set
 			// determine the current (and clicked) element in a set
-			_currentSet.totalElements = sets[_currentSetName].length;
-			_currentSet.currentIndex = this.getCurrentElementNumber( _anchor );
+			_currentSet.totalElements = sets[_setName].length;
+			_currentSet.currentIndex = this.getCurrentElementNumber( $anchor );
 
 			// keep a reference to a current element in a set (consisting of a url, type…)
-			_currentSet.currentElement = sets[_currentSetName][_currentSet.currentIndex - 1];
+			_currentSet.currentElement = setElement;
 
 			// set animation queues
 			this.setOpenQueue();
