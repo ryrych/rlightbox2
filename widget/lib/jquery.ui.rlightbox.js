@@ -276,7 +276,7 @@ $.extend($.ui.rlightbox, {
 									// without additional parameters									
 									_result = {
 										url: _res[1],
-										id: _res[2],
+										videoId: _res[2],
 										type: content.type,
 										setName: _setName,
 										options: jQElement.options,
@@ -974,7 +974,7 @@ $.extend($.ui.rlightbox, {
 			$lb.content.addClass( "ui-lightbox-loader" );
 			$.ajax(
 				{
-					url: _apiEnd + _currentElement.id + "?callback=?",
+					url: _apiEnd + _currentElement.videoId + "?callback=?",
 					data: {
 						v: 2,
 						alt: "jsonc",
@@ -997,7 +997,7 @@ $.extend($.ui.rlightbox, {
 						{
 							width: _width,
 							height: _height,
-							url: _currentElement.id
+							url: _currentElement.videoId
 						}
 					);
 					
