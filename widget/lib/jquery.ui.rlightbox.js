@@ -723,7 +723,7 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 
-		loadContentFlash: function( url ) {
+		loadContentFlash: function( setElement ) {
 			var _width, _height, $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight,
 				data = this.data,
 				$lb = this.$lightbox,
@@ -731,8 +731,8 @@ $.extend($.ui.rlightbox, {
 				$content = $lb.content,
 				_dfd = $.Deferred(),
 				_structure = data.htmlFlash,
-				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.options;
+				_url = setElement.url,
+				_options = setElement.options;
 
 			// show the spinner
 			$content.addClass( "ui-lightbox-loader" );
@@ -741,8 +741,8 @@ $.extend($.ui.rlightbox, {
 
 				// get width and height from parameters: &with & &height
 				// if any exist; ‘inline’ width and height overwrite that of options
-				_width = self.getParam( "width", url );
-				_height = self.getParam( "height", url );
+				_width = self.getParam( "width", _url );
+				_height = self.getParam( "height", _url );
 				
 				_lightboxTargetWidth = self.getOptimalSize( "width", _width );
 				_lightboxTargetHeight = self.getOptimalSize( "height", _height );				
@@ -761,7 +761,7 @@ $.extend($.ui.rlightbox, {
 					{
 						width: _width,
 						height: _height,
-						url: url
+						url: _url
 					}
 				);
 
@@ -798,27 +798,27 @@ $.extend($.ui.rlightbox, {
 			return _dfd.promise();
 		},
 
-		loadContentImage: function( url ) {
+		loadContentImage: function( setElement ) {
 			var _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
 				$lb = this.$lightbox,
 				data = this.data,
 				self = this,
-				_currentElement = data.currentSet.currentElement,
 				_dfd = $.Deferred(),
-				$newImage = $( "<img />" );
+				$newImage = $( "<img />" ),
+				_url = setElement.url;
 				
 			// show spinner
 			$lb.content.addClass( "ui-lightbox-loader" );
 
 			$newImage
-				.attr( "src", url )
+				.attr( "src", _url )
 				.bind("load",
 					function() {
 						$( this ).unbind( "load" );
 						
 						// keep original size of an image – needed when resizing
-						_currentElement.width = this.width;
-						_currentElement.height = this.height;
+						setElement.width = this.width;
+						setElement.height = this.height;
 						
 						_sizes = self.getSizes();
 						_imageTargetWidth = _sizes.imageTargetWidth;
@@ -827,8 +827,8 @@ $.extend($.ui.rlightbox, {
 						_lightboxTargetHeight = _sizes.lightboxTargetHeight;
 		
 						// if scaled size is smaller than the original, show Panorama
-						_currentElement.currentWidth = _imageTargetWidth;
-						_currentElement.currentHeight = _imageTargetHeight;
+						setElement.currentWidth = _imageTargetWidth;
+						setElement.currentHeight = _imageTargetHeight;
 		
 						// scale the image
 						$( this )
@@ -878,16 +878,16 @@ $.extend($.ui.rlightbox, {
 			return _dfd.promise();
 		},
 
-		loadContentVimeo: function( url ) {
+		loadContentVimeo: function( setElement ) {
 			var _width, _height, _lightboxTargetWidth, _lightboxTargetHeight,
 				data = this.data,
 				$lb = this.$lightbox,			
 				self = this,
 				_dfd = $.Deferred(),
 				_apiEnd = data.providers.vimeo,
-				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.options,
-				_minimalLightboxSize = data.minimalLightboxSize;
+				_options = setElement.options,
+				_minimalLightboxSize = data.minimalLightboxSize,
+				_url = setElement.url;
 
 			// show loader
 			$lb.content.addClass( "ui-lightbox-loader" );
@@ -896,7 +896,7 @@ $.extend($.ui.rlightbox, {
 				{
 					url: _apiEnd,
 					data: {
-						url: url,
+						url: _url,
 						maxwidth: _options.videoWidth,
 						maxheight: _options.videoHeight
 					},
@@ -921,7 +921,7 @@ $.extend($.ui.rlightbox, {
 
 					// remember video title
 					if ( _options.overwriteTitle === false ) {
-						_currentElement.title = data.title;
+						setElement.title = data.title;
 					}
 
 					_lightboxTargetWidth = self.getOptimalSize( "width", data.width );
@@ -947,7 +947,7 @@ $.extend($.ui.rlightbox, {
 			return _dfd.promise();
 		},
 		
-		loadContentYoutube: function( url ) {
+		loadContentYoutube: function( setElement ) {
 			var $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight,
 				data = this.data,
 				$lb = this.$lightbox,
@@ -955,8 +955,7 @@ $.extend($.ui.rlightbox, {
 				self = this,
 				_dfd = $.Deferred(),
 				_apiEnd = data.providers.youtube,
-				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.options,
+				_options = setElement.options,
 				_minimalLightboxSize = data.minimalLightboxSize,
 				_width = _options.videoWidth,
 				_height = _options.videoHeight,
@@ -974,7 +973,7 @@ $.extend($.ui.rlightbox, {
 			$lb.content.addClass( "ui-lightbox-loader" );
 			$.ajax(
 				{
-					url: _apiEnd + _currentElement.videoId + "?callback=?",
+					url: _apiEnd + setElement.videoId + "?callback=?",
 					data: {
 						v: 2,
 						alt: "jsonc",
@@ -997,7 +996,7 @@ $.extend($.ui.rlightbox, {
 						{
 							width: _width,
 							height: _height,
-							url: _currentElement.videoId
+							url: setElement.videoId
 						}
 					);
 					
@@ -1022,7 +1021,7 @@ $.extend($.ui.rlightbox, {
 							
 					// remember video title
 					if ( _options.overwriteTitle === false ) {
-						_currentElement.title = json.data.title;
+						setElement.title = json.data.title;
 					}
 					
 					_lightboxTargetWidth = self.getOptimalSize( "width", _width );
@@ -1963,7 +1962,7 @@ $.extend($.ui.rlightbox, {
 					_loadContentMethod = "loadContentFlash";
 			}
 
-			$.when( this[_loadContentMethod](_currentElement.url) ).then(function(d) {
+			$.when( this[_loadContentMethod](_currentElement) ).then(function(d) {
 				next( d );
 			});
 		},
