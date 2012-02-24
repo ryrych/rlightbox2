@@ -726,26 +726,17 @@ $.extend($.ui.rlightbox, {
 		loadContentFlash: function( setElement ) {
 			var _width, _height, $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight,
 				data = this.data,
-				$lb = this.$lightbox,
 				self = this,
-				$content = $lb.content,
-				_dfd = $.Deferred(),
-				_structure = data.htmlFlash,
+				_loadingFlash = $.Deferred(),
+				_flashStructure = data.htmlFlash,
 				_url = setElement.url,
 				_options = setElement.options;
 
-			// show the spinner
-			$content.addClass( "ui-lightbox-loader" );
-
 			function _load() {
-
 				// get width and height from parameters: &with & &height
 				// if any exist; ‘inline’ width and height overwrite that of options
 				_width = self.getParam( "width", _url );
-				_height = self.getParam( "height", _url );
-				
-				_lightboxTargetWidth = self.getOptimalSize( "width", _width );
-				_lightboxTargetHeight = self.getOptimalSize( "height", _height );				
+				_height = self.getParam( "height", _url );			
 
 				// if &width and &height are invalid, use a default one
 				if ( _width === null || isNaN(_width) ) {
@@ -754,10 +745,14 @@ $.extend($.ui.rlightbox, {
 
 				if ( _height === null || isNaN(_height) ) {
 					_height = _options.videoHeight;
-				}			
+				}
+				
+				// what size the lightbox should have
+				_lightboxTargetWidth = self.getOptimalSize( "width", _width );
+				_lightboxTargetHeight = self.getOptimalSize( "height", _height );					
 
 				// use real data
-				_structure = self.replaceHtmlPatterns(_structure,
+				_flashStructure = self.replaceHtmlPatterns(_flashStructure,
 					{
 						width: _width,
 						height: _height,
@@ -768,48 +763,41 @@ $.extend($.ui.rlightbox, {
 				// we have to add ‘width’ and ‘height’ to the $contentWrapper
 				// explicitly since browsers can’t inherit them
 				$contentWrapper = $( "<div></div>" );
-				$contentWrapper.css(
-					{
-						display: "none",
-						width: _width,
-						height: _height
-					}
-				);
-
-				// add structure
-				$content
-					.removeClass( "ui-lightbox-loader" )
-					.empty()
-					.append( _structure )
-					.children()
-						.wrap( $contentWrapper );
+				$contentWrapper
+					.css(
+						{
+							display: "none",
+							width: _width,
+							height: _height
+						}
+					)
+					.append( _flashStructure );
 				
-				_dfd.resolve(
+				// pass to queueLoadContent()
+				_loadingFlash.resolve(
 					{
 						width: _lightboxTargetWidth,
-						height: _lightboxTargetHeight
+						height: _lightboxTargetHeight,
+						structure: $contentWrapper
 					}
 				);	
 			}
 
 			// delay ‘_load’ because we have to return promise
-			setTimeout( _load, 1000 );
+			setTimeout( _load, 500 );
 
-			return _dfd.promise();
+			return _loadingFlash.promise();
 		},
 
 		loadContentImage: function( setElement ) {
 			var _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
-				$lb = this.$lightbox,
 				data = this.data,
 				self = this,
-				_dfd = $.Deferred(),
+				_loadingImage = $.Deferred(),
 				$newImage = $( "<img />" ),
-				_url = setElement.url;
+				_url = setElement.url,
+				$structure = $([]);
 				
-			// show spinner
-			$lb.content.addClass( "ui-lightbox-loader" );
-
 			$newImage
 				.attr( "src", _url )
 				.bind("load",
@@ -836,29 +824,21 @@ $.extend($.ui.rlightbox, {
 							.height( _imageTargetHeight );						
 						
 						// add the loaded image and hide it
-						$lb.content
-							.removeClass( "ui-lightbox-loader" )			
-							.empty()
-							.append( this )
-							.children()
-								.hide();
+						$structure = $structure.add( this ).hide();
 
 						// continue the animation queue
-						_dfd.resolve(
+						_loadingImage.resolve(
 							{
 								width: _lightboxTargetWidth,
-								height: _lightboxTargetHeight
+								height: _lightboxTargetHeight,
+								structure: $structure
 							}
 						);					
 					}
 				)
 				.error(
 					function() {
-						$lb.content.removeClass( "ui-lightbox-loader" );
-						self.showErrorMessage();
-
-						// continue the animation queue
-						_dfd.resolve();
+						_loadingImage.reject();
 					}
 				)				
 				.each(
@@ -875,22 +855,18 @@ $.extend($.ui.rlightbox, {
 					}
 				);				
 
-			return _dfd.promise();
+			return _loadingImage.promise();
 		},
 
 		loadContentVimeo: function( setElement ) {
-			var _width, _height, _lightboxTargetWidth, _lightboxTargetHeight,
-				data = this.data,
-				$lb = this.$lightbox,			
+			var _width, _height, _lightboxTargetWidth, _lightboxTargetHeight, $structure,
+				data = this.data,			
 				self = this,
-				_dfd = $.Deferred(),
+				_loadingVimeo = $.Deferred(),
 				_apiEnd = data.providers.vimeo,
 				_options = setElement.options,
 				_minimalLightboxSize = data.minimalLightboxSize,
 				_url = setElement.url;
-
-			// show loader
-			$lb.content.addClass( "ui-lightbox-loader" );
 
 			$.ajax(
 				{
@@ -906,71 +882,52 @@ $.extend($.ui.rlightbox, {
 			)
 			.success(
 				function( data ) {
-
-					// add embedded code
-					$lb.content
-						.removeClass( "ui-lightbox-loader" )
-						.empty()
-						.append( data.html )
-						.children()
-							.wrap( "<div style='display: none'></div>" )
-							.end()
-						.find( "div:first" )
-							.width( data.width )
-							.height( data.height );							
-
+					// we have to add ‘width’ and ‘height’ to the $contentWrapper
+					// explicitly since browsers can’t inherit them
+					$structure = $( "<div></div>" )
+						.css( "display", "none" )
+						.width( data.width )
+						.height( data.height )
+						.append( data.html );
+						
 					// remember video title
 					if ( _options.overwriteTitle === false ) {
 						setElement.title = data.title;
 					}
-
+					
+					// what size the lightbox should have
 					_lightboxTargetWidth = self.getOptimalSize( "width", data.width );
 					_lightboxTargetHeight = self.getOptimalSize( "height", data.height );
 					
 					// continue the animation queue
-					_dfd.resolve(
+					_loadingVimeo.resolve(
 						{
 							width: _lightboxTargetWidth,
-							height: _lightboxTargetHeight
+							height: _lightboxTargetHeight,
+							structure: $structure
 						}
 					);
 				}
 			)
 			.error(function() {
-				$lb.content.removeClass( "ui-lightbox-loader" );
-				self.showErrorMessage();
-
-				// continue the animation queue
-				_dfd.resolve();
+				_loadingVimeo.reject();
 			});
 
-			return _dfd.promise();
+			return _loadingVimeo.promise();
 		},
 		
 		loadContentYoutube: function( setElement ) {
-			var $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight,
+			var $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight, $structure,
 				data = this.data,
-				$lb = this.$lightbox,
-				$content = $lb.content,
 				self = this,
-				_dfd = $.Deferred(),
+				_loadingYoutube = $.Deferred(),
 				_apiEnd = data.providers.youtube,
 				_options = setElement.options,
 				_minimalLightboxSize = data.minimalLightboxSize,
 				_width = _options.videoWidth,
 				_height = _options.videoHeight,
 				_structure = data.htmlYoutube;
-				
-			function _showError() {
-				$lb.content.removeClass( "ui-lightbox-loader" );
-				self.showErrorMessage();
-
-				// continue the animation queue
-				_dfd.resolve();				
-			}
 			
-			// show loader
-			$lb.content.addClass( "ui-lightbox-loader" );
 			$.ajax(
 				{
 					url: _apiEnd + setElement.videoId + "?callback=?",
@@ -986,8 +943,8 @@ $.extend($.ui.rlightbox, {
 			.success(
 				function( json ) {
 					// if response is successful but there is an error
-					if ( json.error ) {
-						_showError();
+					if ( json.error ) {//sprawdzić
+						_loadingYoutube.reject();
 						return;
 					}
 
@@ -999,25 +956,14 @@ $.extend($.ui.rlightbox, {
 							url: setElement.videoId
 						}
 					);
-					
+						
 					// we have to add ‘width’ and ‘height’ to the $contentWrapper
 					// explicitly since browsers can’t inherit them
-					$contentWrapper = $( "<div></div>" );
-					$contentWrapper.css(
-						{
-							display: "none",
-							width: _width,
-							height: _height
-						}
-					);
-	
-					// add structure
-					$content
-						.removeClass( "ui-lightbox-loader" )
-						.empty()
-						.append( _structure )
-						.children()
-							.wrap( $contentWrapper );
+					$structure = $( "<div></div>" )
+						.css( "display", "none" )
+						.width( _width )
+						.height( _height )
+						.append( _structure );
 							
 					// remember video title
 					if ( _options.overwriteTitle === false ) {
@@ -1028,19 +974,20 @@ $.extend($.ui.rlightbox, {
 					_lightboxTargetHeight = self.getOptimalSize( "height", _height );						
 				
 					// continue the animation queue
-					_dfd.resolve(
+					_loadingYoutube.resolve(
 						{
 							width: _lightboxTargetWidth,
-							height: _lightboxTargetHeight
+							height: _lightboxTargetHeight,
+							structure: $structure
 						}
 					);				
 				}
 			)
 			.error(function() {
-				_showError();
+				_loadingYoutube.reject();
 			});
 
-			return _dfd.promise();
+			return _loadingYoutube.promise();
 		},
 		
 		navigationGoToElement: function( number ) {
@@ -1742,12 +1689,11 @@ $.extend($.ui.rlightbox, {
 		},		
 
 		showErrorMessage: function() {
-
 			// shows a screen with a message that content could not be loaded
 			// and two buttons: one to try to load content again and one to
 			// reject the content; in order to keep the dependencie to minimum
 			// buttons are not jQuery UI widgets but use their CSS classes
-			var $again, $reject, $structure,
+			var $again, $reject, $errorScreenStructure,
 				data = this.data,
 				$lb = this.$lightbox,
 				self = this,
@@ -1758,13 +1704,13 @@ $.extend($.ui.rlightbox, {
 				_errorMessage = _options.errorMessage,
 				_againLabel = _options.againButtonLabel,
 				_rejectLabel = _options.rejectButtonLabel,
-				_structure = data.htmlErrorScreen,
+				_errorScreenStructure = data.htmlErrorScreen,
 				_errorScreenSize = data.errorScreenSize,
 				_errorScreenWidth = _errorScreenSize.width,
 				_errorScreenHeight = _errorScreenSize.height;
 
 			// use real data
-			_structure = self.replaceHtmlPatterns(_structure,
+			_errorScreenStructure = self.replaceHtmlPatterns(_errorScreenStructure,
 				{
 					message: _errorMessage,
 					labelAgain: _againLabel,
@@ -1772,10 +1718,11 @@ $.extend($.ui.rlightbox, {
 				}
 			);			
 				
-			$structure = $( _structure );
+			$errorScreenStructure = $( _errorScreenStructure );
 
-			$again = $structure.find( "#ui-lightbox-error-footer-again" );
-			$reject = $structure.find( "#ui-lightbox-error-footer-reject" );
+			$again = $errorScreenStructure.find( "#ui-lightbox-error-footer-again" );
+			$reject = $errorScreenStructure.find( "#ui-lightbox-error-footer-reject" );
+			
 			// ‘again’ button give a user a chance to try loading content again
 			$again
 				.click(function() {
@@ -1799,19 +1746,12 @@ $.extend($.ui.rlightbox, {
 				);			
 
 			// treat the message as a normal content
-			$lb.content
-				.empty()
-				.append( $structure )
-				.find( "#ui-lightbox-error" )
-					.width( _errorScreenWidth )
-					.height( _errorScreenHeight )
-					.end()
-				.children()
-					.hide();
+			$errorScreenStructure
+				.width( _errorScreenWidth )
+				.height( _errorScreenHeight )
+				.hide();
 
-			// because we don’t want to break the animation queue we need to tell
-			// subsequent functions in the queue that an error occured
-			data.showErrorMessage = true;
+			return $errorScreenStructure;
 		},
 
 		updateCounter: function() {
@@ -1940,10 +1880,10 @@ $.extend($.ui.rlightbox, {
 			// loads appropriate content using right method
 			var _loadContentMethod,
 				data = this.data,
+				self = this,
+				$lb = this.$lightbox,
+				$content = $lb.content,
 				_currentElement = data.currentSet.currentElement;
-
-			// assume that there will be no error
-			data.showErrorMessage = false;
 
 			switch ( _currentElement.type ) {
 				case "image":
@@ -1962,8 +1902,34 @@ $.extend($.ui.rlightbox, {
 					_loadContentMethod = "loadContentFlash";
 			}
 
+			// show spinner
+			$content.addClass( "ui-lightbox-loader" );
+			
 			$.when( this[_loadContentMethod](_currentElement) ).then(function(d) {
-				next( d );
+				// when content has been loaded successfully
+				$content
+					.removeClass( "ui-lightbox-loader" )
+					.empty()
+					.append( d.structure );
+				
+				// continue the queue – resize the lightbox
+				next({
+					width: d.width,
+					height: d.height
+				});
+			}, function() {
+				// when there is an error, there is only one structure we have to add –
+				// the error screen structure so it is not passed as parameter of the promise
+				$content
+					.removeClass( "ui-lightbox-loader" )
+					.empty()
+					.append( self.showErrorMessage() );
+				
+				// continue the queue – resize the lightbox
+				next({
+					width: data.errorScreenSize.width,
+					height: data.errorScreenSize.height
+				});
 			});
 		},
 
@@ -2107,7 +2073,6 @@ $.extend($.ui.rlightbox, {
 				vimeo: "http://www.vimeo.com/api/oembed.json?callback=?",
 				youtube: "http://gdata.youtube.com/feeds/api/videos/"
 			},
-			showErrorMessage: false,
 			currentSet: {},
 			enablePanorama: false,
 			errorScreenSize: {
