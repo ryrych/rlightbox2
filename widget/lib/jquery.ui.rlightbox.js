@@ -1015,7 +1015,6 @@ $.extend($.ui.rlightbox, {
 		next: function() {
 			var data = this.data,
 				sets = this.sets,
-				$lb = this.$lightbox,
 				_isReady = data.ready,
 				_isPanoramaOn = data.panoramaOn,
 				_currentSet = data.currentSet,
@@ -1030,7 +1029,7 @@ $.extend($.ui.rlightbox, {
 				if ( _currentIndex + 1 <= _totalElements ) {
 					_currentSet.currentIndex = _currentIndex = _currentIndex + 1;			
 				} else if ( _currentIndex + 1 > _totalElements && _isLoop ) {
-					_currentSet.totalElements = _currentIndex = 1;
+					_currentSet.currentIndex = _currentIndex = 1;
 				} else {
 					// to prevent form loading last element again when loop is disabled
 					_play = false;
