@@ -703,23 +703,27 @@ $.extend($.ui.rlightbox, {
 		},		
 
 		liveResize: function() {
-			var data = this.data,
+			var _elementType,
+				data = this.data;
+			
+			if ( data.ready ) {
 				_elementType = data.currentSet.currentElement.type;
 
-			// resizes an image when size of the browser window resizes and when Panorama is turned off
-			if ( data.ready && data.panoramaOn === false && _elementType === "image" ) {
-				this.updateImageSize();
-				this.updateLightboxSize();
-				this.updateTitleWidth();
-				this.queueCenterContent();
-				this.panoramaCheckAvailability();
-			} else if ( data.ready && data.panoramaOn && _elementType === "image" ) {
-				// otherwise keep the lightbox centered especially when window is bigger than the lightbox
-				this.queueCenterLightbox();
-				this.panoramaShrink();
-				this.panoramaCheckAvailability();
-			} else if ( data.ready && _elementType !== "image" ) {
-				this.queueCenterLightbox();
+				// resizes an image when size of the browser window resizes and when Panorama is turned off
+				if ( data.ready && data.panoramaOn === false && _elementType === "image" ) {
+					this.updateImageSize();
+					this.updateLightboxSize();
+					this.updateTitleWidth();
+					this.queueCenterContent();
+					this.panoramaCheckAvailability();
+				} else if ( data.ready && data.panoramaOn && _elementType === "image" ) {
+					// otherwise keep the lightbox centered especially when window is bigger than the lightbox
+					this.queueCenterLightbox();
+					this.panoramaShrink();
+					this.panoramaCheckAvailability();
+				} else if ( data.ready && _elementType !== "image" ) {
+					this.queueCenterLightbox();
+				}
 			}
 		},
 
