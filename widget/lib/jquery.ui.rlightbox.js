@@ -1994,15 +1994,13 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox,
 				self = this,
 				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.options,
-				_isError = data.showErrorMessage;			
+				_options = _currentElement.options;		
 
 			// show content
 			$lb.content.children()
 				.fadeIn( _options.animationSpeed, function() {
-
 					// if one of the image sides is bigger than the screen, show panorama icon
-					if ( _currentElement.type === "image" && _isError === false ) {
+					if ( _currentElement.type === "image" ) {
 						self.panoramaCheckAvailability();
 					}
 
