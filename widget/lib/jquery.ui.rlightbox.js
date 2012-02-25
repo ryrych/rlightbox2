@@ -1579,6 +1579,72 @@ $.extend($.ui.rlightbox, {
 			}
 		},
 		
+		setErrorMessage: function() {
+			// shows a screen with a message that content could not be loaded
+			// and two buttons: one to try to load content again and one to
+			// reject the content; in order to keep the dependencie to minimum
+			// buttons are not jQuery UI widgets but use their CSS classes
+			var $again, $reject, $errorScreenStructure,
+				data = this.data,
+				$lb = this.$lightbox,
+				self = this,
+				_currentSet = data.currentSet,
+				_currentElement = _currentSet.currentElement,
+				_options = _currentElement.options,
+				_currentIndex = _currentSet.currentIndex,
+				_errorMessage = _options.errorMessage,
+				_againLabel = _options.againButtonLabel,
+				_rejectLabel = _options.rejectButtonLabel,
+				_errorScreenStructure = data.htmlErrorScreen,
+				_errorScreenSize = data.errorScreenSize,
+				_errorScreenWidth = _errorScreenSize.width,
+				_errorScreenHeight = _errorScreenSize.height;
+
+			// use real data
+			_errorScreenStructure = self.replaceHtmlPatterns(_errorScreenStructure,
+				{
+					message: _errorMessage,
+					labelAgain: _againLabel,
+					labelReject: _rejectLabel				
+				}
+			);			
+				
+			$errorScreenStructure = $( _errorScreenStructure );
+
+			$again = $errorScreenStructure.find( "#ui-lightbox-error-footer-again" );
+			$reject = $errorScreenStructure.find( "#ui-lightbox-error-footer-reject" );
+			
+			// ‘again’ button give a user a chance to try loading content again
+			$again
+				.click(function() {
+					self.navigationGoToElement( _currentIndex );
+				})
+				.hover(
+					function() {
+						$( this ).toggleClass( "ui-state-hover" );
+					}
+				);
+
+			// removes the broken content from list of known contents
+			$reject
+				.click(function() {
+					self.removeSetElement( _currentIndex );
+				})
+				.hover(
+					function() {
+						$( this ).toggleClass( "ui-state-hover" );
+					}
+				);			
+
+			// treat the message as a normal content
+			$errorScreenStructure
+				.width( _errorScreenWidth )
+				.height( _errorScreenHeight )
+				.hide();
+
+			return $errorScreenStructure;
+		},		
+		
 		setNextQueue: function() {
 			// for description take a look at _setOpenQueue method
 			var data = this.data,
@@ -1686,72 +1752,6 @@ $.extend($.ui.rlightbox, {
 			if ( event ) {
 				event.preventDefault();
 			}
-		},		
-
-		showErrorMessage: function() {
-			// shows a screen with a message that content could not be loaded
-			// and two buttons: one to try to load content again and one to
-			// reject the content; in order to keep the dependencie to minimum
-			// buttons are not jQuery UI widgets but use their CSS classes
-			var $again, $reject, $errorScreenStructure,
-				data = this.data,
-				$lb = this.$lightbox,
-				self = this,
-				_currentSet = data.currentSet,
-				_currentElement = _currentSet.currentElement,
-				_options = _currentElement.options,
-				_currentIndex = _currentSet.currentIndex,
-				_errorMessage = _options.errorMessage,
-				_againLabel = _options.againButtonLabel,
-				_rejectLabel = _options.rejectButtonLabel,
-				_errorScreenStructure = data.htmlErrorScreen,
-				_errorScreenSize = data.errorScreenSize,
-				_errorScreenWidth = _errorScreenSize.width,
-				_errorScreenHeight = _errorScreenSize.height;
-
-			// use real data
-			_errorScreenStructure = self.replaceHtmlPatterns(_errorScreenStructure,
-				{
-					message: _errorMessage,
-					labelAgain: _againLabel,
-					labelReject: _rejectLabel				
-				}
-			);			
-				
-			$errorScreenStructure = $( _errorScreenStructure );
-
-			$again = $errorScreenStructure.find( "#ui-lightbox-error-footer-again" );
-			$reject = $errorScreenStructure.find( "#ui-lightbox-error-footer-reject" );
-			
-			// ‘again’ button give a user a chance to try loading content again
-			$again
-				.click(function() {
-					self.navigationGoToElement( _currentIndex );
-				})
-				.hover(
-					function() {
-						$( this ).toggleClass( "ui-state-hover" );
-					}
-				);
-
-			// removes the broken content from list of known contents
-			$reject
-				.click(function() {
-					self.removeSetElement( _currentIndex );
-				})
-				.hover(
-					function() {
-						$( this ).toggleClass( "ui-state-hover" );
-					}
-				);			
-
-			// treat the message as a normal content
-			$errorScreenStructure
-				.width( _errorScreenWidth )
-				.height( _errorScreenHeight )
-				.hide();
-
-			return $errorScreenStructure;
 		},
 
 		updateCounter: function() {
@@ -1923,7 +1923,7 @@ $.extend($.ui.rlightbox, {
 				$content
 					.removeClass( "ui-lightbox-loader" )
 					.empty()
-					.append( self.showErrorMessage() );
+					.append( self.setErrorMessage() );
 				
 				// continue the queue – resize the lightbox
 				next({
