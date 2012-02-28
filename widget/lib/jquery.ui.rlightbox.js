@@ -232,7 +232,7 @@ $.extend($.ui.rlightbox, {
 				_setName = this.getSetName( jQElement );
 				_service = {
 					youtube: {
-						urls: [/(http:\/\/www\.youtube\.com\/watch\?v=([\w-_]+))&?/],
+						urls: [/^http:\/\/(?:www\.)?youtube\.com\/watch\?v=([\w-]+)((?:&\w+=)(?:[\w-]+))*/],
 						type: "youtube"
 					},
 					image: {
@@ -240,7 +240,7 @@ $.extend($.ui.rlightbox, {
 						type: "image"
 					},
 					vimeo: {
-						urls: [/(http:\/\/vimeo\.com\/groups\/\w+\/videos\/(\w+))&?/, /(http:\/\/vimeo\.com\/(\w+))&?/],
+						urls: [/^http:\/\/(?:www\.)?vimeo\.com\/groups\/\w+\/videos\/(\w+)/, /^http:\/\/(?:www\.)?vimeo\.com\/(\w+)/],
 						type: "vimeo"
 					},
 					flash: {
@@ -260,28 +260,22 @@ $.extend($.ui.rlightbox, {
 							var _res = regExp.exec( _url );
 
 							if ( _res !== null ) {
+								_result = {
+									url: _url,
+									type: content.type,
+									setName: _setName,
+									options: jQElement.options,
+									$anchor: $anchor
+								};
+								
 								if ( content.type === "image" || content.type === "flash" ) {
-									// image and flash urls are not normalised; in case of flash content
-									// there may be &with and &height parameters
-									_result = {
-										url: _url,
-										type: content.type,
-										title: $anchor.attr( "title" ),
-										setName: _setName,
-										options: jQElement.options,
-										$anchor: $anchor
-									};										
+									_result.title = $anchor.attr( "title" );								
 								} else if ( content.type === "youtube" || content.type === "vimeo" ) {
-									// for Youtube, Vimeo we return a normalised url
-									// without additional parameters									
-									_result = {
-										url: _res[1],
-										videoId: _res[2],
-										type: content.type,
-										setName: _setName,
-										options: jQElement.options,
-										$anchor: $anchor
-									};
+									_result.videoId = _res[1]										
+									
+									if ( content.type === "youtube" && _res[2] ) {
+										_result.videoParams = _res[0].split( "?" )[1].split( "&" ).slice(1).join( "&" )
+									}
 									
 									if ( jQElement.options.overwriteTitle ) {
 										_result.title = $anchor.attr( "title" );
@@ -921,7 +915,7 @@ $.extend($.ui.rlightbox, {
 		},
 		
 		loadContentYoutube: function( setElement ) {
-			var $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight, $structure,
+			var $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight, $structure, _params,
 				data = this.data,
 				self = this,
 				_loadingYoutube = $.Deferred(),
@@ -952,15 +946,24 @@ $.extend($.ui.rlightbox, {
 						return;
 					}
 
+					// youtube video can have additional parameters
+					if ( setElement.videoParams ) {
+						_params = "?" + setElement.videoParams;
+					} else {
+						_params = "";
+					}
+					
 					// use real data
 					_structure = self.replaceHtmlPatterns(_structure,
 						{
 							width: _width,
 							height: _height,
-							url: setElement.videoId
+							videoid: setElement.videoId,
+							params: _params
 						}
 					);
-						
+
+					
 					// we have to add ‘width’ and ‘height’ to the $contentWrapper
 					// explicitly since browsers can’t inherit them
 					$structure = $( "<div></div>" )
@@ -2104,7 +2107,7 @@ $.extend($.ui.rlightbox, {
 						"</button>" + 
 					"</div>" +
 				"</div>",
-			htmlYoutube: "<iframe class='youtube-player' type='text/html' width='{width}' height='{height}' src='http://www.youtube.com/embed/{url}' frameborder='0'></iframe>",
+			htmlYoutube: "<iframe class='youtube-player' type='text/html' width='{width}' height='{height}' src='http://www.youtube.com/embed/{videoid}{params}' frameborder='0'></iframe>",
 			htmlLightbox: "" +
 				"<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>" +
 					"<div id='ui-lightbox-panorama-icon' style='display: none'></div>" +
