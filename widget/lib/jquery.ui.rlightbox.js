@@ -506,12 +506,14 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				$container = this.$lightbox.contentContainer,
 				_pos = event.pageX - $container.offset().left,
-				_center = Math.round( $container.width() / 2 );
+				_hotAreaWidth = Math.round( $container.width() / 3 );
 
-			if ( _pos <= _center ) {
+			if ( _pos < _hotAreaWidth ) {
 				data.side = "left";
-			} else if ( _pos > _center ) {
+			} else if ( _pos > 2 * _hotAreaWidth ) {
 				data.side = "right";
+			} else {
+				data.side = "center";
 			}
 			
 			// for Panorama to work in IE7 & IE8			
@@ -1548,34 +1550,28 @@ $.extend($.ui.rlightbox, {
 				_totalElements = _currentSet.totalElements,
 				_side = data.side,
 				_panoramaEnabled = data.panoramaOn,
-				_isError = data.showErrorMessage,
 				_options = _currentElement.options,
 				_isLoop = _options.loop;
 			
 			if ( data.ready ) {
-				if ( (_currentSetName === "single" || _totalElements === 1 || _currentIndex === 1 && _side === "left" || _currentIndex === _totalElements && _side === "right") && _panoramaEnabled === false && (_setElementType === "image" || (_setElementType !== "image" && _isError)) ) {
-
+				if ( (_currentSetName === "single" || _totalElements === 1 || _currentIndex === 1 && _side === "left" || _currentIndex === _totalElements && _side === "right") && _panoramaEnabled === false && _setElementType === "image" ) {
 					// single element or single element in a named set or first element in a set or last element in a set
-					// WHEN panorama is DISABLED, and when element type is ‘image’ or the Error Screen is shown
+					// WHEN panorama is DISABLED, and when element type is ‘image’
 					// and when loop is DISABLED
 					if ( _isLoop === false ) {
 						$contentContainer.css( "cursor", "default" );						
 					} else {
-						
 						// otherwise show ‘pointer’ in cases mentioned above
 						$contentContainer.css( "cursor", "pointer" );						
 					}
-
 				} else if ( _panoramaEnabled ) {
-
 					// panorama is enabled
 					$contentContainer.css( "cursor", "move" );
-				} else if ( _setElementType === "image" || (_setElementType !== "image" && _isError) ) {
-					
-					// between first and last element in an image set or when the Error Screen is shown
+				} else if ( _side === "left"  || _side === "right" ) {
 					$contentContainer.css( "cursor", "pointer" );
+				} else if ( _side === "center" ) {
+					$contentContainer.css( "cursor", "default" );
 				} else {
-
 					// for flash videos
 					$contentContainer.css( "cursor", "auto" );
 				}
