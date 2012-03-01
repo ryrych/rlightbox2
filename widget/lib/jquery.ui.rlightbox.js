@@ -1539,7 +1539,8 @@ $.extend($.ui.rlightbox, {
 		},
 		
 		setCursor: function( event ) {
-			var data = this.data,
+			var _cursor,
+				data = this.data,
 				$lb = this.$lightbox,
 				$contentContainer = $lb.contentContainer,
 				_currentSet = data.currentSet,
@@ -1559,25 +1560,28 @@ $.extend($.ui.rlightbox, {
 					// WHEN panorama is DISABLED, and when element type is ‘image’
 					// and when loop is DISABLED
 					if ( _isLoop === false ) {
-						$contentContainer.css( "cursor", "default" );						
+						_cursor = "default";						
 					} else {
 						// otherwise show ‘pointer’ in cases mentioned above
-						$contentContainer.css( "cursor", "pointer" );						
+						_cursor = "pointer";					
 					}
 				} else if ( _panoramaEnabled ) {
 					// panorama is enabled
-					$contentContainer.css( "cursor", "move" );
+					_cursor = "move";
 				} else if ( _side === "left"  || _side === "right" ) {
-					$contentContainer.css( "cursor", "pointer" );
+					_cursor = "pointer";
 				} else if ( _side === "center" ) {
-					$contentContainer.css( "cursor", "default" );
+					_cursor = "default";
 				} else {
 					// for flash videos
-					$contentContainer.css( "cursor", "auto" );
+					_cursor = "auto";
 				}
 			} else {
-				$contentContainer.css( "cursor", "default" );
+				_cursor = "default";
 			}
+			
+			// set new cursor
+			$contentContainer.css( "cursor", _cursor );
 			
 			// for Panorama to work in IE7 & IE8
 			if ( event ) {
