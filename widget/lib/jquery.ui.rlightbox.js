@@ -147,8 +147,6 @@ $.extend($.ui.rlightbox, {
 					.add ( $lb.header )
 					.hide();
 
-				$( "body" ).css( "overflow", "visible" );
-
 				// remove content and restore its initial size
 				$lb.content
 					.empty()
