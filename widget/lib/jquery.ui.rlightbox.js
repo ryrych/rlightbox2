@@ -657,33 +657,31 @@ $.extend($.ui.rlightbox, {
 		},
 
 		handleKeyboard: function( event ) {
-			var data = this.data,
-				_currentElement = data.currentSet.currentElement,
-				_options = _currentElement.options,
-				_keys = _options.keys,
-				_key = event.which;
+			var _currentElement, _options, _keys, _key,
+				data = this.data;
 
 			if ( data.ready === false ) {
 				return;
 			}
-
+			
+			_currentElement = data.currentSet.currentElement,
+			_options = _currentElement.options,
+			_keys = _options.keys,
+			_key = event.which;
+			
 			// handle pressing keys
 			if ( _key === _keys.next[0] || _key === _keys.next[1] ) {
-
 				// next keys: [N] & [→]
 				// load next content if possible
 				this.next();
 			} else if ( _key === _keys.previous[0] || _key === _keys.previous[1] ) {
-
 				// prev keys: [P] & [←]
 				// load previous content if possible
 				this.prev();
 			} else if ( _key === _keys.close[0] || _key === _keys.close[1] ) {
-
 				// close keys: [C] & [ESC]
 				this.closeLightbox();
 			} else if ( (_key === _keys.panorama[0] || _key === _keys.panorama[1]) && _currentElement.type === "image" ) {
-
 				// panorama keys: [Z]
 				this.panoramaToggle( event );
 			}
