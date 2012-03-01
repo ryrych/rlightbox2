@@ -1185,6 +1185,9 @@ $.extend($.ui.rlightbox, {
 			// cursor was ‘pointer’, [Z] buttons was pressed (‘default’ cursor)
 			// [Z] was pressed again → cursor is still ‘pointer’
 			this.setCursor();
+			
+			// disable buttons
+			this.setButtonState( "disabled" );
 		},
 
 		panoramaHideIcon: function() {
@@ -1368,6 +1371,9 @@ $.extend($.ui.rlightbox, {
 			// cursor was ‘pointer’, [Z] buttons was pressed (‘default’ cursor)
 			// [Z] was pressed again → cursor is still ‘pointer’
 			this.setCursor();
+			
+			//restore buttons state to previoue ones
+			this.checkButtonsState();
 		},		
 
 		panoramaStart: function( event ) {
