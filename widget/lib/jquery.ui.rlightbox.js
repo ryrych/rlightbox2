@@ -521,7 +521,7 @@ $.extend($.ui.rlightbox, {
 
 		getSizes: function() {
 			var _statuses, _statusWidth, _statusHeight, _imageTargetWidth, _imageTargetHeight, _lightboxTargetWidth, _lightboxTargetHeight,
-				_heightRatio, _widthRatio,
+				_heightRatio, _widthRatio, _calculateSizes,
 				$lb = this.$lightbox,
 				data = this.data,
 				self = this,
@@ -535,7 +535,7 @@ $.extend($.ui.rlightbox, {
 				_lightboxPadding = data.lightboxPadding,
 				_headerHeight = data.headerHeight;
 
-			function _calculateSizes( w, h ) {
+			_calculateSizes = function( w, h ) {
 				_statuses = self.getImageStatus( w, h );
 				_statusWidth = _statuses.statusWidth;
 				_statusHeight = _statuses.statusHeight;
@@ -722,7 +722,7 @@ $.extend($.ui.rlightbox, {
 		},
 
 		loadContentFlash: function( setElement ) {
-			var _width, _height, $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight,
+			var _width, _height, $contentWrapper, _lightboxTargetWidth, _lightboxTargetHeight, _load
 				data = this.data,
 				self = this,
 				_loadingFlash = $.Deferred(),
@@ -730,7 +730,7 @@ $.extend($.ui.rlightbox, {
 				_url = setElement.url,
 				_options = setElement.options;
 
-			function _load() {
+			_load = function() {
 				// get width and height from parameters: &with & &height
 				// if any exist; ‘inline’ width and height overwrite that of options
 				_width = self.getParam( "width", _url );
