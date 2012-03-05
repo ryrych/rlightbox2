@@ -697,19 +697,20 @@ $.extend($.ui.rlightbox, {
 
 		liveResize: function() {
 			var _elementType,
-				data = this.data;
+				data = this.data,
+				_panoramaEnabled = data.panorama.enabled;
 			
 			if ( data.ready ) {
 				_elementType = data.currentSet.currentElement.type;
 
 				// resizes an image when size of the browser window resizes and when Panorama is turned off
-				if ( data.ready && data.panoramaOn === false && _elementType === "image" ) {
+				if ( data.ready && _panoramaEnabled === false && _elementType === "image" ) {
 					this.updateImageSize();
 					this.updateLightboxSize();
 					this.updateTitleWidth();
 					this.queueCenterContent();
 					this.panoramaCheckAvailability();
-				} else if ( data.ready && data.panoramaOn && _elementType === "image" ) {
+				} else if ( data.ready && _panoramaEnabled && _elementType === "image" ) {
 					// otherwise keep the lightbox centered especially when window is bigger than the lightbox
 					this.queueCenterLightbox();
 					this.panoramaShrink();
@@ -1018,7 +1019,7 @@ $.extend($.ui.rlightbox, {
 			var data = this.data,
 				sets = this.sets,
 				_isReady = data.ready,
-				_isPanoramaOn = data.panoramaOn,
+				_panoramaEnabled = data.panorama.enabled,
 				_currentSet = data.currentSet,
 				_currentSetName = _currentSet.name,
 				_currentIndex = _currentSet.currentIndex,
@@ -1027,7 +1028,7 @@ $.extend($.ui.rlightbox, {
 				_isLoop = _options.loop,
 				_play = true;
 				
-			if ( _isReady && _currentSetName !== "single" && _isPanoramaOn === false ) {
+			if ( _isReady && _currentSetName !== "single" && _panoramaEnabled === false ) {
 				if ( _currentIndex + 1 <= _totalElements ) {
 					_currentSet.currentIndex = _currentIndex = _currentIndex + 1;			
 				} else if ( _currentIndex + 1 > _totalElements && _isLoop ) {
@@ -1144,7 +1145,7 @@ $.extend($.ui.rlightbox, {
 				_options = _currentElement.options;
 
 			// let know that we can scroll now
-			data.panoramaOn = true;
+			data.panorama.enabled = true;
 
 			// show the zoom out icon; we add hover state because when we click
 			// the icon we lose focus and state end up with normal state
@@ -1198,7 +1199,7 @@ $.extend($.ui.rlightbox, {
 			$lb.panoramaIcon
 				.hide()
 				.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
-			data.panoramaOn = false;			
+			data.panorama.enabled = false;			
 		},
 
 		panoramaHideMap: function() {
@@ -1238,13 +1239,14 @@ $.extend($.ui.rlightbox, {
 				data = this.data,
 				$lb = this.$lightbox,
 				$content = $lb.content,
-				_viewportRatio = data.viewportRatio,
+				_panorama = data.panorama,
+				_viewportRatio = _panorama.viewportRatio,
 				_friction = 0.05;
 
 			// if we are in the panorama mode (the panorama icon was clicked)
-			if ( data.panoramaOn && data.panoramaDragged ) {
-				_distX = ( event.pageX - data.panoramaPosition.xStart ) * -1,
-				_distY = ( event.pageY - data.panoramaPosition.yStart ) * -1,
+			if ( _panorama.enabled && _panorama.isDragged ) {
+				_distX = ( event.pageX - _panorama.position.xStart ) * -1,
+				_distY = ( event.pageY - _panorama.position.yStart ) * -1,
 				
 				// add some friction
 				_distX = Math.round( _distX * _friction );
@@ -1334,7 +1336,8 @@ $.extend($.ui.rlightbox, {
 				_imageWidth = $image.width(),
 				_imageHeight = $image.height(),
 				_currentElement = data.currentSet.currentElement,
-				_mapSize = data.mapSize;
+				_panorama = data.panorama,
+				_mapSize = _panorama.mapSize;
 
 			// show the map and give the viewport relevant size
 			// give the viewport relevant size
@@ -1365,7 +1368,7 @@ $.extend($.ui.rlightbox, {
 			$lb.map.show();
 
 			// used when you scroll the content
-			data.viewportRatio = {
+			_panorama.viewportRatio = {
 				width: _mapViewportWidthRatio,
 				height: _mapViewportHeightRatio
 			};
@@ -1377,7 +1380,7 @@ $.extend($.ui.rlightbox, {
 				$lb = this.$lightbox;
 
 			// _panoramaShrink retores the previous size of an image
-			data.panoramaOn = false;
+			data.panorama.enabled = false;
 
 			// show the zoom out icon; we add hover state because when we click
 			// the icon we lose focus and state end up with normal state
@@ -1413,22 +1416,22 @@ $.extend($.ui.rlightbox, {
 
 		panoramaStart: function( event ) {
 			var data = this.data,
-				$lb = this.$lightbox;
+				$lb = this.$lightbox,
+				_panorama = data.panorama;
 
 			// remember starting point to calculate distance in _panoramaStop()
-			data.panoramaPosition =
-				{
+			_panorama.position = {
 					xStart: event.pageX,
 					yStart: event.pageY
 				};
 
 			event.preventDefault();
 			
-			data.panoramaDragged = true;
+			_panorama.isDragged = true;
 		},
 
 		panoramaStop: function( event ) {
-			this.data.panoramaDragged = false;
+			this.data.panorama.isDragged = false;
 			event.stopPropagation();
 		},
 		
@@ -1439,12 +1442,12 @@ $.extend($.ui.rlightbox, {
 			// and open again and next image once again can be zoomed we need to make sure that
 			// expand is the first action – using jQuery .toggle() ‘expand’ would be the fist action again (because of its internal queue)
 			var data = this.data,
-				_panoramaOn = data.panoramaOn,
+				_panoramaEnabled = data.panorama.enabled,
 				_isPanoramaEnabled = data.enablePanorama;
 
-			if ( _isPanoramaEnabled && _panoramaOn === false ) {
+			if ( _isPanoramaEnabled && _panoramaEnabled === false ) {
 				this.panoramaExpand( event );
-			} else if ( _isPanoramaEnabled && _panoramaOn ) {
+			} else if ( _isPanoramaEnabled && _panoramaEnabled ) {
 				this.panoramaShrink( event );			
 			}
 		},
@@ -1454,7 +1457,7 @@ $.extend($.ui.rlightbox, {
 				sets = this.sets,
 				$lb = this.$lightbox,
 				_isReady = data.ready,
-				_isPanoramaOn = data.panoramaOn,
+				_panoramaEnabled = data.panorama.enabled,
 				_currentSet = data.currentSet,
 				_currentSetName = data.currentSet.name,
 				_currentIndex = _currentSet.currentIndex,
@@ -1463,7 +1466,7 @@ $.extend($.ui.rlightbox, {
 				_isLoop = _options.loop,
 				_play = true;
 				
-			if ( _isReady && _currentSetName !== "single" && _isPanoramaOn === false ) {
+			if ( _isReady && _currentSetName !== "single" && _panoramaEnabled=== false ) {
 				if ( _currentIndex - 1 >= 1 ) {
 					_currentSet.currentIndex = _currentIndex = _currentIndex - 1;			
 				} else if ( _currentIndex - 1 < 1 && _isLoop ) {
@@ -1562,7 +1565,7 @@ $.extend($.ui.rlightbox, {
 				_currentIndex = _currentSet.currentIndex,				
 				_totalElements = _currentSet.totalElements,
 				_side = data.side,
-				_panoramaEnabled = data.panoramaOn,
+				_panoramaEnabled = data.panorama.enabled,
 				_options = _currentElement.options,
 				_isLoop = _options.loop;
 			
@@ -1747,7 +1750,7 @@ $.extend($.ui.rlightbox, {
 				_isLoop = _currentElement.options.loop;
 			
 			// show arrow cues only in image set or in The Error Screen when it is part of a set
-			if ( data.ready && data.currentSetName !== "single" && (_currentElement.type === "image" || _isError) && data.panoramaOn === false ) {
+			if ( data.ready && data.currentSetName !== "single" && (_currentElement.type === "image" || _isError) && data.panorama.enabled === false ) {
 
 				if ( _side === "left" && (_currentIndex > 1 || _isLoop) ) {
 					$arrow
@@ -1861,7 +1864,7 @@ $.extend($.ui.rlightbox, {
 				.hide()
 				.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
 
-			data.panoramaOn = false;
+			data.panorama.enabled = false;
 
 			// hide the map
 			this.panoramaHideMap();
@@ -2084,10 +2087,15 @@ $.extend($.ui.rlightbox, {
 			lightboxPadding: 12,
 			headerHeight: 57,
 			ready: false,
-			panoramaOn: false,
-			mapSize: {
-				width: 150,
-				height: 100
+			panorama: {
+				enabled: false,
+				position: {},
+				isDragged: false,
+				mapSize: {
+					width: 150,
+					height: 100
+				},
+				viewportRatio: {}
 			},
 			providers: {
 				vimeo: "http://www.vimeo.com/api/oembed.json?callback=?",
