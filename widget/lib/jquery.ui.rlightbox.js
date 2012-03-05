@@ -412,6 +412,7 @@ $.extend($.ui.rlightbox, {
 					.mousemove( $.proxy(this.showArrow, this) )
 					.mousemove( $.proxy(this.checkSide, this) )
 					.mousemove( $.proxy(this.setCursor, this) )
+					.mousemove( $.proxy(this.panoramaMove, this) )
 					.click(
 						function() {
 							if ( data.side === "left" ) {
@@ -1229,6 +1230,40 @@ $.extend($.ui.rlightbox, {
 					}
 				});		
 		},
+		
+		panoramaMove: function( event ) {
+			// calculate the distance between the starting point from _panoramaStart and this one
+			// we use the oposite vector (-1) because dragging the mouse left we move right
+			var _distX, _distY,
+				data = this.data,
+				$lb = this.$lightbox,
+				$content = $lb.content,
+				_viewportRatio = data.viewportRatio,
+				_friction = 0.05;
+
+			// if we are in the panorama mode (the panorama icon was clicked)
+			if ( data.panoramaOn && data.panoramaDragged ) {
+				_distX = ( event.pageX - data.panoramaPosition.xStart ) * -1,
+				_distY = ( event.pageY - data.panoramaPosition.yStart ) * -1,
+				
+				// add some friction
+				_distX = Math.round( _distX * _friction );
+				_distY = Math.round( _distY * _friction );
+
+				$content
+					.scrollLeft( $content.scrollLeft() + _distX )
+					.scrollTop( $content.scrollTop() + _distY );
+
+				// show the relevant part of the map
+				// subtrack 1 so that the viewport doesn’t overlap the map border
+				$lb.viewport.css({
+					left: $content.scrollLeft() * _viewportRatio.width - 1,
+					top: $content.scrollTop() * _viewportRatio.height - 1
+				});
+			}
+
+			event.stopPropagation();			
+		},		
 
 		panoramaSetContentSize: function() {
 			var _contentWidth, _contentHeight,
@@ -1388,33 +1423,12 @@ $.extend($.ui.rlightbox, {
 				};
 
 			event.preventDefault();
+			
+			data.panoramaDragged = true;
 		},
 
 		panoramaStop: function( event ) {
-
-			// calculate the distance between the starting point from _panoramaStart and this one
-			// we use the oposite vector (-1) because dragging the mouse left we move right
-			var data = this.data,
-				$lb = this.$lightbox,
-				_distX = ( event.pageX - data.panoramaPosition.xStart ) * -1,
-				_distY = ( event.pageY - data.panoramaPosition.yStart ) * -1,
-				$content = $lb.content,
-				_viewportRatio = data.viewportRatio;
-
-			// if we are in the panorama mode (the panorama icon was clicked)
-			if ( data.panoramaOn ) {
-				$content
-					.scrollLeft( $content.scrollLeft() + _distX )
-					.scrollTop( $content.scrollTop() + _distY );
-
-				// show the relevant part of the map
-				// subtrack 1 so that the viewport doesn’t overlap the map border
-				$lb.viewport.css({
-					left: $content.scrollLeft() * _viewportRatio.width - 1,
-					top: $content.scrollTop() * _viewportRatio.height - 1
-				});
-			}
-
+			this.data.panoramaDragged = false;
 			event.stopPropagation();
 		},
 		
