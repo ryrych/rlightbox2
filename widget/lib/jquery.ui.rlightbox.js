@@ -1888,15 +1888,17 @@ $.extend($.ui.rlightbox, {
 		queueCenterLightbox: function( next ) {
 			var $lb = this.$lightbox,
 				$root = $lb.root,
-				_screenWidth = this.getWindowSize( "width" ),
-				_screenHeight = this.getWindowSize( "height" ),
+				_windowWidth = this.getWindowSize( "width" ),
+				_windowHeight = this.getWindowSize( "height" ),
+				_windowXOffset = $( document ).scrollLeft(),
+				_windowYOffset = $( document ).scrollTop(),
 				_lbWidth = $root.outerWidth(),
 				_lbHeight = $root.outerHeight();
 
 			$root
 				.css({
-					left: Math.round( (_screenWidth - _lbWidth) / 2 ) + "px",
-					top: Math.round( (_screenHeight - _lbHeight) / 2 ) + "px"
+					left: Math.round( (_windowWidth - _lbWidth) / 2  + _windowXOffset ) + "px",
+					top: Math.round( (_windowHeight - _lbHeight) / 2 + _windowYOffset ) + "px"
 				})
 				.show( 0, next );
 		},
@@ -1964,8 +1966,10 @@ $.extend($.ui.rlightbox, {
 				data = this.data,
 				$lb = this.$lightbox,
 				$root = $lb.root,
-				_screenWidth = this.getWindowSize( "width" ),
-				_screenHeight = this.getWindowSize( "height" ),
+				_windowWidth = this.getWindowSize( "width" ),
+				_windowHeight = this.getWindowSize( "height" ),
+				_windowXOffset = $( document ).scrollLeft(),
+				_windowYOffset = $( document ).scrollTop(),
 				_padding = data.lightboxPadding,
 				_headerHeight = data.headerHeight,
 				_currentElement = data.currentSet.currentElement,
@@ -1988,8 +1992,8 @@ $.extend($.ui.rlightbox, {
 					.animate( {width: _targetWidth}, _speed )
 					.animate( {height: _targetHeight}, _speed )
 					.end()
-				.animate( {left: (_screenWidth - _targetWidth - _padding) / 2}, _speed )
-				.animate( {top: (_screenHeight - _targetHeight - _padding - _headerHeight) / 2}, _speed, next);				
+				.animate( {left: (_windowWidth - _targetWidth - _padding) / 2 + _windowXOffset}, _speed )
+				.animate( {top: (_windowHeight - _targetHeight - _padding - _headerHeight) / 2 + _windowYOffset}, _speed, next);				
 		},
 
 		queueCenterContent: function( next ) {

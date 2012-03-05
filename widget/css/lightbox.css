@@ -13,7 +13,7 @@
 #ui-lightbox {
 	font-size: 62.5%;
 	padding: 5px;
-	position: fixed;
+	position: absolute;
 	z-index: 9999;
 	width: auto;
 	height: auto;
