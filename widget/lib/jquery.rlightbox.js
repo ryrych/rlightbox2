@@ -10,7 +10,7 @@
  */
 (function( $, undefined ) {
 
-$.widget( "ui.rlightbox", {
+$.widget( "ryrych.rlightbox", {
 	options: {
 		animationSpeed: "fast",
 		setPrefix: "lb",
@@ -33,7 +33,7 @@ $.widget( "ui.rlightbox", {
 
 	_create: function() {
 		var _setElement,
-			global = $.ui.rlightbox.global;
+			global = $.ryrych.rlightbox.global;
 
 		// init the lightbox – do in only once
 		global.getLightbox();
@@ -73,7 +73,7 @@ $.widget( "ui.rlightbox", {
 // urls, all methods are placed in the extended scope of the plugin:
 // ‘$.ui.rlightbox.global’. An instance ‘this’ scope is merely used when we
 // use options.
-$.extend($.ui.rlightbox, {
+$.extend($.ryrych.rlightbox, {
 	global: {
 		addToSet: function( setElement ) {
 			// set structure is following:
