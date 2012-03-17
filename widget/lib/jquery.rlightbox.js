@@ -1198,7 +1198,7 @@ $.extend($.ui.rlightbox, {
 
 			$lb.panoramaIcon
 				.hide()
-				.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
+				.removeClass( "widget-rlightbox-panorama-icon-expand widget-rlightbox-panorama-icon-shrink" );
 			data.panorama.enabled = false;			
 		},
 
@@ -1317,7 +1317,7 @@ $.extend($.ui.rlightbox, {
 		panoramaShowIcon: function( icon, state ) {
 			var $lb = this.$lightbox,
 				_state = state || "",
-				_newClass = "ui-lightbox-panorama-icon-" + icon + _state;
+				_newClass = "widget-rlightbox-panorama-icon-" + icon + _state;
 
 				$lb.panoramaIcon
 					.show()
@@ -1636,8 +1636,8 @@ $.extend($.ui.rlightbox, {
 				
 			$errorScreenStructure = $( _errorScreenStructure );
 
-			$again = $errorScreenStructure.find( "#ui-lightbox-error-footer-again" );
-			$reject = $errorScreenStructure.find( "#ui-lightbox-error-footer-reject" );
+			$again = $errorScreenStructure.find( "#widget-rlightbox-error-footer-again" );
+			$reject = $errorScreenStructure.find( "#widget-rlightbox-error-footer-reject" );
 			
 			// ‘again’ button give a user a chance to try loading content again
 			$again
@@ -1717,22 +1717,22 @@ $.extend($.ui.rlightbox, {
 			var $lb = this.$lightbox;
 
 			// save references to wrapped set for later use
-			$lb.root = $( "#ui-lightbox" );
-			$lb.panoramaIcon = $lb.root.find( "#ui-lightbox-panorama-icon" );
-			$lb.contentContainer = $lb.root.find( "#ui-lightbox-content-container" );
-			$lb.content = $lb.contentContainer.find( "#ui-lightbox-content" );
-			$lb.arrow = $lb.contentContainer.find( "#ui-lightbox-arrow" );
-			$lb.header = $lb.root.find( "#ui-lightbox-bottombar" );
-			$lb.headerWrapper = $lb.header.find( "#ui-lightbox-title-wrapper" );		
-			$lb.overlay = $( "#ui-lightbox-overlay" );
-			$lb.next = $lb.root.find( "#ui-lightbox-button-next" );
-			$lb.prev = $lb.root.find( "#ui-lightbox-button-prev" );
-			//$lb.play = $lb.root.find( "#ui-lightbox-button-play" );
+			$lb.root = $( "#widget-rlightbox" );
+			$lb.panoramaIcon = $lb.root.find( "#widget-rlightbox-panorama-icon" );
+			$lb.contentContainer = $lb.root.find( "#widget-rlightbox-content-container" );
+			$lb.content = $lb.contentContainer.find( "#widget-rlightbox-content" );
+			$lb.arrow = $lb.contentContainer.find( "#widget-rlightbox-arrow" );
+			$lb.header = $lb.root.find( "#widget-rlightbox-bottombar" );
+			$lb.headerWrapper = $lb.header.find( "#widget-rlightbox-title-wrapper" );		
+			$lb.overlay = $( "#widget-rlightbox-overlay" );
+			$lb.next = $lb.root.find( "#widget-rlightbox-button-next" );
+			$lb.prev = $lb.root.find( "#widget-rlightbox-button-prev" );
+			//$lb.play = $lb.root.find( "#widget-rlightbox-button-play" );
 			$lb.controlButtons = $lb.next.add( $lb.prev );//.add( $lb.play );
-			$lb.close = $lb.root.find( "#ui-lightbox-button-close" );
-			$lb.counter = $lb.root.find( "#ui-lightbox-counter" );
-			$lb.title = $lb.root.find( "#ui-lightbox-title" );
-			$lb.map = $( "#ui-lightbox-map" );
+			$lb.close = $lb.root.find( "#widget-rlightbox-button-close" );
+			$lb.counter = $lb.root.find( "#widget-rlightbox-counter" );
+			$lb.title = $lb.root.find( "#widget-rlightbox-title" );
+			$lb.map = $( "#widget-rlightbox-map" );
 			$lb.viewport = $lb.map.children().eq( 0 );
 		},
 		
@@ -1755,16 +1755,16 @@ $.extend($.ui.rlightbox, {
 				if ( _side === "left" && (_currentIndex > 1 || _isLoop) ) {
 					$arrow
 						.show()
-						.removeClass("ui-lightbox-arrow-next ui-corner-left")
-						.addClass("ui-lightbox-arrow-prev ui-corner-right")
+						.removeClass("widget-rlightbox-arrow-next ui-corner-left")
+						.addClass("widget-rlightbox-arrow-prev ui-corner-right")
 						.find("span")
 							.removeClass("ui-icon-carat-1-e")
 							.addClass("ui-icon-carat-1-w");
 				} else if ( _side === "right" && (_currentIndex < _totalElements || _isLoop) ) {
 					$arrow
 						.show()
-						.removeClass("ui-lightbox-arrow-prev ui-corner-right")
-						.addClass("ui-lightbox-arrow-next ui-corner-left")
+						.removeClass("widget-rlightbox-arrow-prev ui-corner-right")
+						.addClass("widget-rlightbox-arrow-next ui-corner-left")
 						.find("span")
 							.removeClass("ui-icon-carat-1-w")
 							.addClass("ui-icon-carat-1-e");
@@ -1862,7 +1862,7 @@ $.extend($.ui.rlightbox, {
 			// disable panorama
 			$lb.panoramaIcon
 				.hide()
-				.removeClass( "ui-lightbox-panorama-icon-expand ui-lightbox-panorama-icon-shrink" );
+				.removeClass( "widget-rlightbox-panorama-icon-expand widget-rlightbox-panorama-icon-shrink" );
 
 			data.panorama.enabled = false;
 
@@ -1930,12 +1930,12 @@ $.extend($.ui.rlightbox, {
 			}
 
 			// show spinner
-			$content.addClass( "ui-lightbox-loader" );
+			$content.addClass( "widget-rlightbox-loader" );
 			
 			$.when( this[_loadContentMethod](_currentElement) ).then(function(d) {
 				// when content has been loaded successfully
 				$content
-					.removeClass( "ui-lightbox-loader" )
+					.removeClass( "widget-rlightbox-loader" )
 					.empty()
 					.append( d.structure );
 				
@@ -1948,7 +1948,7 @@ $.extend($.ui.rlightbox, {
 				// when there is an error, there is only one structure we have to add –
 				// the error screen structure so it is not passed as parameter of the promise
 				$content
-					.removeClass( "ui-lightbox-loader" )
+					.removeClass( "widget-rlightbox-loader" )
 					.empty()
 					.append( self.setErrorMessage() );
 				
@@ -1988,7 +1988,7 @@ $.extend($.ui.rlightbox, {
 			}
 
 			$root
-				.find( "#ui-lightbox-content" )
+				.find( "#widget-rlightbox-content" )
 					.animate( {width: _targetWidth}, _speed )
 					.animate( {height: _targetHeight}, _speed )
 					.end()
@@ -2122,14 +2122,14 @@ $.extend($.ui.rlightbox, {
 						"<!--<![endif]-->" +
 				"</object>",
 			htmlErrorScreen: "" +
-				"<div id='ui-lightbox-error'>" +
-					"<div id='ui-lightbox-error-message' class='ui-lightbox-error-icon-sign'>{message}</div>" +
-					"<div id='ui-lightbox-error-footer'>" +
-						"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+				"<div id='widget-rlightbox-error'>" +
+					"<div id='widget-rlightbox-error-message' class='widget-rlightbox-error-icon-sign'>{message}</div>" +
+					"<div id='widget-rlightbox-error-footer'>" +
+						"<button aria-disabled='false' role='button' id='widget-rlightbox-error-footer-again' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
 							"<span class='ui-button-icon-primary ui-icon ui-icon-refresh'></span>" +
 							"<span class='ui-button-text'>{labelAgain}</span>" +
 						"</button>" +
-						"<button aria-disabled='false' role='button' id='ui-lightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
+						"<button aria-disabled='false' role='button' id='widget-rlightbox-error-footer-reject' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary'>" +
 							"<span class='ui-button-icon-primary ui-icon ui-icon-trash'></span>" +
 							"<span class='ui-button-text'>{labelReject}</span>" +
 						"</button>" + 
@@ -2137,41 +2137,41 @@ $.extend($.ui.rlightbox, {
 				"</div>",
 			htmlYoutube: "<iframe class='youtube-player' type='text/html' width='{width}' height='{height}' src='http://www.youtube.com/embed/{videoid}{params}' frameborder='0'></iframe>",
 			htmlLightbox: "" +
-				"<div id='ui-lightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>" +
-					"<div id='ui-lightbox-panorama-icon' style='display: none'></div>" +
-					"<div id='ui-lightbox-content-container'>" +
-						"<div id='ui-lightbox-content' class='ui-widget-content'></div>" +
-						"<a id='ui-lightbox-arrow' class='ui-widget-header' style='display: none'>" +
+				"<div id='widget-rlightbox' class='ui-widget ui-widget-content ui-corner-all' style='display: none'>" +
+					"<div id='widget-rlightbox-panorama-icon' style='display: none'></div>" +
+					"<div id='widget-rlightbox-content-container'>" +
+						"<div id='widget-rlightbox-content' class='ui-widget-content'></div>" +
+						"<a id='widget-rlightbox-arrow' class='ui-widget-header' style='display: none'>" +
 							"<span class='ui-icon'>go</span>" +
 						"</a>" +
 					"</div>" +
-					"<div id='ui-lightbox-bottombar' class='ui-widget-header ui-corner-all' style='display: none'>" +
-						"<p id='ui-lightbox-title-wrapper'>" +
-							"<span id='ui-lightbox-title'></span>" +
+					"<div id='widget-rlightbox-bottombar' class='ui-widget-header ui-corner-all' style='display: none'>" +
+						"<p id='widget-rlightbox-title-wrapper'>" +
+							"<span id='widget-rlightbox-title'></span>" +
 						"</p>" +
-						"<p id='ui-lightbox-bottombar-bottom'>" +
-							"<a id='ui-lightbox-button-prev' class='ui-lightbox-button'>" +
+						"<p id='widget-rlightbox-bottombar-bottom'>" +
+							"<a id='widget-rlightbox-button-prev' class='widget-rlightbox-button'>" +
 								"<span class='ui-icon ui-icon-circle-arrow-w'>prev</span>" +
 							"</a>" +
-							"<span id='ui-lightbox-counter'></span>" +
-							"<a id='ui-lightbox-button-next' class='ui-lightbox-button'>" +
+							"<span id='widget-rlightbox-counter'></span>" +
+							"<a id='widget-rlightbox-button-next' class='widget-rlightbox-button'>" +
 								"<span class='ui-icon ui-icon-circle-arrow-e'>next</span>" +
 							"</a>" +
-							//"<span id='ui-lightbox-separator'>|</span>" +
-							//"<a id='ui-lightbox-button-play' class='ui-lightbox-button'>" +
+							//"<span id='widget-rlightbox-separator'>|</span>" +
+							//"<a id='widget-rlightbox-button-play' class='widget-rlightbox-button'>" +
 							//	"<span class='ui-icon ui-icon-circle-triangle-e'>play</span>" +
 							//"</a>" +
 						"</p>" +
-						"<a id='ui-lightbox-button-close' class='ui-lightbox-button'>" +
+						"<a id='widget-rlightbox-button-close' class='widget-rlightbox-button'>" +
 							"<span class='ui-icon ui-icon-closethick'>close</span>" +
 						"</a>" +
 					"</div>" +
 				"</div>",
 			htmlMap: "" +
-				"<div id='ui-lightbox-map' style='display: none'>" +
-					"<div id='ui-lightbox-map-viewport'></div>" +
+				"<div id='widget-rlightbox-map' style='display: none'>" +
+					"<div id='widget-rlightbox-map-viewport'></div>" +
 				"</div>",
-			htmlOverlay: "<div id='ui-lightbox-overlay' class='ui-widget-overlay' style='display: none'></div>",
+			htmlOverlay: "<div id='widget-rlightbox-overlay' class='ui-widget-overlay' style='display: none'></div>",
 			queues: {}
 		}
 	}

@@ -1,16 +1,16 @@
-#ui-lightbox, #ui-lightbox-panorama-icon, #ui-lightbox-content-container,
-#ui-lightbox-content, #ui-lightbox-content > *, #ui-lightbox-arrow,
-#ui-lightbox-arrow > span, #ui-lightbox-bottombar, #ui-lightbox-title-wrapper,
-#ui-lightbox-title, #ui-lightbox-bottombar-bottom, #ui-lightbox-button-prev,
-#ui-lightbox-button-prev > span, #ui-lightbox-counter, #ui-lightbox-button-next,
-#ui-lightbox-button-next > span, #ui-lightbox-button-close,
-#ui-lightbox-button-close > span, #ui-lightbox-map, #ui-lightbox-map-viewport,
-#ui-lightbox-overlay {
+#widget-rlightbox, #widget-rlightbox-panorama-icon, #widget-rlightbox-content-container,
+#widget-rlightbox-content, #widget-rlightbox-content > *, #widget-rlightbox-arrow,
+#widget-rlightbox-arrow > span, #widget-rlightbox-bottombar, #widget-rlightbox-title-wrapper,
+#widget-rlightbox-title, #widget-rlightbox-bottombar-bottom, #widget-rlightbox-button-prev,
+#widget-rlightbox-button-prev > span, #widget-rlightbox-counter, #widget-rlightbox-button-next,
+#widget-rlightbox-button-next > span, #widget-rlightbox-button-close,
+#widget-rlightbox-button-close > span, #widget-rlightbox-map, #widget-rlightbox-map-viewport,
+#widget-rlightbox-overlay {
 	margin: 0;
 	padding: 0;
 }
 
-#ui-lightbox {
+#widget-rlightbox {
 	font-size: 62.5%;
 	padding: 5px;
 	position: absolute;
@@ -19,24 +19,24 @@
 	height: auto;
 }
 
-#ui-lightbox-content-container {
+#widget-rlightbox-content-container {
     position: relative;
 }
 
-#ui-lightbox-content {
+#widget-rlightbox-content {
 	border: 0;
 	position: relative;
 	width: 20px;
 	height: 20px;
 }
 
-#ui-lightbox-content > * {
+#widget-rlightbox-content > * {
 	display: block;
 	position: absolute;
 	z-index: 100;
 }
 
-#ui-lightbox-arrow {
+#widget-rlightbox-arrow {
 	cursor: pointer;
 	display: block;
 	position: absolute;
@@ -45,17 +45,17 @@
 	z-index: 101;   
 }
 
-.ui-lightbox-arrow-next {
+.widget-rlightbox-arrow-next {
 	border-right: 0;
 	right: 0;
 }
 
-.ui-lightbox-arrow-prev {
+.widget-rlightbox-arrow-prev {
 	border-left: 0;
 	left: 0;
 }
 
-#ui-lightbox-panorama-icon {
+#widget-rlightbox-panorama-icon {
 	cursor: pointer;
 	height: 32px;
 	left: 20px;
@@ -65,85 +65,85 @@
 	z-index: 110;
 }
 
-.ui-lightbox-panorama-icon-expand {
+.widget-rlightbox-panorama-icon-expand {
 	background: url(panorama.png) top left no-repeat;
 }
 
-.ui-lightbox-panorama-icon-expand-hover {
+.widget-rlightbox-panorama-icon-expand-hover {
 	background: url(panorama.png) bottom left no-repeat;
 }
 
-.ui-lightbox-panorama-icon-shrink {
+.widget-rlightbox-panorama-icon-shrink {
 	background: url(panorama.png) top right no-repeat;
 }
 
-.ui-lightbox-panorama-icon-shrink-hover {
+.widget-rlightbox-panorama-icon-shrink-hover {
 	background: url(panorama.png) bottom right no-repeat;
 }
 
-.ui-lightbox-loader {
+.widget-rlightbox-loader {
 	background: url(loader.gif) center center no-repeat;
 }
 
-#ui-lightbox-bottombar {
+#widget-rlightbox-bottombar {
 	margin-top: 5px;
 	padding: 5px;
 	height: 40px;
 	position: relative;
 }
 
-#ui-lightbox-bottombar > p {
+#widget-rlightbox-bottombar > p {
 	margin-right: 20px;
 	height: 20px;
 	line-height: 20px;
 }
 
-#ui-lightbox-bottombar-bottom {
+#widget-rlightbox-bottombar-bottom {
 	text-align: left;
 }
 
-#ui-lightbox-title-wrapper {
+#widget-rlightbox-title-wrapper {
 	font-size: 14px;
 	height: 20px;
 	overflow: hidden;
 	text-align: left;
 }
 
-#ui-lightbox-counter {
+#widget-rlightbox-counter {
 	font-size: 9px;
 	line-height: 20px;
 	vertical-align: middle;
 }
 
-#ui-lightbox-separator {
+#widget-rlightbox-separator {
     line-height: 20px;
     padding: 0 2px;
     vertical-align: middle;
 }
 
-#ui-lightbox-button-prev, #ui-lightbox-button-next, #ui-lightbox-button-play {
+#widget-rlightbox-button-prev, #widget-rlightbox-button-next, #widget-rlightbox-button-play {
 	display: inline-block;
 	line-height: 20px;
 	vertical-align: middle;
 }
 
-#ui-lightbox-button-close {
+#widget-rlightbox-button-close {
 	line-height: 20px;
 	position: absolute;
 	top: 17px;
 	right: 5px;
 }
 
-.ui-lightbox-button {
+.widget-rlightbox-button {
 	cursor: pointer;
 }
 
-.ui-lightbox-button.ui-state-highlight {
+.widget-rlightbox-button.ui-state-highlight {
 	border-style: none;
 	background: none;
 }
 
-#ui-lightbox-map {
+#widget-rlightbox-map {
 	background-color: black;
 	border: 1px solid white;
 	filter:Alpha(Opacity=20);
@@ -156,24 +156,24 @@
 	z-index: 10000;
 }
 
-#ui-lightbox-map-viewport {
+#widget-rlightbox-map-viewport {
 	border: 1px solid white;
 	left: -1px; /*prevent from overlapping the map border*/
 	position: absolute;
 	top: -1px; /*prevent from overlapping the map border*/
 }
 
-#ui-lightbox-overlay {
+#widget-rlightbox-overlay {
 	border: 0;
 	position: fixed;
 	cursor: pointer;
 }
 
-#ui-lightbox-error {
+#widget-rlightbox-error {
 	background: url(error_bg.png) repeat left top;
 }
 
-#ui-lightbox-error-message {
+#widget-rlightbox-error-message {
 	color: #ffffff;
 	font-size: 14px;
 	line-height: 1.5;
@@ -182,14 +182,14 @@
 	text-align: center;
 }
 
-#ui-lightbox-error-footer {
+#widget-rlightbox-error-footer {
 	text-align: center;
 }
 
-#ui-lightbox-error-footer > button {
+#widget-rlightbox-error-footer > button {
 	margin-right: 15px;
 }
 
-.ui-lightbox-error-icon-sign {
+.widget-rlightbox-error-icon-sign {
 	background: url(error_sign.png) no-repeat center 226px;	    
 }
