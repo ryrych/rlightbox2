@@ -253,7 +253,7 @@ $.extend($.ui.rlightbox, {
 						type: "youtube"
 					},
 					image: {
-						urls: [/.jpg$|.png$|.gif$/],
+						urls: [/(\.jpg|\.png|\.gif)(\?.*)?$/],
 						type: "image"
 					},
 					vimeo: {
